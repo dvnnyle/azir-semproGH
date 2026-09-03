@@ -1,3 +1,4 @@
+@model AccountViewModel
 @{
     ViewData["Title"] = "Registrer deg";
 }
@@ -14,29 +15,33 @@
         </div>
 
         <form class="inputs-stack" method="post" asp-controller="Account" asp-action="Register">
+            <div asp-validation-summary="ModelOnly"></div>
+
             <div class="felt-gruppe">
-                <label class="konto-label" for="firstName">Fornavn</label>
-                <input type="text" id="firstName" name="firstName" class="konto-input" placeholder="Ola" required>
+                <label class="konto-label" asp-for="FirstName">Fornavn</label>
+                <input type="text" asp-for="FirstName" class="konto-input" placeholder="Ola" required>
             </div>
 
             <div class="felt-gruppe">
-                <label class="konto-label" for="lastName">Etternavn</label>
-                <input type="text" id="lastName" name="lastName" class="konto-input" placeholder="Nordmann" required>
+                <label class="konto-label" asp-for="LastName">Etternavn</label>
+                <input type="text" asp-for="LastName" class="konto-input" placeholder="Nordmann" required>
             </div>
 
             <div class="felt-gruppe">
-                <label class="konto-label" for="email">E-post</label>
-                <input type="email" id="email" name="email" class="konto-input" placeholder="navn@eksempel.no" required>
+                <label class="konto-label" asp-for="Email">E-post</label>
+                <input type="email" asp-for="Email" class="konto-input" placeholder="navn@eksempel.no" required>
+                <span asp-validation-for="Email"></span>
             </div>
 
             <div class="felt-gruppe">
-                <label class="konto-label" for="phoneNumber">Telefonnummer</label>
-                <input type="tel" id="phoneNumber" name="phoneNumber" class="konto-input" placeholder="+47 12345678" required>
+                <label class="konto-label" asp-for="PhoneNumber">Telefonnummer</label>
+                <input type="tel" asp-for="PhoneNumber" class="konto-input" placeholder="+47 12345678" required>
+                <span asp-validation-for="PhoneNumber"></span>
             </div>
 
             <div class="felt-gruppe">
-                <label class="konto-label" for="password">Passord</label>
-                <input type="password" id="password" name="password" class="konto-input" placeholder="Min. 8 tegn" minlength="8" required>
+                <label class="konto-label" asp-for="Password">Passord</label>
+                <input type="password" asp-for="Password" class="konto-input" placeholder="Min. 8 tegn" minlength="8" required>
             </div>
 
             <button type="submit" class="konto-knapp">Registrer deg</button>

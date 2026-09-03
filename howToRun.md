@@ -5,9 +5,10 @@
 - http://localhost:5253
 
 ## Docker
-- docker build -t azir-sempro .
-- docker run -p 8080:8080 azir-sempro
+- docker compose up --build
 - http://localhost:8080
+- MySQL and the Users table are created automatically from sql/users.sql
+- Stop everything with: docker compose down
 
 Docker garanterer samme miljø for alle (same OS, same .NET, same setup).
 

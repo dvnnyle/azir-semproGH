@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace azir_sempro.Controllers;
 
-public class DannyController : Controller
+public class ResourcesController : Controller
 {
     public IActionResult Index()
     {
