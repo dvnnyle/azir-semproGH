@@ -5,9 +5,181 @@
     background: #0f172a;
 }
 
-.marker-pin {
-    font-size: 30px;
+.report-marker {
+    align-items: center;
     color: #10b981;
+    display: flex;
+    font-size: 18px;
+    gap: 6px;
     -webkit-text-stroke: 2px #f1f5f9;
     paint-order: stroke fill;
+}
+
+.report-marker span {
+    background: rgba(15, 23, 42, 0.85);
+    border-radius: 6px;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    -webkit-text-stroke: 0;
+}
+
+body.dark-mode .leaflet-tile-pane {
+    filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9);
+}
+
+.kart-verktoylinje,
+.tegne-bar {
+    background: rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.kart-verktoylinje {
+    align-items: center;
+    border-radius: 8px;
+    display: flex;
+    gap: 8px;
+    left: 20px;
+    padding: 8px;
+    position: fixed;
+    top: calc(var(--nav-height) + var(--nav-margin) + 16px);
+    z-index: 2;
+}
+
+.verktoy-knapp,
+.tegne-bar button {
+    align-items: center;
+    background: #07111f;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: rgba(255, 255, 255, 0.78);
+    cursor: pointer;
+    display: inline-flex;
+    font: inherit;
+    justify-content: center;
+    min-height: 40px;
+    text-decoration: none;
+}
+
+.verktoy-knapp {
+    width: 40px;
+}
+
+.verktoy-knapp:hover,
+.verktoy-knapp.active,
+.tegne-bar button:hover:not(:disabled) {
+    border-color: #ffae00;
+    color: #ffae00;
+}
+
+.rapporter-knapp {
+    align-items: center;
+    background: #dc2626;
+    border: 0;
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    gap: 8px;
+    height: 40px;
+    padding: 0 14px;
+}
+
+.rapporter-knapp:hover {
+    background: #b91c1c;
+}
+
+.tegne-bar {
+    align-items: center;
+    border-radius: 8px;
+    bottom: 20px;
+    display: flex;
+    gap: 8px;
+    left: 50%;
+    opacity: 0;
+    padding: 10px;
+    pointer-events: none;
+    position: fixed;
+    transform: translate(-50%, 30px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    white-space: nowrap;
+    z-index: 2;
+}
+
+.tegne-bar.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, 0);
+}
+
+.tegne-bar-skille {
+    background: rgba(255, 255, 255, 0.1);
+    height: 28px;
+    width: 1px;
+}
+
+.bar-knapp {
+    align-items: center;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid transparent;
+    border-radius: 6px;
+    color: #a3a7af;
+    display: inline-flex;
+    font-size: 13px;
+    font-weight: 600;
+    gap: 8px;
+    height: 40px;
+    justify-content: center;
+    line-height: 1;
+    min-height: 40px;
+    padding: 0 12px;
+    white-space: nowrap;
+}
+
+.bar-knapp.modus-knapp {
+    color: #ffae00;
+    padding: 0;
+    width: 40px;
+}
+
+.bar-knapp:hover:not(:disabled) {
+    background: rgba(15, 23, 42, 0.9);
+}
+
+.bar-knapp.active {
+    border-color: #ffae00;
+    color: #ffae00;
+}
+
+.bar-knapp__tekst {
+    display: inline;
+    font-size: 11px;
+    line-height: 1;
+}
+
+.tegne-bar .send-inn {
+    background: #10b981;
+    border-color: #10b981;
+    color: #062c22;
+    font-weight: 700;
+}
+
+.tegne-bar button:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+@media (max-width: 700px) {
+    .kart-verktoylinje { left: 10px; right: 10px; top: calc(var(--nav-height) + var(--nav-margin) + 8px); }
+    .rapporter-knapp { margin-left: auto; padding: 0 10px; }
+    .tegne-bar { bottom: 10px; max-width: calc(100vw - 20px); overflow-x: auto; }
+    .tegne-bar-skille { display: none; }
+    .bar-knapp.modus-knapp { padding: 0; width: 40px; }
+    .bar-knapp__tekst { display: none; }
 }
