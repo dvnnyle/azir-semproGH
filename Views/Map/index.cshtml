@@ -1,26 +1,147 @@
 @{
-    ViewData["Title"] = "Map Test";
+    ViewData["Title"] = "Kart";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="~/css/map.css" asp-append-version="true">
+
 <div id="map"></div>
+
+<div class="kart-verktoylinje">
+    <a asp-controller="Home" asp-action="Index" class="verktoy-knapp" title="Tilbake" aria-label="Tilbake"><i class="fa-solid fa-arrow-left"></i></a>
+      <button type="button" class="verktoy-knapp" id="temaVeksle" title="Veksle karttema" aria-label="Veksle karttema"><i class="fa-solid fa-moon"></i></button>
+    <button type="button" class="rapporter-knapp" id="rapporterKnapp"><i class="fa-solid fa-draw-polygon"></i> Rapporter fare</button>
+</div>
+
+<div class="tegne-bar" id="tegneBar">
+    <button type="button" class="bar-knapp modus-knapp" id="handModus" title="Hand (flytt kart)" aria-label="Hand (flytt kart)"><i class="fa-solid fa-hand"></i></button>
+      <button type="button" class="bar-knapp modus-knapp active" id="frihandModus" title="Frihand" aria-label="Frihand"><i class="fa-solid fa-pen"></i></button>
+    <button type="button" class="bar-knapp" id="nullstillKnapp" title="Nullstill" aria-label="Nullstill"><i class="fa-solid fa-rotate-left"></i></button>
+    <div class="tegne-bar-skille"></div>
+    <button type="button" class="bar-knapp avbryt" id="avbrytKnapp" title="Avbryt"><i class="fa-solid fa-xmark"></i><span class="bar-knapp__tekst">Avbryt</span></button>
+    <button type="button" class="bar-knapp send-inn" id="sendInnKnapp" disabled title="Send inn"><i class="fa-solid fa-check"></i><span class="bar-knapp__tekst">Send inn</span></button>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
-    const coords = [58.1635601, 8.003155500000002];
-    const map = L.map('map', { minZoom: 4 }).setView(coords, 12);
+    // Lager kartet og setter startposisjonen
+    const map = L.map('map',{ minZoom: 4 }).setView([58.1635601, 8.0031555],17);
+    const tileLayer = name => L.tileLayer(`https://cache.kartverket.no/v1/wmts/1.0.0/${name}/default/webmercator/{z}/{y}/{x}.png`, { maxZoom: 18, noWrap: true, attribution: '&copy; Kartverket' });
+            const normalLayer = tileLayer('topo').addTo(map);
+    const darkLayer = tileLayer('topograatone');
+    let isDark = false;
+    let drawing = false;
+    let dragging = false;
+        let points = [];
+    let preview = null;
+    let shape = null;
 
-    const redIcon = L.divIcon({
-        html: '<div class="marker-pin"><i class="fa-solid fa-location-dot"></i></div>',
-        className: '',
-        iconSize: [30, 30],
-        iconAnchor: [15, 30]
+//knapper og div
+    const toggle = document.getElementById('temaVeksle') ;
+            const drawingBar = document.getElementById('tegneBar');
+    const submitButton = document.getElementById('sendInnKnapp');
+    const reportButton = document.getElementById('rapporterKnapp');
+        const freehandButton = document.getElementById('frihandModus');
+    const handButton = document.getElementById('handModus');
+    const resetButton = document.getElementById('nullstillKnapp');
+    const cancelButton = document.getElementById('avbrytKnapp');
+
+
+    // Nullstiller tegningen og gjor kartet flyttbart igjen
+    function resetDrawing() {
+        dragging = false;
+        points = [];
+                    if (preview) map.removeLayer(preview);   
+        if (shape) map.removeLayer(shape);
+        preview = null;
+        shape = null;
+        drawing = false;
+        submitButton.disabled = true;
+        map.dragging.enable();
+    }
+
+    function reportIcon(title) {
+        const label = document.createElement('span');
+        label.textContent = title || 'Meldt fare';
+        return L.divIcon({ html: `<div class="report-marker"><i class="fa-solid fa-location-crosshairs"></i>${label.outerHTML}</div>`, className: '', iconSize: [150, 26], iconAnchor: [12, 12] });
+    }
+
+    function reports()  {
+         return JSON.parse(localStorage.getItem('rapporterteFarer') || '[]');
+    }
+
+    // Viser farer som allerede er lagret i nettleseren
+    function loadReports() {
+                    reports().forEach(report => {
+            const polygon = L.polygon(report.points, { color: '#10b981', fillColor: '#10b981', fillOpacity: 0.35 }).addTo(map);
+            L.marker(polygon.getBounds().getCenter(), { icon: reportIcon(report.title) }).addTo(map);
+        });
+    }
+    loadReports();
+
+    toggle.addEventListener('click', () => {
+        isDark = !isDark;
+                    map.removeLayer(isDark ? normalLayer : darkLayer);
+        map.addLayer(isDark ? darkLayer : normalLayer);
+        toggle.querySelector('i').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
     });
-    L.marker(coords, { icon: redIcon }).addTo(map);
 
-    L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', {
-        maxZoom: 18,
-        noWrap: true,
-        attribution: '© Kartverket'
-    }).addTo(map);
+    // Apner tegneverktøyet
+    reportButton.addEventListener('click', () =>  {
+        drawingBar.classList.toggle('active');
+        resetDrawing();
+                    if (drawingBar.classList.contains('active')) {
+            drawing = true;
+            map.dragging.disable();
+        }
+    });
+    freehandButton.addEventListener('click', () => {
+        drawing = true;
+        map.dragging.disable();
+                    freehandButton.classList.add('active');
+        handButton.classList.remove('active');
+    });
+    handButton.addEventListener('click', () => {
+        drawing = false;
+        map.dragging.enable();
+        handButton.classList.add('active');
+        freehandButton.classList.remove('active');
+    });
+    resetButton.addEventListener('click', () => { resetDrawing(); drawing = true; map.dragging.disable(); freehandButton.click();  });
+    cancelButton.addEventListener('click', () => { resetDrawing(); drawingBar.classList.remove('active'); });
+
+    map.on('mousedown', event => {
+        if (!drawing) return;
+        // Starter en ny strek pa kartet
+        dragging = true;
+        points = [event.latlng];
+        preview = L.polyline(points, { color: '#8b5cf6', weight: 2 }).addTo(map);
+    });
+    map.on('mousemove', event => {
+        if (!dragging) return;
+        points.push(event.latlng);
+        preview.setLatLngs(points);
+    });
+    map.on('mouseup', () => {
+        if (!dragging) return;
+        dragging = false;
+        map.removeLayer(preview);
+        preview = null;
+                    if (points.length < 3) return;
+        shape = L.polygon(points, { color: '#8b5cf6', fillColor: '#4c1d95', fillOpacity: 0.5 }).addTo(map);
+        submitButton.disabled = false;
+    });
+
+    // Lagrer fareomradet nar brukeren trykker send inn
+    submitButton.addEventListener('click', () => {
+                    const title = 'Meldt fare';
+        const reportsToSave = reports();
+          reportsToSave.push({ title, level: 'Middels', description: '', points: shape.getLatLngs()[0].map(point => ({ lat: point.lat, lng: point.lng })) });
+             localStorage.setItem('rapporterteFarer', JSON.stringify(reportsToSave));
+        shape.setStyle({ color: '#10b981', fillColor: '#10b981' });
+             L.marker(shape.getBounds().getCenter(), { icon: reportIcon(title) }).addTo(map);
+        drawingBar.classList.remove('active');
+        shape = null;
+        resetDrawing();
+    });
+
 </script>
