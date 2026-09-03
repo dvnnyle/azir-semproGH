@@ -8,14 +8,21 @@
 ## 1. For å starte applikasjonen:
 For å gå inn i prosjektmappen: `cd azir-semproGH`
 
-Bygg og start Docker Container med webapplikasjon:
+Bygg og start webapplikasjonen og MySQL-databasen med Docker Compose:
 
 ```bash
-docker build -t azir-sempro .
-docker run -p 8080:8080 azir-sempro
+docker compose up --build
 ```
 
 Åpne `http://localhost:8080`
+
+Docker Compose oppretter databasen `krisisdb` og `Users`-tabellen automatisk fra `sql/users.sql`.
+
+Stopp containerne med:
+
+```bash
+docker compose down
+```
 
 ## 2. Lokal development
 

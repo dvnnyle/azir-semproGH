@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/azir_sempro.styles.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/azir-sempro.styles.css" asp-append-version="true" />
 </head>
 <body class="@(navController == "Map" ? "no-footer" : "")">
     <nav class="nav-bar">
@@ -32,16 +32,12 @@
                 <div class="nav-item-label">Home</div>
                 <div class="active-indicator"></div>
             </a>
-            <a asp-controller="Danny" asp-action="Index" class="nav-item @(navController == "Danny" ? "active" : "")">
-                <div class="nav-item-label">Lab</div>
-                <div class="active-indicator"></div>
-            </a>
             <a asp-controller="Form" asp-action="Index" class="nav-item @(navController == "Form" ? "active" : "")">
                 <div class="nav-item-label">Form</div>
                 <div class="active-indicator"></div>
             </a>
-            <a asp-controller="Home" asp-action="Privacy" class="nav-item @(navController == "Home" && navAction == "Privacy" ? "active" : "")">
-                <div class="nav-item-label">Privacy</div>
+            <a asp-controller="Resources" asp-action="Index" class="nav-item @(navController == "Resources" ? "active" : "")">
+                <div class="nav-item-label">Resources</div>
                 <div class="active-indicator"></div>
             </a>
             <a asp-controller="Map" asp-action="Index" class="nav-item @(navController == "Map" ? "active" : "")">
@@ -69,7 +65,7 @@
     {
         <footer class="border-top footer text-muted">
             <div class="container">
-                &copy; 2026 - azir_sempro - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                &copy; 2026 - azir_sempro
             </div>
         </footer>
     }
