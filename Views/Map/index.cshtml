@@ -1,0 +1,26 @@
+@{
+    ViewData["Title"] = "Map Test";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="~/css/map.css" asp-append-version="true">
+<div id="map"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+    const coords = [58.1635601, 8.003155500000002];
+    const map = L.map('map', { minZoom: 4 }).setView(coords, 12);
+
+    const redIcon = L.divIcon({
+        html: '<div class="marker-pin"><i class="fa-solid fa-location-dot"></i></div>',
+        className: '',
+        iconSize: [30, 30],
+        iconAnchor: [15, 30]
+    });
+    L.marker(coords, { icon: redIcon }).addTo(map);
+
+    L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', {
+        maxZoom: 18,
+        noWrap: true,
+        attribution: '© Kartverket'
+    }).addTo(map);
+</script>

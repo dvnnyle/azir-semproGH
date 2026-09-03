@@ -1,0 +1,35 @@
+Kart - Notat 
+
+Du finenr kartet ved å søke på google 
+
+https://cache.kartverket.no/
+
+Kartet er en  Web Map Tile Service (WMTS)
+
+les mer her i linken det ligger et eksempel
+
+bruk leaflet eller noe annet som oversetter kartet til et kart som kan vises på en nettside
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Kartverkskart</title>
+    <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        #map {height: 600px; width: 800px}
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        var map = L.map('map').setView([60.14, 10.25], 9);
+        L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', {
+            attribution: '© Kartverket',
+        }).addTo(map);
+    </script>
+</body>
+</html>
+
+du kan finne koordinater på ting med google maps

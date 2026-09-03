@@ -1,0 +1,11 @@
+@model azir_sempro.Models.FormViewModel
+@{
+    ViewData["Title"] = "Simple Form";
+}
+
+<form asp-controller="Form" asp-action="Submit" method="post">
+    <input type="text" asp-for="Name">
+    <button type="submit">Submit</button>
+</form>
+
+<p><a asp-controller="Form" asp-action="Innsendinger">Se innsendinger</a></p>

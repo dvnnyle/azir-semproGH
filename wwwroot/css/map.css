@@ -1,0 +1,13 @@
+#map {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background: #0f172a;
+}
+
+.marker-pin {
+    font-size: 30px;
+    color: #10b981;
+    -webkit-text-stroke: 2px #f1f5f9;
+    paint-order: stroke fill;
+}

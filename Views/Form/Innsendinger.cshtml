@@ -1,0 +1,22 @@
+@model List<azir_sempro.Models.FormViewModel>
+@{
+    ViewData["Title"] = "Innsendinger";
+}
+
+<h1>Innsendinger</h1>
+
+@if (!Model.Any())
+{
+    <p>Ingen innsendinger ennå.</p>
+}
+else
+{
+    <ul>
+        @foreach (var innsending in Model)
+        {
+            <li>@innsending.Name</li>
+        }
+    </ul>
+}
+
+<p><a asp-controller="Form" asp-action="Index">Tilbake til skjema</a></p>

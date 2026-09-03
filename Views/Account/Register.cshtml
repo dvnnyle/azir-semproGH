@@ -1,0 +1,49 @@
+@{
+    ViewData["Title"] = "Registrer deg";
+}
+<link rel="stylesheet" href="~/css/account.css" asp-append-version="true">
+
+<div class="page-fill konto-wrap">
+    <div class="kort">
+        <div class="konto-header">
+            <div class="avatar-sirkel"><i class="fa-solid fa-user"></i></div>
+            <div class="tittel-blokk">
+                <h1>Registrer deg</h1>
+                <p>Opprett en konto for å komme i gang</p>
+            </div>
+        </div>
+
+        <form class="inputs-stack" method="post" asp-controller="Account" asp-action="Register">
+            <div class="felt-gruppe">
+                <label class="konto-label" for="firstName">Fornavn</label>
+                <input type="text" id="firstName" name="firstName" class="konto-input" placeholder="Ola" required>
+            </div>
+
+            <div class="felt-gruppe">
+                <label class="konto-label" for="lastName">Etternavn</label>
+                <input type="text" id="lastName" name="lastName" class="konto-input" placeholder="Nordmann" required>
+            </div>
+
+            <div class="felt-gruppe">
+                <label class="konto-label" for="email">E-post</label>
+                <input type="email" id="email" name="email" class="konto-input" placeholder="navn@eksempel.no" required>
+            </div>
+
+            <div class="felt-gruppe">
+                <label class="konto-label" for="phoneNumber">Telefonnummer</label>
+                <input type="tel" id="phoneNumber" name="phoneNumber" class="konto-input" placeholder="+47 12345678" required>
+            </div>
+
+            <div class="felt-gruppe">
+                <label class="konto-label" for="password">Passord</label>
+                <input type="password" id="password" name="password" class="konto-input" placeholder="Min. 8 tegn" minlength="8" required>
+            </div>
+
+            <button type="submit" class="konto-knapp">Registrer deg</button>
+        </form>
+
+        <div class="bytte-row">
+            Har du allerede en konto? <a asp-controller="Account" asp-action="Login">Logg inn</a>
+        </div>
+    </div>
+</div>
