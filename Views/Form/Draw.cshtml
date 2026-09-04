@@ -1,0 +1,191 @@
+@model azir_sempro.Models.FormViewModel
+@{
+    ViewData["Title"] = "Tilby ressurs";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="~/css/form.css" asp-append-version="true">
+
+<div class="ressurs-split">
+    <div class="ressurs-split__form">
+        <div class="ressurs-split__header">
+            <div>
+                <h1>Tilby ressurs</h1>
+            </div>
+        </div>
+
+        <hr class="ressurs-split__divider">
+
+        <div class="ressurs-steg-header">
+            <p class="ressurs-steg-nummer">Steg 1 av 3</p>
+            <h2 class="ressurs-steg-tittel">Velg omradet</h2>
+        </div>
+
+        <form asp-controller="Form" asp-action="Draw" method="post" class="ressurs-steg">
+            <input type="hidden" asp-for="Lokasjon" id="lokasjonInput">
+            <input type="hidden" asp-for="PunkterJson" id="punkterJsonInput">
+
+            <div class="ressurs-tegneverktoy">
+                <button type="button" class="bar-knapp modus-knapp active" id="frihandModus" title="Velg omrade" aria-label="Velg omrade"><i class="fa-solid fa-pen"></i></button>
+                <button type="button" class="bar-knapp modus-knapp" id="pinModus" title="Slipp nal" aria-label="Slipp nal"><i class="fa-solid fa-location-dot"></i></button>
+                <button type="button" class="bar-knapp modus-knapp" id="handModus" title="Flytt kart" aria-label="Flytt kart"><i class="fa-solid fa-hand"></i></button>
+                <button type="button" class="bar-knapp" id="nullstillKnapp" title="Nullstill" aria-label="Nullstill"><i class="fa-solid fa-rotate-left"></i></button>
+                <button type="button" class="ressurs-btn ressurs-btn--submit ressurs-btn--liten" id="fullforKnapp" disabled>Fullf&oslash;r tegning</button>
+            </div>
+
+            <div class="mini-kart" id="lokasjonSnapshot">
+                <div id="lokasjonKartForhandsvisning"></div>
+                <div class="mini-kart-plassholder" id="lokasjonPlassholder">
+                    <i class="fa-solid fa-draw-polygon"></i>
+                    <span>Velg et omrade pa kartet</span>
+                </div>
+            </div>
+
+            <div class="koordinat-boks" id="koordinatBoks">
+                <div><span>Lat</span><strong id="koordinatLat">-</strong></div>
+                <div><span>Lng</span><strong id="koordinatLng">-</strong></div>
+            </div>
+
+            <div class="ressurs-split__actions">
+                <button type="submit" class="ressurs-btn ressurs-btn--submit" id="nesteKnapp" disabled>Neste</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="ressurs-split__map-wrap">
+        <div id="map"></div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+    const map = L.map('map', { minZoom: 4, attributionControl: false }).setView([58.1635601, 8.0031555], 17);
+    const tileLayer = () => L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', { maxZoom: 18, noWrap: true });
+    tileLayer().addTo(map);
+
+    const senterIkon = L.divIcon({ html: '<div class="kart-senter-merke"><i class="fa-solid fa-location-crosshairs"></i></div>', className: '', iconSize: [24, 24], iconAnchor: [12, 12] });
+    const nalIkon = L.divIcon({ html: '<div class="marker-pin"><i class="fa-solid fa-location-dot"></i></div>', className: '', iconSize: [30, 30], iconAnchor: [15, 30] });
+
+    const koordinatLat = document.getElementById('koordinatLat');
+    const koordinatLng = document.getElementById('koordinatLng');
+    function visKoordinater(latlng) {
+        koordinatLat.textContent = latlng.lat.toFixed(6);
+        koordinatLng.textContent = latlng.lng.toFixed(6);
+    }
+
+    const freehandButton = document.getElementById('frihandModus');
+    const pinButton = document.getElementById('pinModus');
+    const handButton = document.getElementById('handModus');
+    const resetButton = document.getElementById('nullstillKnapp');
+    const fullforKnapp = document.getElementById('fullforKnapp');
+    const nesteKnapp = document.getElementById('nesteKnapp');
+    const lokasjonPlassholder = document.getElementById('lokasjonPlassholder');
+    const lokasjonInput = document.getElementById('lokasjonInput');
+    const punkterJsonInput = document.getElementById('punkterJsonInput');
+    const modusKnapper = [freehandButton, pinButton, handButton];
+
+    let modus = 'frihand';
+    let dragging = false;
+    let points = [];
+    let preview = null;
+    let shape = null;
+    let shapeMarkor = null;
+    let snapshotKart = null;
+    let snapshotPolygon = null;
+    let snapshotMarkor = null;
+
+    // Nullstiller den paagaende tegningen
+    function resetDrawing() {
+        dragging = false;
+        points = [];
+        if (preview) map.removeLayer(preview);
+        preview = null;
+        if (shape) map.removeLayer(shape);
+        shape = null;
+        if (shapeMarkor) map.removeLayer(shapeMarkor);
+        shapeMarkor = null;
+        fullforKnapp.disabled = true;
+        nesteKnapp.disabled = true;
+        koordinatLat.textContent = '-';
+        koordinatLng.textContent = '-';
+    }
+
+    function velgModus(knapp, nyModus) {
+        modus = nyModus;
+        map.dragging[nyModus === 'hand' ? 'enable' : 'disable']();
+        modusKnapper.forEach(k => k.classList.toggle('active', k === knapp));
+    }
+    freehandButton.addEventListener('click', () => velgModus(freehandButton, 'frihand'));
+    pinButton.addEventListener('click', () => velgModus(pinButton, 'pin'));
+    handButton.addEventListener('click', () => velgModus(handButton, 'hand'));
+    resetButton.addEventListener('click', () => { resetDrawing(); freehandButton.click(); });
+    map.dragging.disable();
+
+    // Nal-verktoy: ett klikk setter et enkelt punkt i stedet for et omrade
+    map.on('click', event => {
+        if (modus !== 'pin') return;
+        if (shape) map.removeLayer(shape);
+        points = [event.latlng];
+        shape = L.marker(event.latlng, { icon: nalIkon }).addTo(map);
+        fullforKnapp.disabled = false;
+        visKoordinater(event.latlng);
+    });
+
+    map.on('mousedown', event => {
+        if (modus !== 'frihand') return;
+        dragging = true;
+        points = [event.latlng];
+        // Fjerner det forrige omradet/nalen med en gang - kun ett av delene skal finnes om gangen
+        if (shape) map.removeLayer(shape);
+        shape = null;
+        fullforKnapp.disabled = true;
+        preview = L.polyline(points, { color: '#8b5cf6', weight: 2 }).addTo(map);
+    });
+    map.on('mousemove', event => {
+        if (!dragging) return;
+        points.push(event.latlng);
+        preview.setLatLngs(points);
+    });
+    map.on('mouseup', () => {
+        if (!dragging) return;
+        dragging = false;
+        map.removeLayer(preview);
+        preview = null;
+        if (points.length < 3) return;
+        shape = L.polygon(points, { color: '#8b5cf6', fillColor: '#4c1d95', fillOpacity: 0.5 }).addTo(map);
+        fullforKnapp.disabled = false;
+    });
+
+    // Tar et snapshot av det tegnede omradet/punktet og legger det i forhandsvisningen
+    fullforKnapp.addEventListener('click', () => {
+        const erOmrade = points.length >= 3;
+        const punkter = points.map(p => ({ lat: p.lat, lng: p.lng }));
+        const bounds = L.latLngBounds(points);
+        const senter = bounds.getCenter();
+
+        punkterJsonInput.value = JSON.stringify(punkter);
+        lokasjonInput.value = senter.lat.toFixed(6) + ', ' + senter.lng.toFixed(6);
+        visKoordinater(senter);
+
+        // Samme stil pa selve kartet som i forhandsvisningen: gronn omrade + krysshar-markor
+        if (shape) map.removeLayer(shape);
+        shape = erOmrade ? L.polygon(punkter, { color: '#10b981', fillColor: '#10b981', fillOpacity: 0.35 }).addTo(map) : null;
+        if (shapeMarkor) map.removeLayer(shapeMarkor);
+        shapeMarkor = L.marker(senter, { icon: senterIkon }).addTo(map);
+
+        lokasjonPlassholder.hidden = true;
+        if (!snapshotKart) {
+            snapshotKart = L.map('lokasjonKartForhandsvisning', { zoomControl: false, dragging: false, scrollWheelZoom: false, attributionControl: false });
+            tileLayer().addTo(snapshotKart);
+        }
+        if (snapshotPolygon) snapshotKart.removeLayer(snapshotPolygon);
+        snapshotPolygon = erOmrade ? L.polygon(punkter, { color: '#10b981', fillColor: '#10b981', fillOpacity: 0.35 }).addTo(snapshotKart) : null;
+        if (snapshotMarkor) snapshotKart.removeLayer(snapshotMarkor);
+        snapshotMarkor = L.marker(senter, { icon: senterIkon }).addTo(snapshotKart);
+        setTimeout(() => {
+            snapshotKart.invalidateSize();
+            snapshotKart.fitBounds(erOmrade ? bounds : bounds.pad(2), { padding: [16, 16] });
+        }, 50);
+
+        nesteKnapp.disabled = false;
+    });
+</script>
