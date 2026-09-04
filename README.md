@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="wwwroot/assets/readme_assets/banner.png" width="100%">
+</p>
+
 # Krisis - semester project at IT - UIA
 # Gruppe 14
 
