@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="wwwroot/assets/readme_assets/banner.png" width="100%">
+  <img src="wwwroot/assets/readme_assets/top-Banner.png" width="100%">
 </p>
 
 # Krisis - semester project at IT - UIA
@@ -53,5 +53,9 @@ Applikasjonen vil være tilgjengelig på `http://localhost:5253`
   <a href="wwwroot/assets/readme_assets/brandndesign.png"><img src="wwwroot/assets/readme_assets/brandndesign.png" width="32%"></a>
   <a href="wwwroot/assets/readme_assets/accountflow.png"><img src="wwwroot/assets/readme_assets/accountflow.png" width="32%"></a>
 </p>
+<p align="center"><sub>Systemarkitektur · Brand Design · Account Flow</sub></p>
+
 <p align="center">
+  <img src="wwwroot/assets/readme_assets/bottom-banner.png" width="100%">
+</p>
 
