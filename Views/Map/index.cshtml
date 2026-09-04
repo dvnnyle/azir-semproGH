@@ -1,3 +1,17 @@
+@*
+    Kart-siden. Punkt "kart i tillegg til skjemaet" fra oppgaven:
+    bruker tegner et omrade pa kartet, fyller ut skjema (modal), og det
+    lagres. Enn sa lenge bare client-side (localStorage) - ikke koblet
+    pa MapController eller database enda, kommer senere.
+
+    TODO for a bli ferdig, samme mal som FormController/FormViewModel:
+    - koble pa database (MySQL, samme AppDbContext som User)
+    - egen modell, f.eks Models/MarkedArea.cs (tittel, kategori, detaljer, points)
+    - DbSet<MarkedArea> i AppDbContext + migrasjon
+    - modifiser MapController: [HttpGet] hent lagrede omrader, [HttpPost] lagre nytt
+    - bytt skjemaet (modalen under) fra localStorage til fetch mot de nye endepunktene
+    - vurder om modalen skal ta imot en ViewModel fra serveren i stedet for tomt skjema
+*@
 @{
     ViewData["Title"] = "Kart";
 }
@@ -7,10 +21,16 @@
 <div id="map"></div>
 
 <div class="kart-verktoylinje">
-    <a asp-controller="Home" asp-action="Index" class="verktoy-knapp" title="Tilbake" aria-label="Tilbake"><i class="fa-solid fa-arrow-left"></i></a>
+    <a asp-controller="Home" asp-action="Index" class="verktoy-knapp" title="Hjem" aria-label="Hjem"><i class="fa-solid fa-house"></i></a>
       <button type="button" class="verktoy-knapp" id="temaVeksle" title="Veksle karttema" aria-label="Veksle karttema"><i class="fa-solid fa-moon"></i></button>
+    <button type="button" class="verktoy-knapp" id="listeKnapp" title="Ressurser" aria-label="Ressurser"><i class="fa-solid fa-list"></i></button>
     <button type="button" class="rapporter-knapp" id="rapporterKnapp"><i class="fa-solid fa-hand-holding-heart"></i> Tilby ressurser</button>
 </div>
+
+<aside class="sidepanel" id="sidePanel">
+    <header><h2>Ressurser</h2><button type="button" id="sidePanelLukk" aria-label="Lukk"><i class="fa-solid fa-xmark"></i></button></header>
+    <div id="sidePanelListe"></div>
+</aside>
 
 <div class="tegne-bar" id="tegneBar">
     <button type="button" class="bar-knapp modus-knapp" id="handModus" title="Hand (flytt kart)" aria-label="Hand (flytt kart)"><i class="fa-solid fa-hand"></i></button>
@@ -18,8 +38,87 @@
     <button type="button" class="bar-knapp" id="nullstillKnapp" title="Nullstill" aria-label="Nullstill"><i class="fa-solid fa-rotate-left"></i></button>
     <div class="tegne-bar-skille"></div>
     <button type="button" class="bar-knapp avbryt" id="avbrytKnapp" title="Avbryt"><i class="fa-solid fa-xmark"></i><span class="bar-knapp__tekst">Avbryt</span></button>
-    <button type="button" class="bar-knapp send-inn" id="sendInnKnapp" disabled title="Send inn"><i class="fa-solid fa-check"></i><span class="bar-knapp__tekst">Send inn</span></button>
+    <button type="button" class="bar-knapp send-inn" id="sendInnKnapp" disabled title="Fullfør"><i class="fa-solid fa-check"></i><span class="bar-knapp__tekst">Fullfør</span></button>
 </div>
+
+<section class="actify-modal active" id="ressursModal">
+    <header>
+        <h2>Tilby ressurs</h2>
+        <button type="button" id="ressursModalLukk" aria-label="Lukk"><i class="fa-solid fa-xmark"></i></button>
+    </header>
+    <div class="actify-body">
+        <div class="actify-felt">
+            <label for="modalTittel">Tittel</label>
+            <input type="text" id="modalTittel" placeholder="Skriv ressurs tittel her">
+        </div>
+        <div class="actify-felt">
+            <label for="modalKategori">Kategori</label>
+            <select id="modalKategori">
+                <option>Strøm</option>
+                <option>Medisin</option>
+                <option>Vann</option>
+                <option>Mat</option>
+                <option>Bolig</option>
+                <option>Transport</option>
+                <option>Annet</option>
+            </select>
+        </div>
+        <div class="actify-felt">
+            <label for="pinLocationApne">Lokasjon</label>
+            <button type="button" class="mini-kart" id="pinLocationApne">
+                <div id="modalKartForhandsvisning"></div>
+                <div class="mini-kart-plassholder" id="modalKartPlassholder">
+                    <i class="fa-solid fa-draw-polygon"></i>
+                    <span>Tegn omrade pa kartet</span>
+                </div>
+            </button>
+        </div>
+        <div class="actify-felt">
+            <label for="modalDetaljer">Detaljer</label>
+            <textarea id="modalDetaljer" placeholder="Beskriv ressursen..."></textarea>
+        </div>
+    </div>
+    <footer>
+        <button type="button" id="ressursModalAvbryt">Avbryt</button>
+        <button type="button" id="ressursModalBekreft">Send inn</button>
+    </footer>
+</section>
+
+<section class="actify-modal" id="detaljModal">
+    <header>
+        <h2 id="detaljTittel">Ressurs</h2>
+        <button type="button" id="detaljModalLukk" aria-label="Lukk"><i class="fa-solid fa-xmark"></i></button>
+    </header>
+    <div class="actify-body">
+        <!-- TODO: placeholder til pabrukeren er innlogget, ingen auth pa kart-siden enda -->
+        <div class="actify-rad">
+            <div class="actify-felt">
+                <label>Meldt av</label>
+                <p id="detaljForfatter">Ukjent bruker</p>
+            </div>
+            <div class="actify-felt">
+                <label>Dato</label>
+                <p id="detaljDato"></p>
+            </div>
+        </div>
+        <div class="actify-felt">
+            <label>Kategori</label>
+            <p id="detaljKategori"></p>
+        </div>
+        <div class="actify-felt">
+            <label>Lokasjon</label>
+            <div class="mini-kart" id="detaljKartForhandsvisning"></div>
+        </div>
+        <div class="actify-felt">
+            <label>Detaljer</label>
+            <p id="detaljDetaljer"></p>
+        </div>
+    </div>
+    <footer>
+        <button type="button" id="detaljModalTilbake">Tilbake</button>
+        <button type="button" id="detaljModalVisPaKart">Vis pa kart</button>
+    </footer>
+</section>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
@@ -44,29 +143,67 @@
     const handButton = document.getElementById('handModus');
     const resetButton = document.getElementById('nullstillKnapp');
     const cancelButton = document.getElementById('avbrytKnapp');
+    const listButton = document.getElementById('listeKnapp');
+    const toolbar = document.querySelector('.kart-verktoylinje');
+    const sidePanel = document.getElementById('sidePanel');
+    const sidePanelListe = document.getElementById('sidePanelListe');
+    const sidePanelLukk = document.getElementById('sidePanelLukk');
+    const ressursModalLukk = document.getElementById('ressursModalLukk');
+    const ressursModalAvbryt = document.getElementById('ressursModalAvbryt');
+    const ressursModalBekreft = document.getElementById('ressursModalBekreft');
+    const actifyModal = document.getElementById('ressursModal');
+    const pinLocationApne = document.getElementById('pinLocationApne');
+    const modalKartPlassholder = document.getElementById('modalKartPlassholder');
+    const senterIkon = L.divIcon({ html: '<div class="kart-senter-merke"><i class="fa-solid fa-location-crosshairs"></i></div>', className: '', iconSize: [24, 24], iconAnchor: [12, 12] });
+    const detaljModal = document.getElementById('detaljModal');
+    const detaljModalLukk = document.getElementById('detaljModalLukk');
+    const detaljModalTilbake = document.getElementById('detaljModalTilbake');
+    const detaljModalVisPaKart = document.getElementById('detaljModalVisPaKart');
+    const detaljTittel = document.getElementById('detaljTittel');
+    const detaljKategori = document.getElementById('detaljKategori');
+    const detaljDetaljer = document.getElementById('detaljDetaljer');
+    const detaljDato = document.getElementById('detaljDato');
+    let detaljKart = null;
+    let detaljPolygon = null;
+    let detaljMarkor = null;
+    let detaljValgtOmrade = null;
+    let valgtePunkter = null;
+    let snapshotKart = null;
+    let snapshotPolygon = null;
+    let snapshotMarkor = null;
 
 
-    // Nullstiller tegningen og gjor kartet flyttbart igjen
-    function resetDrawing() {
+    // Avslutter tegnemodus. Med fjernShape=true nullstilles ogsa det tegnede omradet
+    function resetDrawing(fjernShape = true) {
         dragging = false;
         points = [];
-                    if (preview) map.removeLayer(preview);   
-        if (shape) map.removeLayer(shape);
+        if (preview) map.removeLayer(preview);
         preview = null;
-        shape = null;
         drawing = false;
-        submitButton.disabled = true;
         map.dragging.enable();
+        if (fjernShape) {
+            if (shape) map.removeLayer(shape);
+            shape = null;
+            submitButton.disabled = true;
+        }
     }
 
+    // Lager markoren med tittel-label som vises pa ferdig lagrede omrader
     function reportIcon(title) {
         const label = document.createElement('span');
-        label.textContent = title || 'Meldt fare';
+        label.textContent = title || 'Tilbudt ressurs';
         return L.divIcon({ html: `<div class="report-marker"><i class="fa-solid fa-location-crosshairs"></i>${label.outerHTML}</div>`, className: '', iconSize: [150, 26], iconAnchor: [12, 12] });
     }
 
+    // Henter alle lagrede ressursomrader. Rett fra localStorage, ingen fetch/api enna
     function reports()  {
          return JSON.parse(localStorage.getItem('rapporterteFarer') || '[]');
+    }
+
+    // Kategoriene i skjemaet - brukes til a vaske opp gammel/ugyldig data (feks fra for kategoriene ble forenklet)
+    const KATEGORIER = ['Strøm', 'Medisin', 'Vann', 'Mat', 'Bolig', 'Transport', 'Annet'];
+    function gyldigKategori(kategori) {
+        return KATEGORIER.includes(kategori) ? kategori : 'Annet';
     }
 
     // Viser farer som allerede er lagret i nettleseren
@@ -85,15 +222,95 @@
         toggle.querySelector('i').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
     });
 
-    // Apner tegneverktøyet
-    reportButton.addEventListener('click', () =>  {
-        drawingBar.classList.toggle('active');
-        resetDrawing();
-                    if (drawingBar.classList.contains('active')) {
-            drawing = true;
-            map.dragging.disable();
-        }
+    // Holder sidepanelet og skjemaet like bredt som verktoylinjen
+    function syncPanelWidth() {
+        sidePanel.style.width = toolbar.offsetWidth + 'px';
+        actifyModal.style.width = toolbar.offsetWidth + 'px';
+        detaljModal.style.width = toolbar.offsetWidth + 'px';
+    }
+    syncPanelWidth();
+    window.addEventListener('resize', syncPanelWidth);
+
+    // Viser listen over meldte omrader i sidepanelet
+    listButton.addEventListener('click', () => {
+        actifyModal.classList.remove('active');
+        detaljModal.classList.remove('active');
+        syncPanelWidth();
+        sidePanelListe.innerHTML = '';
+        reports().slice().reverse().forEach(report => {
+            const item = document.createElement('button');
+            item.type = 'button';
+            const tittelSpan = document.createElement('span');
+            tittelSpan.className = 'sidepanel-item-tittel';
+            tittelSpan.textContent = report.title || 'Meldt omrade';
+            const kategoriSpan = document.createElement('span');
+            kategoriSpan.className = 'sidepanel-item-kategori';
+            kategoriSpan.textContent = gyldigKategori(report.kategori);
+            item.append(tittelSpan, kategoriSpan);
+            item.addEventListener('click', () => visDetaljer(report));
+            sidePanelListe.appendChild(item);
+        });
+        if (!sidePanelListe.childElementCount) sidePanelListe.textContent = 'Ingen meldte omrader enna.';
+        sidePanel.classList.add('active');
     });
+    sidePanelLukk.addEventListener('click', () => sidePanel.classList.remove('active'));
+
+    // Apner detaljmodalen for en lagret ressurs, med kart-snapshot av omradet
+    function visDetaljer(report) {
+        detaljValgtOmrade = report;
+        detaljTittel.textContent = report.title || 'Meldt omrade';
+        detaljKategori.textContent = gyldigKategori(report.kategori);
+        detaljDetaljer.textContent = report.detaljer || 'Ingen detaljer lagt til.';
+        detaljDato.textContent = report.tidspunkt ? new Date(report.tidspunkt).toLocaleDateString('no-NO') : 'Ukjent dato';
+
+        const bounds = L.latLngBounds(report.points);
+        if (!detaljKart) {
+            detaljKart = L.map('detaljKartForhandsvisning', { zoomControl: false, dragging: false, scrollWheelZoom: false, attributionControl: false });
+            tileLayer('topo').addTo(detaljKart);
+        }
+        if (detaljPolygon) detaljKart.removeLayer(detaljPolygon);
+        if (detaljMarkor) detaljKart.removeLayer(detaljMarkor);
+        detaljPolygon = L.polygon(report.points, { color: '#10b981', fillColor: '#10b981', fillOpacity: 0.35 }).addTo(detaljKart);
+        detaljMarkor = L.marker(bounds.getCenter(), { icon: senterIkon }).addTo(detaljKart);
+
+        sidePanel.classList.remove('active');
+        actifyModal.classList.remove('active');
+        syncPanelWidth();
+        detaljModal.classList.add('active');
+        setTimeout(() => {
+            detaljKart.invalidateSize();
+            detaljKart.fitBounds(bounds, { padding: [16, 16] });
+        }, 50);
+    }
+    detaljModalLukk.addEventListener('click', () => detaljModal.classList.remove('active'));
+    detaljModalTilbake.addEventListener('click', () => listButton.click());
+    detaljModalVisPaKart.addEventListener('click', () => {
+        map.fitBounds(L.latLngBounds(detaljValgtOmrade.points));
+    });
+
+    // Apner skjemaet for ressursdetaljer
+    reportButton.addEventListener('click', () => {
+        sidePanel.classList.remove('active');
+        detaljModal.classList.remove('active');
+        syncPanelWidth();
+        actifyModal.classList.add('active');
+    });
+
+    function lukkRessursModal() {
+        actifyModal.classList.remove('active');
+    }
+    ressursModalLukk.addEventListener('click', lukkRessursModal);
+    ressursModalAvbryt.addEventListener('click', lukkRessursModal);
+
+    // Apner tegneverktoyet for a merke omradet, uten a lukke skjemaet
+    pinLocationApne.addEventListener('click', () => {
+        drawingBar.classList.add('active');
+        resetDrawing();
+        drawing = true;
+        map.dragging.disable();
+    });
+
+    // Bytter mellom "tegn strek" og "flytt kart" mode i tegne-baren
     freehandButton.addEventListener('click', () => {
         drawing = true;
         map.dragging.disable();
@@ -107,7 +324,12 @@
         freehandButton.classList.remove('active');
     });
     resetButton.addEventListener('click', () => { resetDrawing(); drawing = true; map.dragging.disable(); freehandButton.click();  });
-    cancelButton.addEventListener('click', () => { resetDrawing(); drawingBar.classList.remove('active'); });
+    // Avbryt betyr ogsa "tilbake til skjemaet" siden det er derfra man havnet her
+    cancelButton.addEventListener('click', () => {
+        resetDrawing();
+        drawingBar.classList.remove('active');
+        actifyModal.classList.add('active');
+    });
 
     map.on('mousedown', event => {
         if (!drawing) return;
@@ -131,17 +353,61 @@
         submitButton.disabled = false;
     });
 
-    // Lagrer fareomradet nar brukeren trykker send inn
+    // Tar et snapshot av det tegnede omradet og legger det inn i skjemaet
     submitButton.addEventListener('click', () => {
-                    const title = 'Meldt fare';
-        const reportsToSave = reports();
-          reportsToSave.push({ title, level: 'Middels', description: '', points: shape.getLatLngs()[0].map(point => ({ lat: point.lat, lng: point.lng })) });
-             localStorage.setItem('rapporterteFarer', JSON.stringify(reportsToSave));
-        shape.setStyle({ color: '#10b981', fillColor: '#10b981' });
-             L.marker(shape.getBounds().getCenter(), { icon: reportIcon(title) }).addTo(map);
+        valgtePunkter = shape.getLatLngs()[0].map(point => ({ lat: point.lat, lng: point.lng }));
+        const bounds = shape.getBounds();
+
+        modalKartPlassholder.hidden = true;
+        if (!snapshotKart) {
+            snapshotKart = L.map('modalKartForhandsvisning', { zoomControl: false, dragging: false, scrollWheelZoom: false, attributionControl: false });
+            tileLayer('topo').addTo(snapshotKart);
+        }
+        if (snapshotPolygon) snapshotKart.removeLayer(snapshotPolygon);
+        if (snapshotMarkor) snapshotKart.removeLayer(snapshotMarkor);
+        snapshotPolygon = L.polygon(valgtePunkter, { color: '#10b981', fillColor: '#10b981', fillOpacity: 0.35 }).addTo(snapshotKart);
+        snapshotMarkor = L.marker(bounds.getCenter(), { icon: senterIkon }).addTo(snapshotKart);
+
         drawingBar.classList.remove('active');
+        resetDrawing(false);
+        syncPanelWidth();
+        actifyModal.classList.add('active');
+        setTimeout(() => {
+            snapshotKart.invalidateSize();
+            snapshotKart.fitBounds(bounds, { padding: [16, 16] });
+        }, 50);
+    });
+
+    // Lagrer ressursomradet med detaljene fra skjemaet.
+    // TODO: dette er enn sa lenge bare localStorage, ikke [HttpPost] mot MapController
+    // sant som FormController gjor det - kommer nar databasen er koblet pa.
+    ressursModalBekreft.addEventListener('click', () => {
+        const tittelFelt = document.getElementById('modalTittel');
+        if (!tittelFelt.value.trim()) { tittelFelt.focus(); return; }
+        if (!valgtePunkter) { pinLocationApne.focus(); return; }
+
+        const title = tittelFelt.value.trim();
+        const reportsToSave = reports();
+        reportsToSave.push({
+            title,
+            kategori: document.getElementById('modalKategori').value,
+            detaljer: document.getElementById('modalDetaljer').value.trim(),
+            points: valgtePunkter,
+            tidspunkt: Date.now()
+        });
+        localStorage.setItem('rapporterteFarer', JSON.stringify(reportsToSave));
+        shape.setStyle({ color: '#10b981', fillColor: '#10b981' });
+        L.marker(shape.getBounds().getCenter(), { icon: reportIcon(title) }).addTo(map);
         shape = null;
-        resetDrawing();
+        submitButton.disabled = true;
+
+        tittelFelt.value = '';
+        document.getElementById('modalDetaljer').value = '';
+        if (snapshotPolygon) { snapshotKart.removeLayer(snapshotPolygon); snapshotPolygon = null; }
+        if (snapshotMarkor) { snapshotKart.removeLayer(snapshotMarkor); snapshotMarkor = null; }
+        modalKartPlassholder.hidden = false;
+        valgtePunkter = null;
+        lukkRessursModal();
     });
 
 </script>
