@@ -1,6 +1,7 @@
 ﻿@{
     var navController = ViewContext.RouteData.Values["controller"]?.ToString();
     var navAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var erFullsideForm = navController == "Form" && (navAction == "Draw" || navAction == "Beskrivelse");
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -12,13 +13,13 @@
     <script type="importmap"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;800&family=Poppins:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;800&family=Poppins:wght@400;500;600&family=Space+Mono:wght@400;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
         <link rel="stylesheet" href="~/azir-sempro.styles.css" asp-append-version="true" />
 </head>
-<body class="@(navController == "Map" ? "no-footer" : "")">
+<body class="@(navController == "Map" || erFullsideForm ? "no-footer" : "")">
     <nav class="nav-bar">
         <div class="brand">
             <img src="~/assets/icons/logoGreen.svg" alt="" class="brand-logo">
@@ -45,7 +46,7 @@
             </a>
         </div>
         <div class="nav-account">
-            <a asp-controller="Map" asp-action="Index" class="nav-cta"><i class="fa-solid fa-hand-holding-heart"></i> Tilby ressurs</a>
+            <a asp-controller="Form" asp-action="Draw" class="nav-cta"><i class="fa-solid fa-hand-holding-heart"></i> Tilby ressurs</a>
             <button type="button" class="nav-avatar" id="navAccountToggle" aria-label="Account" aria-expanded="false">
                 <i class="fa-solid fa-user"></i>
             </button>
@@ -61,7 +62,7 @@
         </main>
     </div>
 
-    @if (navController != "Map")
+    @if (navController != "Map" && !erFullsideForm)
     {
         <footer class="border-top footer text-muted">
             <div class="container">

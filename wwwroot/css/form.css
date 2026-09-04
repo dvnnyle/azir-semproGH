@@ -1,0 +1,334 @@
+.kart-senter-merke {
+    color: #10b981;
+    font-size: 20px;
+    -webkit-text-stroke: 2px #f1f5f9;
+    paint-order: stroke fill;
+}
+
+.marker-pin {
+    color: #dc2626;
+    font-size: 30px;
+    -webkit-text-stroke: 2px #f1f5f9;
+    paint-order: stroke fill;
+}
+
+.ressurs-split__form {
+    background: rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    bottom: 20px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    left: 20px;
+    overflow-y: auto;
+    padding: 24px;
+    position: fixed;
+    top: calc(var(--nav-height) + 20px);
+    width: 380px;
+    z-index: 2;
+}
+
+.ressurs-split__header {
+    align-items: center;
+    display: flex;
+    gap: 16px;
+}
+
+.ressurs-split__back {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    color: #f8fafc;
+    display: flex;
+    flex-shrink: 0;
+    height: 40px;
+    justify-content: center;
+    text-decoration: none;
+    width: 40px;
+}
+
+.ressurs-split__header h1 {
+    color: #f8fafc;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    margin: 0;
+}
+
+.ressurs-split__divider {
+    background: rgba(255, 255, 255, 0.06);
+    border: 0;
+    height: 1px;
+    margin: 0;
+}
+
+.ressurs-split__fields {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.ressurs-steg-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ressurs-steg-nummer {
+    color: #64748b;
+    font-family: 'Manrope', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.ressurs-steg-tittel {
+    color: #f8fafc;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.ressurs-steg {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.ressurs-tegneverktoy {
+    display: flex;
+    gap: 8px;
+}
+
+.ressurs-tegneverktoy #fullforKnapp {
+    margin-left: auto;
+}
+
+.bar-knapp {
+    align-items: center;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    color: #a3a7af;
+    cursor: pointer;
+    display: inline-flex;
+    font-size: 13px;
+    font-weight: 600;
+    height: 40px;
+    justify-content: center;
+    width: 40px;
+}
+
+.bar-knapp:hover {
+    background: rgba(15, 23, 42, 0.9);
+}
+
+.bar-knapp.active {
+    border-color: #10b981;
+    color: #10b981;
+}
+
+.mini-kart {
+    background: #0f1729;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    height: 160px;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+#lokasjonKartForhandsvisning {
+    height: 100%;
+    width: 100%;
+}
+
+.mini-kart-plassholder {
+    align-items: center;
+    color: #94a3b8;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Manrope', sans-serif;
+    font-size: 12px;
+    gap: 6px;
+    height: 100%;
+    inset: 0;
+    justify-content: center;
+    position: absolute;
+    width: 100%;
+}
+
+.mini-kart-plassholder i {
+    color: #10b981;
+    font-size: 18px;
+}
+
+.ressurs-felt {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ressurs-felt p {
+    color: #f8fafc;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.ressurs-kvittering-merke {
+    align-items: center;
+    color: #10b981;
+    display: flex;
+    font-family: 'Manrope', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    gap: 8px;
+    margin: 0;
+}
+
+.ressurs-kvittering-tekst {
+    color: #f8fafc;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.ressurs-kvittering-ikon {
+    align-self: center;
+    color: #10b981;
+    font-size: 72px;
+}
+
+.ressurs-felt label {
+    color: #64748b;
+    font-family: 'Manrope', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.ressurs-felt input,
+.ressurs-felt select,
+.ressurs-felt textarea {
+    background: #0f1729;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    box-sizing: border-box;
+    color: #f8fafc;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    padding: 0 14px;
+    width: 100%;
+}
+
+.ressurs-felt input,
+.ressurs-felt select {
+    height: 44px;
+}
+
+.ressurs-felt input::placeholder,
+.ressurs-felt textarea::placeholder {
+    color: #94a3b8;
+}
+
+.ressurs-felt textarea {
+    height: 100px;
+    padding: 14px;
+    resize: none;
+}
+
+.ressurs-split__actions {
+    display: flex;
+    gap: 12px;
+    margin-top: auto;
+}
+
+.ressurs-btn {
+    align-items: center;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    flex: 1;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    height: 48px;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.ressurs-btn--liten {
+    align-self: flex-start;
+    flex: none;
+    font-size: 13px;
+    height: 36px;
+    padding: 0 16px;
+}
+
+.ressurs-btn--cancel {
+    background: #0f1729;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #94a3b8;
+}
+
+.ressurs-btn--submit {
+    background: #22b87a;
+    border: 0;
+    color: #f8fafc;
+}
+
+.ressurs-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+.ressurs-split__map-wrap {
+    background: #0f172a;
+    inset: 0;
+    position: fixed;
+    z-index: 1;
+}
+
+.ressurs-split__map-wrap #map {
+    height: 100%;
+    width: 100%;
+}
+
+.koordinat-boks {
+    background: #0f1729;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    display: flex;
+    gap: 24px;
+    padding: 10px 14px;
+}
+
+.koordinat-boks div {
+    display: grid;
+    gap: 2px;
+}
+
+.koordinat-boks span {
+    color: rgba(255, 255, 255, 0.55);
+    font-family: 'Manrope', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.koordinat-boks strong {
+    color: #f8fafc;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+}
