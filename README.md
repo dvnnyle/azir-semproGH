@@ -46,15 +46,15 @@ Applikasjonen vil være tilgjengelig på `http://localhost:5253`
 
 <table cellpadding="12" cellspacing="0">
   <tr>
-    <td align="center">
+    <td align="center" width="33%">
       <a href="wwwroot/assets/readme_assets/sysarkv2.png"><img src="wwwroot/assets/readme_assets/sysarkv2.png" width="100%"></a><br>
       <sub>Systemarkitektur</sub>
     </td>
-    <td align="center">
+    <td align="center" width="33%">
       <a href="wwwroot/assets/readme_assets/brandndesign.png"><img src="wwwroot/assets/readme_assets/brandndesign.png" width="100%"></a><br>
       <sub>Brand Design</sub>
     </td>
-    <td align="center">
+    <td align="center" width="33%">
       <a href="wwwroot/assets/readme_assets/accountflow.png"><img src="wwwroot/assets/readme_assets/accountflow.png" width="100%"></a><br>
       <sub>Account Flow</sub>
     </td>
