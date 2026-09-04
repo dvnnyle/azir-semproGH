@@ -2,15 +2,15 @@
   <img src="wwwroot/assets/readme_assets/top-Banner.png" width="100%">
 </p>
 
-# Krisis - semester project at IT - UIA
-# Gruppe 14
+# Krisis - semesterprosjekt BAC-IT - UIA
 
-## Members 
+
+## Medlemmer [G14]
 - Danny Nguyen Le
 
 
-## 1. For å starte applikasjonen:
-For å gå inn i prosjektmappen: `cd azir-semproGH`
+## 1. For å starte applikasjonen: (kan være litt feil / outdated)
+For å gå inn i prosjektmappen: `cd azir-sempro`
 
 Bygg og start webapplikasjonen og MySQL-databasen med Docker Compose:
 
@@ -32,28 +32,28 @@ docker compose down
 
 For å starte applikasjonen lokalt uten Docker:
 
+
+```bash
+cd azir-sempro
+```
+eller 
 ```bash
 dotnet run --project azir-sempro
+```
+
+HOT
+```bash
+dotnet watch run
 ```
 
 Applikasjonen vil være tilgjengelig på `http://localhost:5253`
 
 
-# ⚡Links
+# Links
 - [Github](https://github.com/dvnnyle/azir-semproGH)
 - [Trello](https://trello.com/b/9TofOcKn/azir-semproTL)
 - [Figma](https://www.figma.com/design/43vJYUOC0oBQ4l5ZFmEe3o/azir-semproFM?t=pe3a3mwMyu3gA6o4-1)
 
-
-
-# Systemarkitektur og design
-
-<p align="center">
-  <a href="wwwroot/assets/readme_assets/sysarkv2.png"><img src="wwwroot/assets/readme_assets/sysarkv2.png" width="32%"></a>
-  <a href="wwwroot/assets/readme_assets/brandndesign.png"><img src="wwwroot/assets/readme_assets/brandndesign.png" width="32%"></a>
-  <a href="wwwroot/assets/readme_assets/accountflow.png"><img src="wwwroot/assets/readme_assets/accountflow.png" width="32%"></a>
-</p>
-<p align="center"><sub>Systemarkitektur · Brand Design · Account Flow</sub></p>
 
 <p align="center">
   <img src="wwwroot/assets/readme_assets/bottom-banner.png" width="100%">
