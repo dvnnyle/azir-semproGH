@@ -1,0 +1,11 @@
+CREATE TABLE Submissions (
+    SubmissionId INT AUTO_INCREMENT PRIMARY KEY,
+    UserId INT NOT NULL,
+    Tittel VARCHAR(255) NOT NULL,
+    Kategori VARCHAR(255) NOT NULL,
+    Beskrivelse TEXT,
+    Lokasjon VARCHAR(255) NOT NULL,
+    PunkterJson TEXT NOT NULL,
+    SubmittedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (UserId) REFERENCES Users(UserId)
+);

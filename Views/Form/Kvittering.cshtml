@@ -53,4 +53,11 @@
     if (erOmrade) L.polygon(punkter, { color: '#10b981', fillColor: '#10b981', fillOpacity: 0.35 }).addTo(map);
     L.marker(senter, { icon: senterIkon }).addTo(map);
     setTimeout(() => { map.invalidateSize(); map.fitBounds(erOmrade ? bounds : bounds.pad(2), { padding: [40, 40] }); }, 50);
+
+    // Lagrer ogsa til localStorage, i tillegg til den ekte lagringen pa serveren (Punkt 2/3)
+    const nyRessurs = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
+    nyRessurs.tidspunkt = Date.now();
+    const lagredeRessurser = JSON.parse(localStorage.getItem('tilbudteRessurser') || '[]');
+    lagredeRessurser.push(nyRessurs);
+    localStorage.setItem('tilbudteRessurser', JSON.stringify(lagredeRessurser));
 </script>
