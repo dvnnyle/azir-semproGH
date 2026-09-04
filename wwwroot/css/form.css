@@ -301,6 +301,7 @@
 }
 
 .ressurs-split__map-wrap #map {
+    background: #0f172a;
     height: 100%;
     width: 100%;
 }

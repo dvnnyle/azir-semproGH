@@ -4,3 +4,23 @@
     z-index: 1;
     background: #0f172a;
 }
+
+.report-marker {
+    align-items: center;
+    color: #10b981;
+    display: flex;
+    font-size: 18px;
+    gap: 6px;
+    -webkit-text-stroke: 2px #f1f5f9;
+    paint-order: stroke fill;
+}
+
+.report-marker span {
+    background: rgba(15, 23, 42, 0.85);
+    border-radius: 6px;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    -webkit-text-stroke: 0;
+}
