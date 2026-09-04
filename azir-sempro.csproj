@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>azir_sempro</RootNamespace>
+    <DefaultItemExcludes>$(DefaultItemExcludes);azir-sempro.Tests/**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>

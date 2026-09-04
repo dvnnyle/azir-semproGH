@@ -25,12 +25,71 @@
     -webkit-text-stroke: 0;
 }
 
-body.dark-mode .leaflet-tile-pane {
-    filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9);
+.kart-senter-merke {
+    color: #10b981;
+    font-size: 20px;
+    -webkit-text-stroke: 2px #f1f5f9;
+    paint-order: stroke fill;
+}
+
+.mini-kart {
+    background: #07111f;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    cursor: pointer;
+    font: inherit;
+    height: 120px;
+    overflow: hidden;
+    padding: 0;
+    position: relative;
+    transition: border-color 0.2s ease;
+    width: 100%;
+}
+
+#pinLocationApne:hover {
+    border-color: #10b981;
+}
+
+#pinLocationApne:hover .mini-kart-plassholder {
+    color: #cbd5e1;
+}
+
+#modalKartForhandsvisning,
+#detaljKartForhandsvisning {
+    height: 100%;
+    width: 100%;
+}
+
+#detaljKartForhandsvisning {
+    cursor: default;
+}
+
+.mini-kart .leaflet-container {
+    pointer-events: none;
+}
+
+.mini-kart-plassholder {
+    align-items: center;
+    color: #94a3b8;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    height: 100%;
+    inset: 0;
+    justify-content: center;
+    position: absolute;
+    width: 100%;
+}
+
+.mini-kart-plassholder i {
+    color: #10b981;
+    font-size: 18px;
 }
 
 .kart-verktoylinje,
-.tegne-bar {
+.tegne-bar,
+.sidepanel {
     background: rgba(15, 23, 42, 0.88);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -45,7 +104,7 @@ body.dark-mode .leaflet-tile-pane {
     left: 20px;
     padding: 8px;
     position: fixed;
-    top: calc(var(--nav-height) + var(--nav-margin) + 16px);
+    top: calc(var(--nav-height) + 20px);
     z-index: 2;
 }
 
@@ -69,7 +128,6 @@ body.dark-mode .leaflet-tile-pane {
 }
 
 .verktoy-knapp:hover,
-.verktoy-knapp.active,
 .tegne-bar button:hover:not(:disabled) {
     border-color: #ffae00;
     color: #ffae00;
@@ -77,7 +135,7 @@ body.dark-mode .leaflet-tile-pane {
 
 .rapporter-knapp {
     align-items: center;
-    background: #dc2626;
+    background: #10b981;
     border: 0;
     border-radius: 6px;
     color: #fff;
@@ -92,7 +150,7 @@ body.dark-mode .leaflet-tile-pane {
 }
 
 .rapporter-knapp:hover {
-    background: #b91c1c;
+    background: #0ea371;
 }
 
 .tegne-bar {
@@ -116,6 +174,88 @@ body.dark-mode .leaflet-tile-pane {
     opacity: 1;
     pointer-events: auto;
     transform: translate(-50%, 0);
+}
+
+.sidepanel {
+    border-radius: 8px;
+    left: 20px;
+    display: none;
+    padding: 20px;
+    position: fixed;
+    top: calc(var(--nav-height) + 86px);
+    max-width: calc(100vw - 40px);
+    z-index: 2;
+}
+
+.sidepanel.active {
+    display: block;
+}
+
+.sidepanel header {
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+}
+
+.sidepanel h2 {
+    color: #fff;
+    font-size: 14px;
+    margin: 0;
+}
+
+.sidepanel header button {
+    background: transparent;
+    border: 0;
+    color: rgba(255, 255, 255, 0.78);
+    cursor: pointer;
+    font: inherit;
+    height: 28px;
+    width: 28px;
+}
+
+#sidePanelListe {
+    color: rgba(255, 255, 255, 0.7);
+    display: grid;
+    font-size: 13px;
+    gap: 8px;
+}
+
+#sidePanelListe button {
+    align-items: flex-start;
+    background: #07111f;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 3px solid #10b981;
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    font: inherit;
+    gap: 5px;
+    padding: 10px 12px;
+    text-align: left;
+    transition: border-color 0.2s ease;
+}
+
+#sidePanelListe button:hover {
+    border-color: #10b981;
+}
+
+.sidepanel-item-tittel {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+}
+
+.sidepanel-item-kategori {
+    color: #10b981;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
 .tegne-bar-skille {
@@ -173,6 +313,136 @@ body.dark-mode .leaflet-tile-pane {
 .tegne-bar button:disabled {
     cursor: not-allowed;
     opacity: 0.45;
+}
+
+.actify-modal {
+    background: rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    display: none;
+    left: 20px;
+    max-height: calc(100vh - var(--nav-height) - 116px);
+    overflow: auto;
+    position: fixed;
+    top: calc(var(--nav-height) + 86px);
+    z-index: 10;
+}
+
+.actify-modal.active {
+    display: block;
+}
+
+.actify-modal header {
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    margin: 0 20px;
+    padding: 20px 0 16px;
+}
+
+.actify-modal h2 {
+    color: #fff;
+    font-size: 14px;
+    margin: 0;
+}
+
+.actify-modal header button {
+    background: transparent;
+    border: 0;
+    color: rgba(255, 255, 255, 0.78);
+    cursor: pointer;
+    font: inherit;
+    height: 28px;
+    width: 28px;
+}
+
+.actify-body {
+    display: grid;
+    gap: 16px;
+    padding: 20px;
+}
+
+#detaljModal .actify-body {
+    background: #081120;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin: 12px 20px 8px;
+    padding: 16px;
+}
+
+.actify-felt {
+    display: grid;
+    gap: 7px;
+}
+
+.actify-rad {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr 1fr;
+}
+
+.actify-felt label {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.actify-felt p {
+    color: #fff;
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.actify-modal input,
+.actify-modal textarea,
+.actify-modal select {
+    background: #07111f;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    box-sizing: border-box;
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+    padding: 10px;
+    width: 100%;
+}
+
+.actify-modal textarea {
+    height: 90px;
+    resize: vertical;
+}
+
+.actify-modal footer {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    padding: 16px 20px;
+}
+
+.actify-modal footer button {
+    border-radius: 6px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 13px;
+    padding: 10px 14px;
+}
+
+.actify-modal footer button:first-child {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.actify-modal footer button:last-child {
+    background: #10b981;
+    border: 1px solid #10b981;
+    color: #062c22;
+    font-weight: 700;
 }
 
 @media (max-width: 700px) {
