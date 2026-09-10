@@ -7,5 +7,4 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
 COPY --from=build /app/out .
 EXPOSE 8080
-ENV DOTNET_hostBuilder__reloadConfigOnChange=false
 ENTRYPOINT ["dotnet", "azir-sempro.dll"]
