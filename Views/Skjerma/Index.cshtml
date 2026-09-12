@@ -1,0 +1,43 @@
+@model SkjermaViewModel
+@{
+    ViewData["Title"] = "Skjerma";
+}
+<link rel="stylesheet" href="~/css/account.css" asp-append-version="true">
+
+<div class="page-fill konto-wrap">
+    <div class="kort">
+        <div class="konto-header">
+            <div class="avatar-sirkel"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="tittel-blokk">
+                <h1>Skjerma testing</h1>
+                <p>Meld inn noe som trenger skjerming</p>
+            </div>
+        </div>
+
+        <form class="inputs-stack" method="post" asp-controller="Skjerma" asp-action="Index">
+            <div asp-validation-summary="ModelOnly"></div>
+
+            <div class="felt-gruppe">
+                <label class="konto-label" asp-for="Tittel">Navn</label>
+                <input type="text" asp-for="Tittel" class="konto-input" placeholder="Hva gjelder det?" required>
+            </div>
+
+            <div class="felt-gruppe">
+                <label class="konto-label" asp-for="Kategori">Kategori</label>
+                <select asp-for="Kategori" class="konto-input">
+                    <option value="Person">Person</option>
+                    <option value="Bygning">Bygning</option>
+                    <option value="Utstyr">Utstyr</option>
+                    <option value="Annet">Annet</option>
+                </select>
+            </div>
+
+            <div class="felt-gruppe">
+                <label class="konto-label" asp-for="Beskrivelse">Beskrivelse</label>
+                <textarea asp-for="Beskrivelse" class="konto-input" rows="4" placeholder="Legg til detaljer"></textarea>
+            </div>
+
+            <button type="submit" class="konto-knapp">Send inn</button>
+        </form>
+    </div>
+</div>

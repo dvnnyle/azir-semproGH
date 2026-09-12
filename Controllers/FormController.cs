@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using azir_sempro.Models;
 
 namespace azir_sempro.Controllers;
@@ -9,6 +10,12 @@ public class FormController : Controller
     // Punkt 2: in-memory liste, ingen database enda
     private static readonly List<FormViewModel> innsendinger = [];
     private const string UtkastNokkel = "RessursUtkast";
+
+    // TODO: skjema-flyten er midlertidig deaktivert. Fjern denne for a sla den pa igjen.
+    public override void OnActionExecuting(ActionExecutingContext context)
+    {
+        context.Result = RedirectToAction("Index", "Home");
+    }
 
     public IActionResult Index() => RedirectToAction(nameof(Draw));
 

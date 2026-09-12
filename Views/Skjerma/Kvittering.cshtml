@@ -1,0 +1,34 @@
+@model SkjermaViewModel
+@{
+    ViewData["Title"] = "Skjerma";
+}
+<link rel="stylesheet" href="~/css/account.css" asp-append-version="true">
+
+<div class="page-fill konto-wrap">
+    <div class="kort">
+        <div class="konto-header">
+            <div class="avatar-sirkel"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="tittel-blokk">
+                <h1>Sendt inn</h1>
+                <p>Dette ble registrert</p>
+            </div>
+        </div>
+
+        <div class="felt-liste">
+            <div class="felt-row">
+                <span class="felt-label">Navn</span>
+                <span class="felt-verdi">@Model.Tittel</span>
+            </div>
+            <div class="felt-row">
+                <span class="felt-label">Kategori</span>
+                <span class="felt-verdi">@Model.Kategori</span>
+            </div>
+            <div class="felt-row">
+                <span class="felt-label">Beskrivelse</span>
+                <span class="felt-verdi">@Model.Beskrivelse</span>
+            </div>
+        </div>
+
+        <a asp-controller="Skjerma" asp-action="Index" class="konto-knapp" style="text-align:center; text-decoration:none;">Send inn ny</a>
+    </div>
+</div>
