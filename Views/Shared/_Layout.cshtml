@@ -29,30 +29,38 @@
         </div>
         <div class="nav-links">
             <a asp-controller="Home" asp-action="Index" class="nav-item @(navController == "Home" && navAction == "Index" ? "active" : "")">
-                <div class="nav-item-label">Home</div>
+                <div class="nav-item-label">Hjem</div>
                 <div class="active-indicator"></div>
             </a>
+            @* TODO: skjema-flyten er midlertidig deaktivert, se FormController.OnActionExecuting
             <a asp-controller="Form" asp-action="Index" class="nav-item @(navController == "Form" ? "active" : "")">
-                <div class="nav-item-label">Form</div>
+                <div class="nav-item-label">Skjema</div>
                 <div class="active-indicator"></div>
             </a>
+            *@
             <a asp-controller="Resources" asp-action="Index" class="nav-item @(navController == "Resources" ? "active" : "")">
-                <div class="nav-item-label">Resources</div>
+                <div class="nav-item-label">Ressurser</div>
                 <div class="active-indicator"></div>
             </a>
             <a asp-controller="Map" asp-action="Index" class="nav-item @(navController == "Map" ? "active" : "")">
-                <div class="nav-item-label">Map</div>
+                <div class="nav-item-label">Kart</div>
+                <div class="active-indicator"></div>
+            </a>
+            <a asp-controller="Skjerma" asp-action="Index" class="nav-item @(navController == "Skjerma" ? "active" : "")">
+                <div class="nav-item-label">Skjerma</div>
                 <div class="active-indicator"></div>
             </a>
         </div>
         <div class="nav-account">
+            @* TODO: skjema-flyten er midlertidig deaktivert, se FormController.OnActionExecuting
             <a asp-controller="Form" asp-action="Draw" class="nav-cta"><i class="fa-solid fa-hand-holding-heart"></i> Tilby ressurs</a>
-            <button type="button" class="nav-avatar" id="navAccountToggle" aria-label="Account" aria-expanded="false">
+            *@
+            <button type="button" class="nav-avatar" id="navAccountToggle" aria-expanded="false">
                 <i class="fa-solid fa-user"></i>
             </button>
             <div class="konto-dropdown" id="navAccountDropdown">
-                <a asp-controller="Account" asp-action="Login" class="konto-dropdown__pill konto-dropdown__pill--primary">Log in</a>
-                <a asp-controller="Account" asp-action="Register" class="konto-dropdown__pill konto-dropdown__pill--secondary">Sign up</a>
+                <a asp-controller="Account" asp-action="Login" class="konto-dropdown__pill konto-dropdown__pill--primary">Logg inn</a>
+                <a asp-controller="Account" asp-action="Register" class="konto-dropdown__pill konto-dropdown__pill--secondary">Registrer deg</a>
             </div>
         </div>
     </nav>
