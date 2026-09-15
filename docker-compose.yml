@@ -1,3 +1,4 @@
+# Krisis - lokal utviklingsstack (app + mysql)
 services:
   app:
     build: .

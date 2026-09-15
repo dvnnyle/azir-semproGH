@@ -1,3 +1,4 @@
+# build output og lokale editor-filer
 bin/
 obj/
 .vs/
