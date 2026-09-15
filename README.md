@@ -20,7 +20,7 @@ docker compose up --build
 
 Åpne `http://localhost:8080`
 
-Docker Compose oppretter databasen `krisisdb` og `Users`-tabellen automatisk fra `sql/users.sql`.
+Docker Compose oppretter databasen `krisisdb` og `Users`-tabellen automatisk fra `Data/sql/users.sql`.
 
 Stopp containerne med:
 
