@@ -32,12 +32,10 @@
                 <div class="nav-item-label">Hjem</div>
                 <div class="active-indicator"></div>
             </a>
-            @* TODO: skjema-flyten er midlertidig deaktivert, se FormController.OnActionExecuting
             <a asp-controller="Form" asp-action="Index" class="nav-item @(navController == "Form" ? "active" : "")">
                 <div class="nav-item-label">Skjema</div>
                 <div class="active-indicator"></div>
             </a>
-            *@
             <a asp-controller="Resources" asp-action="Index" class="nav-item @(navController == "Resources" ? "active" : "")">
                 <div class="nav-item-label">Ressurser</div>
                 <div class="active-indicator"></div>
@@ -52,9 +50,7 @@
             </a>
         </div>
         <div class="nav-account">
-            @* TODO: skjema-flyten er midlertidig deaktivert, se FormController.OnActionExecuting
             <a asp-controller="Form" asp-action="Draw" class="nav-cta"><i class="fa-solid fa-hand-holding-heart"></i> Tilby ressurs</a>
-            *@
             <button type="button" class="nav-avatar" id="navAccountToggle" aria-expanded="false">
                 <i class="fa-solid fa-user"></i>
             </button>

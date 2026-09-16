@@ -7,7 +7,7 @@
 ## Docker
 - docker compose up --build
 - http://localhost:8080
-- MySQL and the Users table are created automatically from sql/users.sql
+- MySQL and the Users table are created automatically from Data/sql/users.sql
 - Stop everything with: docker compose down
 
 Docker garanterer samme miljø for alle (same OS, same .NET, same setup).

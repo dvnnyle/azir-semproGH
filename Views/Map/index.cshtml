@@ -1,7 +1,7 @@
 @{
     ViewData["Title"] = "Kart";
 }
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="~/lib/leaflet/dist/leaflet.min.css">
 <link rel="stylesheet" href="~/css/map.css" asp-append-version="true">
 
 <div id="map"></div>
@@ -10,7 +10,7 @@
     <button type="button" class="verktoy-knapp" id="temaVeksle" title="Veksle karttema" aria-label="Veksle karttema"><i class="fa-solid fa-moon"></i></button>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="~/lib/leaflet/dist/leaflet.min.js"></script>
 <script>
     const map = L.map('map', { minZoom: 4 }).setView([58.1635601, 8.0031555], 17);
     const tileLayer = name => L.tileLayer(`https://cache.kartverket.no/v1/wmts/1.0.0/${name}/default/webmercator/{z}/{y}/{x}.png`, { maxZoom: 18, noWrap: true, attribution: '&copy; Kartverket' });

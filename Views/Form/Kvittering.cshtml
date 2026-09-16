@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Tilby ressurs";
 }
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="~/lib/leaflet/dist/leaflet.min.css">
 <link rel="stylesheet" href="~/css/form.css" asp-append-version="true">
 
 <div class="ressurs-split">
@@ -37,24 +37,27 @@
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="~/lib/leaflet/dist/leaflet.min.js"></script>
+<script src="~/js/ressurs-kart.js" asp-append-version="true"></script>
 <script>
-    const tileLayer = () => L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', { maxZoom: 18, noWrap: true });
-    const senterIkon = L.divIcon({ html: '<div class="kart-senter-merke"><i class="fa-solid fa-location-crosshairs"></i></div>', className: '', iconSize: [24, 24], iconAnchor: [12, 12] });
+    /* Dette er den egne siden som viser det innsendte skjemaet OG kartdataen
+       (oppgavepunkt 4/5) - FormController.Submit() legger innsendingen i
+       "innsendinger"-listen og redirecter hit, sa Model her er den samme
+       FormViewModel-en som ble sendt inn, hentet tilbake fra TempData. */
 
-    const punkter = (@Html.Raw(string.IsNullOrWhiteSpace(Model.PunkterJson) ? "[]" : Model.PunkterJson)).map(p => [p.lat, p.lng]);
-    const erOmrade = punkter.length >= 3;
-    const bounds = L.latLngBounds(punkter);
-    const senter = bounds.getCenter();
+    /* Her, i motsetning til Beskrivelse/Oppsummering, finnes det ikke noe skjult inputfelt a lese fra -
+       PunkterJson skrives direkte inn i siden av Razor pa server-siden (@@Html.Raw skriver den
+       raa JSON-teksten inn i JS-koden ufiltrert). JSON.stringify pakker den om til en vanlig
+       tekststreng igjen, sa den kan sendes til tegnRessursOmradeKart pa samme mate som de andre sidene. */
+    const punkterJson = JSON.stringify(@Html.Raw(string.IsNullOrWhiteSpace(Model.PunkterJson) ? "[]" : Model.PunkterJson));
+    tegnRessursOmradeKart('map', punkterJson);
 
-    // Stort kart i bakgrunnen: viser det innsendte omradet/punktet, ikke redigerbart her
-    const map = L.map('map', { minZoom: 4, attributionControl: false, dragging: false, scrollWheelZoom: false }).setView(senter, 17);
-    tileLayer().addTo(map);
-    if (erOmrade) L.polygon(punkter, { color: '#10b981', fillColor: '#10b981', fillOpacity: 0.35 }).addTo(map);
-    L.marker(senter, { icon: senterIkon }).addTo(map);
-    setTimeout(() => { map.invalidateSize(); map.fitBounds(erOmrade ? bounds : bounds.pad(2), { padding: [40, 40] }); }, 50);
-
-    // Lagrer ogsa til localStorage, i tillegg til den ekte lagringen pa serveren (Punkt 2/3)
+    /* Lagrer ogsa til localStorage, i tillegg til den ekte lagringen pa serveren (Punkt 2/3).
+       Dette er bare en ekstra lokal cache (feks for Map-siden a lese senere) - IKKE den egentlige
+       datakilden, som er "innsendinger"-listen i FormController. System.Text.Json brukes her
+       (i stedet for a bygge JSON-strengen manuelt) for a unnga XSS: hvis Tittel/Beskrivelse
+       inneholder anforselstegn eller en avsluttende script-tag, ville rastring-interpolasjon
+       kunne odelegge eller injisere kode i denne blokken. */
     const nyRessurs = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
     nyRessurs.tidspunkt = Date.now();
     const lagredeRessurser = JSON.parse(localStorage.getItem('tilbudteRessurser') || '[]');
