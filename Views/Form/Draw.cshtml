@@ -2,7 +2,8 @@
 @{
     ViewData["Title"] = "Tilby ressurs";
 }
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="~/lib/leaflet/dist/leaflet.min.css">
+<link rel="stylesheet" href="~/lib/leaflet-geoman/dist/leaflet-geoman.css">
 <link rel="stylesheet" href="~/css/form.css" asp-append-version="true">
 
 <div class="ressurs-split">
@@ -23,7 +24,7 @@
             <input type="hidden" asp-for="PunkterJson" id="punkterJsonInput">
 
             <div class="ressurs-tegneverktoy">
-                <button type="button" class="bar-knapp modus-knapp active" id="frihandModus" title="Velg omrade"><i class="fa-solid fa-pen"></i></button>
+                <button type="button" class="bar-knapp modus-knapp active" id="omradeModus" title="Velg omrade"><i class="fa-solid fa-vector-square"></i></button>
                 <button type="button" class="bar-knapp modus-knapp" id="pinModus" title="Slipp nal"><i class="fa-solid fa-location-dot"></i></button>
                 <button type="button" class="bar-knapp modus-knapp" id="handModus" title="Flytt kart"><i class="fa-solid fa-hand"></i></button>
                 <button type="button" class="bar-knapp" id="nullstillKnapp" title="Nullstill"><i class="fa-solid fa-rotate-left"></i></button>
@@ -54,8 +55,17 @@
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="~/lib/leaflet/dist/leaflet.min.js"></script>
+<script src="~/lib/leaflet-geoman/dist/leaflet-geoman.min.js"></script>
 <script>
+    /* Steg 1 av skjema-flyten: bruker tegner enten et omrade eller slipper en
+       enkelt nal pa kartet. Selve tegningen gjores av Leaflet-Geoman
+       (geoman.io/docs/leaflet) i stedet for handrullet mousedown/mousemove-
+       handtering - Geoman legger automatisk til map.pm med enableDraw()/
+       disableDraw() og et "pm:create"-event nar en tegning er ferdig.
+       Resultatet lagres som JSON-punkter i det skjulte feltet PunkterJson og
+       sendes videre til steg 2 (Beskrivelse). */
+
     const map = L.map('map', { minZoom: 4, attributionControl: false }).setView([58.1635601, 8.0031555], 17);
     const tileLayer = () => L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', { maxZoom: 18, noWrap: true });
     tileLayer().addTo(map);
@@ -70,7 +80,7 @@
         koordinatLng.textContent = latlng.lng.toFixed(6);
     }
 
-    const freehandButton = document.getElementById('frihandModus');
+    const omradeButton = document.getElementById('omradeModus');
     const pinButton = document.getElementById('pinModus');
     const handButton = document.getElementById('handModus');
     const resetButton = document.getElementById('nullstillKnapp');
@@ -79,26 +89,25 @@
     const lokasjonPlassholder = document.getElementById('lokasjonPlassholder');
     const lokasjonInput = document.getElementById('lokasjonInput');
     const punkterJsonInput = document.getElementById('punkterJsonInput');
-    const modusKnapper = [freehandButton, pinButton, handButton];
+    const modusKnapper = [omradeButton, pinButton, handButton];
 
-    let modus = 'frihand';
-    let dragging = false;
-    let points = [];
-    let preview = null;
-    let shape = null;
-    let shapeMarkor = null;
-    let snapshotKart = null;
+    /* gjeldendeLag er Geoman-laget (L.Polygon eller L.Marker) fra siste
+       "pm:create", gjeldendeType forteller hvilken av delene det er, siden
+       Leaflet ikke har en enkel type-sjekk pa selve laget. */
+    let modus = 'omrade';
+    let gjeldendeLag = null;
+    let gjeldendeType = null;
+    let shapeMarkor = null;   /* krysshar-markoren som vises i midten av omradet etter "Fullfor tegning" */
+    let snapshotKart = null;  /* eget lite Leaflet-kart i forhandsvisningsboksen (opprettes forst ved fullforing) */
     let snapshotPolygon = null;
     let snapshotMarkor = null;
 
-    // Nullstiller den paagaende tegningen
+    /* Nullstiller den paagaende tegningen */
     function resetDrawing() {
-        dragging = false;
-        points = [];
-        if (preview) map.removeLayer(preview);
-        preview = null;
-        if (shape) map.removeLayer(shape);
-        shape = null;
+        map.pm.disableDraw();
+        if (gjeldendeLag) map.removeLayer(gjeldendeLag);
+        gjeldendeLag = null;
+        gjeldendeType = null;
         if (shapeMarkor) map.removeLayer(shapeMarkor);
         shapeMarkor = null;
         fullforKnapp.disabled = true;
@@ -107,83 +116,80 @@
         koordinatLng.textContent = '-';
     }
 
+    /* Bytter aktivt verktoy: "omrade"/"pin" slar pa riktig Geoman-tegnemodus,
+       "hand" skrur av tegning og lar deg bare panorere kartet i stedet. */
     function velgModus(knapp, nyModus) {
         modus = nyModus;
+        map.pm.disableDraw();
+        if (nyModus === 'omrade') {
+            map.pm.enableDraw('Polygon', { pathOptions: { color: '#8b5cf6', fillColor: '#4c1d95', fillOpacity: 0.5 }, snappable: false });
+        } else if (nyModus === 'pin') {
+            map.pm.enableDraw('Marker', { markerStyle: { icon: nalIkon } });
+        }
         map.dragging[nyModus === 'hand' ? 'enable' : 'disable']();
         modusKnapper.forEach(k => k.classList.toggle('active', k === knapp));
     }
-    freehandButton.addEventListener('click', () => velgModus(freehandButton, 'frihand'));
+    omradeButton.addEventListener('click', () => velgModus(omradeButton, 'omrade'));
     pinButton.addEventListener('click', () => velgModus(pinButton, 'pin'));
     handButton.addEventListener('click', () => velgModus(handButton, 'hand'));
-    resetButton.addEventListener('click', () => { resetDrawing(); freehandButton.click(); });
+    resetButton.addEventListener('click', () => { resetDrawing(); omradeButton.click(); });
     map.dragging.disable();
 
-    // Nal-verktoy: ett klikk setter et enkelt punkt i stedet for et omrade
-    map.on('click', event => {
-        if (modus !== 'pin') return;
-        if (shape) map.removeLayer(shape);
-        points = [event.latlng];
-        shape = L.marker(event.latlng, { icon: nalIkon }).addTo(map);
+    /* Geoman legger selv til det ferdige laget pa kartet nar en tegning
+       fullfores (dobbeltklikk/klikk-pa-forste-punkt for omrade, ett klikk
+       for nal) og skrur draw-modus av igjen automatisk etterpa. */
+    map.on('pm:create', event => {
+        if (gjeldendeLag) map.removeLayer(gjeldendeLag);
+        gjeldendeLag = event.layer;
+        gjeldendeType = event.shape;
         fullforKnapp.disabled = false;
-        visKoordinater(event.latlng);
+
+        const senter = gjeldendeType === 'Marker' ? gjeldendeLag.getLatLng() : gjeldendeLag.getBounds().getCenter();
+        visKoordinater(senter);
     });
 
-    map.on('mousedown', event => {
-        if (modus !== 'frihand') return;
-        dragging = true;
-        points = [event.latlng];
-        // Fjerner det forrige omradet/nalen med en gang - kun ett av delene skal finnes om gangen
-        if (shape) map.removeLayer(shape);
-        shape = null;
-        fullforKnapp.disabled = true;
-        preview = L.polyline(points, { color: '#8b5cf6', weight: 2 }).addTo(map);
-    });
-    map.on('mousemove', event => {
-        if (!dragging) return;
-        points.push(event.latlng);
-        preview.setLatLngs(points);
-    });
-    map.on('mouseup', () => {
-        if (!dragging) return;
-        dragging = false;
-        map.removeLayer(preview);
-        preview = null;
-        if (points.length < 3) return;
-        shape = L.polygon(points, { color: '#8b5cf6', fillColor: '#4c1d95', fillOpacity: 0.5 }).addTo(map);
-        fullforKnapp.disabled = false;
-    });
-
-    // Tar et snapshot av det tegnede omradet/punktet og legger det i forhandsvisningen
+    /* Kjores nar brukeren trykker "Fullfor tegning". Punktene fra Geoman-laget
+       gjores her om til dataene som faktisk sendes videre i skjemaet
+       (PunkterJson + Lokasjon), og en liten forhandsvisning av omradet bygges
+       i sidepanelet sa brukeren ser hva som er valgt for de gar til neste steg. */
     fullforKnapp.addEventListener('click', () => {
-        const erOmrade = points.length >= 3;
-        const punkter = points.map(p => ({ lat: p.lat, lng: p.lng }));
-        const bounds = L.latLngBounds(points);
-        const senter = bounds.getCenter();
+        if (!gjeldendeLag) return;
+        map.pm.disableDraw();
+        const erOmrade = gjeldendeType !== 'Marker';
+        const punkter = (erOmrade ? gjeldendeLag.getLatLngs()[0] : [gjeldendeLag.getLatLng()]).map(p => ({ lat: p.lat, lng: p.lng }));
+        const bounds = L.latLngBounds(punkter.map(p => [p.lat, p.lng]));
+        const senter = bounds.getCenter(); /* brukes som "Lokasjon" uansett om det er nal eller omrade */
 
         punkterJsonInput.value = JSON.stringify(punkter);
         lokasjonInput.value = senter.lat.toFixed(6) + ', ' + senter.lng.toFixed(6);
         visKoordinater(senter);
 
-        // Samme stil pa selve kartet som i forhandsvisningen: gronn omrade + krysshar-markor
-        if (shape) map.removeLayer(shape);
-        shape = erOmrade ? L.polygon(punkter, { color: '#10b981', fillColor: '#10b981', fillOpacity: 0.35 }).addTo(map) : null;
+        /* Samme stil pa selve kartet som i forhandsvisningen: gronn omrade + krysshar-markor */
+        map.removeLayer(gjeldendeLag);
+        gjeldendeLag = erOmrade ? L.polygon(punkter.map(p => [p.lat, p.lng]), { color: '#10b981', fillColor: '#10b981', fillOpacity: 0.35 }).addTo(map) : null;
         if (shapeMarkor) map.removeLayer(shapeMarkor);
         shapeMarkor = L.marker(senter, { icon: senterIkon }).addTo(map);
 
         lokasjonPlassholder.hidden = true;
+        /* Mini-kartet i forhandsvisningen opprettes forst her (ikke ved siste-lasting av
+           siden), fordi Leaflet ikke kan males ut i en div som fortsatt er skjult */
         if (!snapshotKart) {
             snapshotKart = L.map('lokasjonKartForhandsvisning', { zoomControl: false, dragging: false, scrollWheelZoom: false, attributionControl: false });
             tileLayer().addTo(snapshotKart);
         }
         if (snapshotPolygon) snapshotKart.removeLayer(snapshotPolygon);
-        snapshotPolygon = erOmrade ? L.polygon(punkter, { color: '#10b981', fillColor: '#10b981', fillOpacity: 0.35 }).addTo(snapshotKart) : null;
+        snapshotPolygon = erOmrade ? L.polygon(punkter.map(p => [p.lat, p.lng]), { color: '#10b981', fillColor: '#10b981', fillOpacity: 0.35 }).addTo(snapshotKart) : null;
         if (snapshotMarkor) snapshotKart.removeLayer(snapshotMarkor);
         snapshotMarkor = L.marker(senter, { icon: senterIkon }).addTo(snapshotKart);
         setTimeout(() => {
             snapshotKart.invalidateSize();
-            snapshotKart.fitBounds(erOmrade ? bounds : bounds.pad(2), { padding: [16, 16] });
+            /* maxZoom: 17 holder forhandsvisningen pa samme zoom som selve tegnekartet over */
+            snapshotKart.fitBounds(erOmrade ? bounds : bounds.pad(2), { padding: [16, 16], maxZoom: 17, animate: false });
         }, 50);
 
         nesteKnapp.disabled = false;
     });
+
+    /* Starter i omrade-modus med en gang, siden det er det som star som aktivt i verktoylinja */
+    velgModus(omradeButton, 'omrade');
 </script>
