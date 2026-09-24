@@ -8,7 +8,7 @@
 <div class="ressurs-split">
     <div class="ressurs-split__form">
         <div class="ressurs-split__header">
-            <a asp-controller="Home" asp-action="Index" class="ressurs-split__back"><i class="fa-solid fa-arrow-left"></i></a>
+            <a asp-controller="Resources" asp-action="Index" class="ressurs-split__back"><i class="fa-solid fa-arrow-left"></i></a>
             <div>
                 <h1>Tilby ressurs</h1>
             </div>
@@ -19,6 +19,7 @@
         <div class="ressurs-steg-header">
             <p class="ressurs-kvittering-merke"><i class="fa-solid fa-circle-check"></i> Sendt inn</p>
             <h2 class="ressurs-steg-tittel">Kvittering</h2>
+            <p class="ressurs-kvittering-merke"><i class="fa-solid fa-circle-notch"></i> Status: @Model.Status</p>
         </div>
 
         <div class="ressurs-split__fields">
@@ -26,8 +27,7 @@
             <i class="fa-regular fa-face-smile ressurs-kvittering-ikon"></i>
 
             <div class="ressurs-split__actions">
-                <a asp-controller="Form" asp-action="Draw" class="ressurs-btn ressurs-btn--cancel">Tilby en til</a>
-                <a asp-controller="Form" asp-action="Innsendinger" class="ressurs-btn ressurs-btn--submit">Se alle innsendinger</a>
+                <a asp-controller="Form" asp-action="Draw" class="ressurs-btn ressurs-btn--submit">Tilby en til</a>
             </div>
         </div>
     </div>
@@ -50,7 +50,10 @@
        raa JSON-teksten inn i JS-koden ufiltrert). JSON.stringify pakker den om til en vanlig
        tekststreng igjen, sa den kan sendes til tegnRessursOmradeKart pa samme mate som de andre sidene. */
     const punkterJson = JSON.stringify(@Html.Raw(string.IsNullOrWhiteSpace(Model.PunkterJson) ? "[]" : Model.PunkterJson));
-    tegnRessursOmradeKart('map', punkterJson);
+
+    /* Fargekoden fra oppgavens kart-legende (case.md) - samme oppslag som i Beskrivelse/Oppsummering */
+    const fargeHex = { rod: '#ef4444', gul: '#f59e0b', gronn: '#10b981', bla: '#3b82f6' };
+    tegnRessursOmradeKart('map', punkterJson, { farge: fargeHex['@Model.Farge'] || fargeHex.gronn });
 
     /* Lagrer ogsa til localStorage, i tillegg til den ekte lagringen pa serveren (Punkt 2/3).
        Dette er bare en ekstra lokal cache (feks for Map-siden a lese senere) - IKKE den egentlige

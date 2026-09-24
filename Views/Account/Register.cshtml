@@ -19,29 +19,29 @@
 
             <div class="felt-gruppe">
                 <label class="konto-label" asp-for="FirstName">Fornavn</label>
-                <input type="text" asp-for="FirstName" class="konto-input" placeholder="Ola" required>
+                <input type="text" asp-for="FirstName" class="konto-input" placeholder="Daymian" required>
             </div>
 
             <div class="felt-gruppe">
                 <label class="konto-label" asp-for="LastName">Etternavn</label>
-                <input type="text" asp-for="LastName" class="konto-input" placeholder="Nordmann" required>
+                <input type="text" asp-for="LastName" class="konto-input" placeholder="EX" required>
             </div>
 
             <div class="felt-gruppe">
                 <label class="konto-label" asp-for="Email">E-post</label>
-                <input type="email" asp-for="Email" class="konto-input" placeholder="navn@eksempel.no" required>
+                <input type="email" asp-for="Email" class="konto-input" placeholder="Ex@eksempel.no" required>
                 <span asp-validation-for="Email"></span>
             </div>
 
             <div class="felt-gruppe">
                 <label class="konto-label" asp-for="PhoneNumber">Telefonnummer</label>
-                <input type="tel" asp-for="PhoneNumber" class="konto-input" placeholder="+47 12345678" required>
+                <input type="tel" asp-for="PhoneNumber" class="konto-input" placeholder="12345678" required>
                 <span asp-validation-for="PhoneNumber"></span>
             </div>
 
             <div class="felt-gruppe">
                 <label class="konto-label" asp-for="Password">Passord</label>
-                <input type="password" asp-for="Password" class="konto-input" placeholder="Min. 8 tegn" minlength="8" required>
+                <input type="password" asp-for="Password" class="konto-input" placeholder="Passord her" minlength="8" required>
             </div>
 
             <button type="submit" class="konto-knapp">Registrer deg</button>

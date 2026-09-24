@@ -8,6 +8,7 @@ services:
       ConnectionStrings__DefaultConnection: "Server=db;Port=3306;Database=krisisdb;User=root;Password=${MYSQL_ROOT_PASSWORD:-123};"
     depends_on:
       db:
+      
         condition: service_healthy
 
   db:
@@ -19,7 +20,10 @@ services:
       - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
-      - ./Data/sql/users.sql:/docker-entrypoint-initdb.d/users.sql:ro
+      # Filnavnene her styrer rekkefølgen MySQL kjorer dem i (alfabetisk) - users må
+      # opprettes for submissions, siden Submissions har en FOREIGN KEY mot Users.
+      - ./Data/sql/users.sql:/docker-entrypoint-initdb.d/01-users.sql:ro
+      - ./Data/sql/submissions.sql:/docker-entrypoint-initdb.d/02-submissions.sql:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p$${MYSQL_ROOT_PASSWORD}"]
       interval: 5s

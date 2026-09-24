@@ -20,13 +20,23 @@ docker compose up --build
 
 Åpne `http://localhost:8080`
 
-Docker Compose oppretter databasen `krisisdb` og `Users`-tabellen automatisk fra `Data/sql/users.sql`.
+Docker Compose oppretter databasen `krisisdb` og tabellene `Users`/`Submissions` automatisk fra `Data/sql/users.sql` og `Data/sql/submissions.sql`.
 
 Stopp containerne med:
 
 ```bash
 docker compose down
 ```
+
+**Fikk du nye endringer med `git pull`?** Init-scriptene over kjøres kun når MySQL-volumet er helt tomt - de kjører ikke på nytt av seg selv. For å faktisk få nye tabeller/kolonner:
+
+```bash
+git pull
+docker compose down -v
+docker compose up --build
+```
+
+`-v` sletter det lokale databasevolumet (og all lokal testdata) - det er det som trigger at init-scriptene kjøres på nytt.
 
 ## 2. Lokal development
 

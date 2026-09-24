@@ -1,3 +1,30 @@
+@model List<azir_sempro.Models.Submission>
 @{
     ViewData["Title"] = "Resources";
+}
+
+<h1>dette er en test</h1>
+
+@if (!Model.Any())
+{
+    <p>Ingen rader i Submissions enna.</p>
+}
+else
+{
+    @foreach (var s in Model)
+    {
+        <p>
+            SubmissionId: @s.SubmissionId<br>
+            UserId: @s.UserId<br>
+            Tittel: @s.Tittel<br>
+            Kategori: @s.Kategori<br>
+            Farge: @s.Farge<br>
+            Lokasjon: @s.Lokasjon<br>
+            PunkterJson: @s.PunkterJson<br>
+            Beskrivelse: @s.Beskrivelse<br>
+            Tidspunkt: @s.Tidspunkt<br>
+            Status: @s.Status
+        </p>
+        <hr>
+    }
 }
