@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
         <link rel="stylesheet" href="~/azir-sempro.styles.css" asp-append-version="true" />
 </head>
-<body class="@(navController == "Map" || erFullsideForm ? "no-footer" : "")">
+<body class="@(erFullsideForm ? "no-footer" : "")">
     <nav class="nav-bar">
         <div class="brand">
             <img src="~/assets/icons/logoGreen.svg" alt="" class="brand-logo">
@@ -28,24 +28,12 @@
             </div>
         </div>
         <div class="nav-links">
-            <a asp-controller="Home" asp-action="Index" class="nav-item @(navController == "Home" && navAction == "Index" ? "active" : "")">
-                <div class="nav-item-label">Hjem</div>
-                <div class="active-indicator"></div>
-            </a>
-            <a asp-controller="Form" asp-action="Index" class="nav-item @(navController == "Form" ? "active" : "")">
-                <div class="nav-item-label">Skjema</div>
-                <div class="active-indicator"></div>
-            </a>
             <a asp-controller="Resources" asp-action="Index" class="nav-item @(navController == "Resources" ? "active" : "")">
                 <div class="nav-item-label">Ressurser</div>
                 <div class="active-indicator"></div>
             </a>
-            <a asp-controller="Map" asp-action="Index" class="nav-item @(navController == "Map" ? "active" : "")">
-                <div class="nav-item-label">Kart</div>
-                <div class="active-indicator"></div>
-            </a>
-            <a asp-controller="Skjerma" asp-action="Index" class="nav-item @(navController == "Skjerma" ? "active" : "")">
-                <div class="nav-item-label">Skjerma</div>
+            <a asp-controller="Form" asp-action="Index" class="nav-item @(navController == "Form" ? "active" : "")">
+                <div class="nav-item-label">Skjema</div>
                 <div class="active-indicator"></div>
             </a>
         </div>
@@ -66,7 +54,7 @@
         </main>
     </div>
 
-    @if (navController != "Map" && !erFullsideForm)
+    @if (!erFullsideForm)
     {
         <footer class="border-top footer text-muted">
             <div class="container">

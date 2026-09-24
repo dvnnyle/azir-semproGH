@@ -4,13 +4,9 @@ using azir_sempro.Models;
 
 namespace azir_sempro.Controllers;
 
-public class HomeController : Controller
+// Egen controller kun for feilsiden - flyttet ut av HomeController da Home-siden ble fjernet
+public class ErrorController : Controller
 {
-    public IActionResult Index()
-    {
-        return View();
-    }
-
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

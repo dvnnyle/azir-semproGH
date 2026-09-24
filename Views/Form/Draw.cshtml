@@ -34,7 +34,7 @@
             <div class="mini-kart" id="lokasjonSnapshot">
                 <div id="lokasjonKartForhandsvisning"></div>
                 <div class="mini-kart-plassholder" id="lokasjonPlassholder">
-                    <i class="fa-solid fa-draw-polygon"></i>
+                    <i class="fa-solid fa-camera"></i>
                     <span>Velg et omrade pa kartet</span>
                 </div>
             </div>
@@ -70,7 +70,6 @@
     const tileLayer = () => L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', { maxZoom: 18, noWrap: true });
     tileLayer().addTo(map);
 
-    const senterIkon = L.divIcon({ html: '<div class="kart-senter-merke"><i class="fa-solid fa-location-crosshairs"></i></div>', className: '', iconSize: [24, 24], iconAnchor: [12, 12] });
     const nalIkon = L.divIcon({ html: '<div class="marker-pin"><i class="fa-solid fa-location-dot"></i></div>', className: '', iconSize: [30, 30], iconAnchor: [15, 30] });
 
     const koordinatLat = document.getElementById('koordinatLat');
@@ -97,7 +96,6 @@
     let modus = 'omrade';
     let gjeldendeLag = null;
     let gjeldendeType = null;
-    let shapeMarkor = null;   /* krysshar-markoren som vises i midten av omradet etter "Fullfor tegning" */
     let snapshotKart = null;  /* eget lite Leaflet-kart i forhandsvisningsboksen (opprettes forst ved fullforing) */
     let snapshotPolygon = null;
     let snapshotMarkor = null;
@@ -108,8 +106,6 @@
         if (gjeldendeLag) map.removeLayer(gjeldendeLag);
         gjeldendeLag = null;
         gjeldendeType = null;
-        if (shapeMarkor) map.removeLayer(shapeMarkor);
-        shapeMarkor = null;
         fullforKnapp.disabled = true;
         nesteKnapp.disabled = true;
         koordinatLat.textContent = '-';
@@ -122,7 +118,7 @@
         modus = nyModus;
         map.pm.disableDraw();
         if (nyModus === 'omrade') {
-            map.pm.enableDraw('Polygon', { pathOptions: { color: '#8b5cf6', fillColor: '#4c1d95', fillOpacity: 0.5 }, snappable: false });
+            map.pm.enableDraw('Polygon', { snappable: false });
         } else if (nyModus === 'pin') {
             map.pm.enableDraw('Marker', { markerStyle: { icon: nalIkon } });
         }
@@ -164,11 +160,12 @@
         lokasjonInput.value = senter.lat.toFixed(6) + ', ' + senter.lng.toFixed(6);
         visKoordinater(senter);
 
-        /* Samme stil pa selve kartet som i forhandsvisningen: gronn omrade + krysshar-markor */
+        /* Samme stil pa selve kartet som i forhandsvisningen: gront omrade, eller en nal
+           hvis det bare er ett punkt - ingen krysshar-markor i tillegg lenger */
         map.removeLayer(gjeldendeLag);
-        gjeldendeLag = erOmrade ? L.polygon(punkter.map(p => [p.lat, p.lng]), { color: '#10b981', fillColor: '#10b981', fillOpacity: 0.35 }).addTo(map) : null;
-        if (shapeMarkor) map.removeLayer(shapeMarkor);
-        shapeMarkor = L.marker(senter, { icon: senterIkon }).addTo(map);
+        gjeldendeLag = erOmrade
+            ? L.polygon(punkter.map(p => [p.lat, p.lng]), { color: '#10b981', fillColor: '#10b981', fillOpacity: 0.35 }).addTo(map)
+            : L.marker(senter, { icon: nalIkon }).addTo(map);
 
         lokasjonPlassholder.hidden = true;
         /* Mini-kartet i forhandsvisningen opprettes forst her (ikke ved siste-lasting av
@@ -180,7 +177,7 @@
         if (snapshotPolygon) snapshotKart.removeLayer(snapshotPolygon);
         snapshotPolygon = erOmrade ? L.polygon(punkter.map(p => [p.lat, p.lng]), { color: '#10b981', fillColor: '#10b981', fillOpacity: 0.35 }).addTo(snapshotKart) : null;
         if (snapshotMarkor) snapshotKart.removeLayer(snapshotMarkor);
-        snapshotMarkor = L.marker(senter, { icon: senterIkon }).addTo(snapshotKart);
+        snapshotMarkor = erOmrade ? null : L.marker(senter, { icon: nalIkon }).addTo(snapshotKart);
         setTimeout(() => {
             snapshotKart.invalidateSize();
             /* maxZoom: 17 holder forhandsvisningen pa samme zoom som selve tegnekartet over */

@@ -12,14 +12,18 @@ function tegnRessursOmradeKart(elementId, punkterJsonStr, options) {
     ));
     L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', { maxZoom: 18, noWrap: true }).addTo(map);
 
-    const senterIkon = L.divIcon({ html: '<div class="kart-senter-merke"><i class="fa-solid fa-location-crosshairs"></i></div>', className: '', iconSize: [24, 24], iconAnchor: [12, 12] });
+    const nalIkon = L.divIcon({ html: '<div class="marker-pin"><i class="fa-solid fa-location-dot"></i></div>', className: '', iconSize: [30, 30], iconAnchor: [15, 30] });
     const punkter = JSON.parse(punkterJsonStr || '[]').map(p => [p.lat, p.lng]);
     const erOmrade = punkter.length >= 3;
     const bounds = L.latLngBounds(punkter);
     const senter = bounds.getCenter();
 
-    if (erOmrade) L.polygon(punkter, { color: '#10b981', fillColor: '#10b981', fillOpacity: 0.35 }).addTo(map);
-    L.marker(senter, { icon: senterIkon }).addTo(map);
+    const farge = options.farge || '#10b981';
+    if (erOmrade) {
+        L.polygon(punkter, { color: farge, fillColor: farge, fillOpacity: 0.35 }).addTo(map);
+    } else {
+        L.marker(senter, { icon: nalIkon }).addTo(map);
+    }
 
     // maxZoom: 17 holder zoomen konsekvent med Draw-siden, som alltid tegner pa zoom 17
     const padding = options.padding || [40, 40];
