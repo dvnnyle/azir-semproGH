@@ -1,14 +1,19 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using azir_sempro.Data;
 using azir_sempro.Models;
 
 namespace azir_sempro.Controllers;
 
 public class FormController : Controller
 {
-    // Punkt 2: in-memory liste, ingen database enda
-    private static readonly List<FormViewModel> innsendinger = [];
+    private readonly AppDbContext database;
     private const string UtkastNokkel = "RessursUtkast";
+
+    public FormController(AppDbContext database)
+    {
+        this.database = database;
+    }
 
     public IActionResult Index() => RedirectToAction(nameof(Draw));
 
@@ -69,9 +74,26 @@ public class FormController : Controller
     }
 
     [HttpPost]
-    public IActionResult Submit(FormViewModel model)
+    public async Task<IActionResult> Submit(FormViewModel model)
     {
-        innsendinger.Add(model);
+        // UserId er nullable helt til innlogging finnes - se Data/sql/submissions.sql.
+        // TODO: sett til den innloggede brukerens UserId nar auth er pa plass.
+        var innsending = new Submission
+        {
+            Tittel = model.Tittel,
+            Kategori = model.Kategori,
+            Farge = model.Farge,
+            Lokasjon = model.Lokasjon,
+            PunkterJson = model.PunkterJson,
+            Beskrivelse = model.Beskrivelse,
+            Tidspunkt = DateTime.Now,
+            Status = "ny"
+        };
+        database.Submissions.Add(innsending);
+        await database.SaveChangesAsync();
+
+        model.Tidspunkt = innsending.Tidspunkt;
+        model.Status = innsending.Status;
 
         // Punkt 2 og 3: egen side viser innsendt skjema- og kartdata
         LagreUtkast(model);
@@ -88,11 +110,6 @@ public class FormController : Controller
         }
 
         return View(utkast);
-    }
-
-    public IActionResult Innsendinger()
-    {
-        return View(innsendinger);
     }
 
     // Utkastet lagres i TempData og "peekes" sa det overlever tilbake-navigering

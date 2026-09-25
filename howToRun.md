@@ -1,16 +1,7 @@
-# Rask test
+# Onboarding / team git-flyt
 
-## Lokal dev
-- dotnet watch run
-- http://localhost:5253
-
-## Docker
-- docker compose up --build
-- http://localhost:8080
-- MySQL and the Users table are created automatically from Data/sql/users.sql
-- Stop everything with: docker compose down
-
-Docker garanterer samme miljø for alle (same OS, same .NET, same setup).
+Se README.md for de raske run-kommandoene (Docker og lokal dev) - de er ikke
+gjentatt her for a unnga at de to filene driver fra hverandre over tid.
 
 STEP by STEP - D
 

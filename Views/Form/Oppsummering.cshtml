@@ -24,6 +24,7 @@
             <input type="hidden" asp-for="Tittel">
             <input type="hidden" asp-for="Kategori">
             <input type="hidden" asp-for="Beskrivelse">
+            <input type="hidden" asp-for="Farge">
 
             <div class="ressurs-felt">
                 <label>Lokasjon</label>
@@ -44,6 +45,15 @@
             <div class="ressurs-felt">
                 <label>Kategori</label>
                 <p>@Model.Kategori</p>
+            </div>
+            <div class="ressurs-felt">
+                <label>Fargekode</label>
+                <p>@(Model.Farge switch {
+                    "rod" => "Rød - Akutt behov",
+                    "gul" => "Gul - Planlagt behov",
+                    "bla" => "Blå - Offentlig aktør",
+                    _ => "Grønn - Tilgjengelig ressurs"
+                })</p>
             </div>
             <div class="ressurs-felt">
                 <label>Beskrivelse</label>
@@ -70,14 +80,19 @@
        tegne den pa nytt, ikke fordi noe nytt tegnes pa denne siden. */
     const punkterJson = document.getElementById('punkterJsonInput').value;
 
+    /* Fargekoden fra oppgavens kart-legende (case.md) - samme oppslag som i Beskrivelse/Kvittering */
+    const fargeHex = { rod: '#ef4444', gul: '#f59e0b', gronn: '#10b981', bla: '#3b82f6' };
+    const farge = fargeHex['@Model.Farge'] || fargeHex.gronn;
+
     /* Stort kart i bakgrunnen */
-    const { senter } = tegnRessursOmradeKart('map', punkterJson);
+    const { senter } = tegnRessursOmradeKart('map', punkterJson, { farge });
     document.getElementById('koordinatLat').textContent = senter.lat.toFixed(6);
     document.getElementById('koordinatLng').textContent = senter.lng.toFixed(6);
 
     /* Mini-forhandsvisning i sidepanelet, samme snapshot-stil som steg 1 og 2 - bare mindre padding */
     tegnRessursOmradeKart('lokasjonKartForhandsvisning', punkterJson, {
         mapOptions: { zoomControl: false },
-        padding: [16, 16]
+        padding: [16, 16],
+        farge
     });
 </script>

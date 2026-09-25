@@ -44,6 +44,15 @@
                 </select>
             </div>
             <div class="ressurs-felt">
+                <label asp-for="Farge">Fargekode</label>
+                <select asp-for="Farge" id="fargeValg">
+                    <option value="gronn" style="color:#10b981">Grønn - Tilgjengelig ressurs</option>
+                    <option value="rod" style="color:#ef4444">Rød - Akutt behov</option>
+                    <option value="gul" style="color:#f59e0b">Gul - Planlagt behov</option>
+                    <option value="bla" style="color:#3b82f6">Blå - Offentlig aktør</option>
+                </select>
+            </div>
+            <div class="ressurs-felt">
                 <label asp-for="Beskrivelse">Beskrivelse</label>
                 <textarea asp-for="Beskrivelse" placeholder="Beskriv ressursen"></textarea>
             </div>
@@ -68,5 +77,21 @@
        se kommentaren ved skjul-feltene over). tegnRessursOmradeKart (wwwroot/js/ressurs-kart.js)
        leser den samme JSON-en pa nytt og tegner et helt nytt polygon/nal pa DETTE sitt eget
        kart - en frisk gjentegning, ikke det samme Leaflet-laget som i Draw.cshtml. */
-    tegnRessursOmradeKart('map', document.getElementById('punkterJsonInput').value);
+
+    /* Fargekoden fra oppgavens kart-legende (case.md) - se samme oppslag i Oppsummering/Kvittering */
+    const fargeHex = { rod: '#ef4444', gul: '#f59e0b', gronn: '#10b981', bla: '#3b82f6' };
+
+    const punkterJson = document.getElementById('punkterJsonInput').value;
+    const fargeValg = document.getElementById('fargeValg');
+    let kartInstans = null;
+
+    function tegnMedValgtFarge() {
+        if (kartInstans) kartInstans.map.remove();
+        kartInstans = tegnRessursOmradeKart('map', punkterJson, { farge: fargeHex[fargeValg.value] });
+        /* <option>-fargen vises ikke alltid i selve den lukkede boksen (varierer per
+           nettleser/OS), sa vi setter fargen pa selve <select>-en direkte i tillegg */
+        fargeValg.style.color = fargeHex[fargeValg.value];
+    }
+    tegnMedValgtFarge();
+    fargeValg.addEventListener('change', tegnMedValgtFarge);
 </script>
