@@ -20,6 +20,7 @@
         </div>
 
         <form asp-controller="Form" asp-action="Draw" method="post" class="ressurs-steg">
+            <div asp-validation-summary="ModelOnly"></div>
             <input type="hidden" asp-for="Lokasjon" id="lokasjonInput">
             <input type="hidden" asp-for="PunkterJson" id="punkterJsonInput">
 
