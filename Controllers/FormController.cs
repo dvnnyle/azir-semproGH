@@ -51,9 +51,21 @@ public class FormController : Controller
     [HttpPost]
     public IActionResult Beskrivelse(FormViewModel model)
     {
+        var harFeil = false;
+        
         if (string.IsNullOrWhiteSpace(model.Tittel))
         {
             ModelState.AddModelError("", "Du ma gi ressursen en tittel.");
+            harFeil = true;
+        }
+        if (string.IsNullOrWhiteSpace(model.Kategori))
+        {
+            ModelState.AddModelError("", "Du ma velge en kategori.");
+            harFeil = true;
+        }
+        
+        if (harFeil)
+        {
             return View(model);
         }
 
