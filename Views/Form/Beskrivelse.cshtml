@@ -19,6 +19,7 @@
         </div>
 
         <form asp-controller="Form" asp-action="Beskrivelse" method="post" class="ressurs-split__fields">
+            <div asp-validation-summary="ModelOnly"></div>
             @* Lokasjon/PunkterJson tas ikke pa nytt her - asp-for fyller dem automatisk
                med verdiene fra steg 1, siden FormController.Beskrivelse() henter utkastet
                fra TempData og sender det inn som modellen for denne siden. De sendes bare
@@ -28,11 +29,11 @@
 
             <div class="ressurs-felt">
                 <label asp-for="Tittel">Tittel</label>
-                <input asp-for="Tittel" placeholder="Skriv ressurstittel her">
+                <input asp-for="Tittel" placeholder="Skriv ressurstittel her" required>
             </div>
             <div class="ressurs-felt">
                 <label asp-for="Kategori">Kategori</label>
-                <select asp-for="Kategori">
+                <select asp-for="Kategori" required>
                     <option value="">Velg kategori...</option>
                     <option>Strøm</option>
                     <option>Medisin</option>
