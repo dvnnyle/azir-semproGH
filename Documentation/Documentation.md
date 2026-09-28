@@ -36,8 +36,8 @@ Kjøres med `dotnet test azir-sempro.Tests`.
 
 | Testklasse | Hva den sjekker | Resultat |
 |---|---|---|
-| `AccountViewModelTests` | Registreringsskjemaet godtar gyldig data og avviser ugyldig e-post, kort passord og tomt fornavn | |
-| `FormViewModelTests` | Standardverdiene i skjemamodellen | |
+| `AccountViewModelTests` | Registreringsskjemaet godtar gyldig data og avviser ugyldig e-post, kort passord og tomt fornavn | 4 av 4 bestått |
+| `FormViewModelTests` | Standardverdiene i skjemamodellen | 3 av 3 bestått |
 
 ### Manuelle tester
 
