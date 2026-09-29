@@ -9,17 +9,32 @@
 <div class="ressurs-split">
     <div class="ressurs-split__form">
         <div class="ressurs-split__header">
-            <h1>Tilby ressurs</h1>
+            <h1 id="sideTittel">Tilby ressurs</h1>
         </div>
 
         <hr class="ressurs-split__divider">
 
-        <div class="ressurs-steg-header">
-            <p class="ressurs-steg-nummer">Steg 1 av 3</p>
-            <h2 class="ressurs-steg-tittel">Velg omradet</h2>
-        </div>
-
         <form asp-controller="Form" asp-action="Draw" method="post" class="ressurs-steg">
+            <div class="ressurs-felt">
+                <label>Type</label>
+                <div class="type-valg">
+                    <button type="button" class="type-knapp type-knapp--ressurs active" data-type="ressurs">
+                        <i class="fa-solid fa-hand-holding-heart"></i>
+                        <span>Tilby ressurs</span>
+                    </button>
+                    <button type="button" class="type-knapp type-knapp--behov" data-type="behov">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span>Meld behov</span>
+                    </button>
+                </div>
+                <input type="hidden" asp-for="Type" id="typeInput">
+            </div>
+
+            <div class="ressurs-steg-header">
+                <p class="ressurs-steg-nummer">Steg 1 av 3</p>
+                <h2 class="ressurs-steg-tittel">Velg omradet</h2>
+            </div>
+
             <input type="hidden" asp-for="Lokasjon" id="lokasjonInput">
             <input type="hidden" asp-for="PunkterJson" id="punkterJsonInput">
 
@@ -89,6 +104,19 @@
     const lokasjonInput = document.getElementById('lokasjonInput');
     const punkterJsonInput = document.getElementById('punkterJsonInput');
     const modusKnapper = [omradeButton, pinButton, handButton];
+
+    /* Type (ressurs/behov) avgjores helt i starten av flyten na, sa resten av
+       stegene (Beskrivelse/Oppsummering/Kvittering) kan vise riktig overskrift
+       fra Model.Type - se samme knapp-mønster i disse. */
+    const typeInput = document.getElementById('typeInput');
+    const sideTittel = document.getElementById('sideTittel');
+    document.querySelectorAll('.type-knapp').forEach(knapp => {
+        knapp.addEventListener('click', () => {
+            document.querySelectorAll('.type-knapp').forEach(k => k.classList.toggle('active', k === knapp));
+            typeInput.value = knapp.dataset.type;
+            sideTittel.textContent = knapp.dataset.type === 'behov' ? 'Meld behov' : 'Tilby ressurs';
+        });
+    });
 
     /* gjeldendeLag er Geoman-laget (L.Polygon eller L.Marker) fra siste
        "pm:create", gjeldendeType forteller hvilken av delene det er, siden

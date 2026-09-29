@@ -9,6 +9,7 @@ public class Submission
     public int? UserId { get; set; }
     public string Tittel { get; set; } = "";
     public string Kategori { get; set; } = "";
+    public string Type { get; set; } = "ressurs";
     public string Farge { get; set; } = "gronn";
     public string Lokasjon { get; set; } = "";
     public string PunkterJson { get; set; } = "";

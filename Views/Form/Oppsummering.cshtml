@@ -1,6 +1,7 @@
 @model azir_sempro.Models.FormViewModel
 @{
-    ViewData["Title"] = "Tilby ressurs";
+    var sideTittel = Model.Type == "behov" ? "Meld behov" : "Tilby ressurs";
+    ViewData["Title"] = sideTittel;
 }
 <link rel="stylesheet" href="~/lib/leaflet/dist/leaflet.min.css">
 <link rel="stylesheet" href="~/css/form.css" asp-append-version="true">
@@ -8,7 +9,7 @@
 <div class="ressurs-split">
     <div class="ressurs-split__form">
         <div class="ressurs-split__header">
-            <h1>Tilby ressurs</h1>
+            <h1>@sideTittel</h1>
         </div>
 
         <hr class="ressurs-split__divider">
@@ -24,6 +25,7 @@
             <input type="hidden" asp-for="Tittel">
             <input type="hidden" asp-for="Kategori">
             <input type="hidden" asp-for="Beskrivelse">
+            <input type="hidden" asp-for="Type">
             <input type="hidden" asp-for="Farge">
 
             <div class="ressurs-felt">
@@ -39,7 +41,7 @@
             </div>
 
             <div class="ressurs-felt">
-                <label>Ressurstittel</label>
+                <label>Tittel</label>
                 <p>@Model.Tittel</p>
             </div>
             <div class="ressurs-felt">
@@ -47,12 +49,18 @@
                 <p>@Model.Kategori</p>
             </div>
             <div class="ressurs-felt">
-                <label>Fargekode</label>
+                <label>Type</label>
+                <p>
+                    <i class="fa-solid @(Model.Type == "behov" ? "fa-triangle-exclamation" : "fa-hand-holding-heart")"></i>
+                    @(Model.Type == "behov" ? "Meld behov" : "Tilby ressurs")
+                </p>
+            </div>
+            <div class="ressurs-felt">
+                <label>Prioritet</label>
                 <p>@(Model.Farge switch {
-                    "rod" => "Rød - Akutt behov",
-                    "gul" => "Gul - Planlagt behov",
-                    "bla" => "Blå - Offentlig aktør",
-                    _ => "Grønn - Tilgjengelig ressurs"
+                    "rod" => "Rød - Akutt",
+                    "gul" => "Gul - Planlagt",
+                    _ => "Grønn - Lav prioritet"
                 })</p>
             </div>
             <div class="ressurs-felt">
