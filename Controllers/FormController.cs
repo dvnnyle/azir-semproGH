@@ -94,6 +94,7 @@ public class FormController : Controller
         {
             Tittel = model.Tittel,
             Kategori = model.Kategori,
+            Type = model.Type,
             Farge = model.Farge,
             Lokasjon = model.Lokasjon,
             PunkterJson = model.PunkterJson,

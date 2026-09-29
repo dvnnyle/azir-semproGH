@@ -1,6 +1,7 @@
 @model azir_sempro.Models.FormViewModel
 @{
-    ViewData["Title"] = "Tilby ressurs";
+    var sideTittel = Model.Type == "behov" ? "Meld behov" : "Tilby ressurs";
+    ViewData["Title"] = sideTittel;
 }
 <link rel="stylesheet" href="~/lib/leaflet/dist/leaflet.min.css">
 <link rel="stylesheet" href="~/css/form.css" asp-append-version="true">
@@ -8,7 +9,7 @@
 <div class="ressurs-split">
     <div class="ressurs-split__form">
         <div class="ressurs-split__header">
-            <h1>Tilby ressurs</h1>
+            <h1>@sideTittel</h1>
         </div>
 
         <hr class="ressurs-split__divider">
@@ -44,13 +45,14 @@
                     <option>Annet</option>
                 </select>
             </div>
+            @* Type ble valgt pa steg 1 (Draw) - bare fores skjult videre herfra *@
+            <input type="hidden" asp-for="Type">
             <div class="ressurs-felt">
-                <label asp-for="Farge">Fargekode</label>
+                <label asp-for="Farge">Prioritet</label>
                 <select asp-for="Farge" id="fargeValg">
-                    <option value="gronn" style="color:#10b981">Grønn - Tilgjengelig ressurs</option>
-                    <option value="rod" style="color:#ef4444">Rød - Akutt behov</option>
-                    <option value="gul" style="color:#f59e0b">Gul - Planlagt behov</option>
-                    <option value="bla" style="color:#3b82f6">Blå - Offentlig aktør</option>
+                    <option value="gronn" style="color:#10b981">Grønn - Lav prioritet</option>
+                    <option value="gul" style="color:#f59e0b">Gul - Planlagt</option>
+                    <option value="rod" style="color:#ef4444">Rød - Akutt</option>
                 </select>
             </div>
             <div class="ressurs-felt">

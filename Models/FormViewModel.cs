@@ -4,9 +4,9 @@ public class FormViewModel
 {
     public string Tittel { get; set; } = "";
     public string Kategori { get; set; } = "";
-    // Fargekode fra oppgavens fastsatte kart-legende (case.md): rod = akutt behov,
-    // gul = planlagt behov, gronn = tilgjengelig ressurs, bla = offentlig aktor.
-    // Denne flyten er ressurstilbud, sa "gronn" er standardvalget.
+    // Hva det er: "ressurs" (tilbyr hjelp) eller "behov" (trenger hjelp) - styrer ikon.
+    public string Type { get; set; } = "ressurs";
+    // Hvor viktig det er: rod (akutt), gul (planlagt) eller gronn (lav prioritet/tilgjengelig).
     public string Farge { get; set; } = "gronn";
     public string Lokasjon { get; set; } = "";
     public string PunkterJson { get; set; } = "";

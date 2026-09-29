@@ -1,6 +1,7 @@
 @model azir_sempro.Models.FormViewModel
 @{
-    ViewData["Title"] = "Tilby ressurs";
+    var sideTittel = Model.Type == "behov" ? "Meld behov" : "Tilby ressurs";
+    ViewData["Title"] = sideTittel;
 }
 <link rel="stylesheet" href="~/lib/leaflet/dist/leaflet.min.css">
 <link rel="stylesheet" href="~/css/form.css" asp-append-version="true">
@@ -10,7 +11,7 @@
         <div class="ressurs-split__header">
             <a asp-controller="Resources" asp-action="Index" class="ressurs-split__back"><i class="fa-solid fa-arrow-left"></i></a>
             <div>
-                <h1>Tilby ressurs</h1>
+                <h1>@sideTittel</h1>
             </div>
         </div>
 
@@ -20,10 +21,18 @@
             <p class="ressurs-kvittering-merke"><i class="fa-solid fa-circle-check"></i> Sendt inn</p>
             <h2 class="ressurs-steg-tittel">Kvittering</h2>
             <p class="ressurs-kvittering-merke"><i class="fa-solid fa-circle-notch"></i> Status: @Model.Status</p>
+            <p class="ressurs-kvittering-merke"><i class="fa-solid @(Model.Type == "behov" ? "fa-triangle-exclamation" : "fa-hand-holding-heart")"></i> @(Model.Type == "behov" ? "Meld behov" : "Tilby ressurs")</p>
         </div>
 
         <div class="ressurs-split__fields">
-            <p class="ressurs-kvittering-tekst">Takk for at du tilbyr <strong>@Model.Tittel</strong> til beredskapen. Ressursen er registrert og synlig for andre.</p>
+            @if (Model.Type == "behov")
+            {
+                <p class="ressurs-kvittering-tekst">Takk for at du melder <strong>@Model.Tittel</strong> som et behov. Det er registrert og synlig for andre.</p>
+            }
+            else
+            {
+                <p class="ressurs-kvittering-tekst">Takk for at du tilbyr <strong>@Model.Tittel</strong> til beredskapen. Ressursen er registrert og synlig for andre.</p>
+            }
             <i class="fa-regular fa-face-smile ressurs-kvittering-ikon"></i>
 
             <div class="ressurs-split__actions">

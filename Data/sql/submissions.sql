@@ -6,6 +6,9 @@ CREATE TABLE Submissions (
     UserId INT NULL,
     Tittel VARCHAR(255) NOT NULL,
     Kategori VARCHAR(255) NOT NULL,
+    -- "ressurs" (tilbyr hjelp) eller "behov" (trenger hjelp)
+    Type VARCHAR(10) NOT NULL DEFAULT 'ressurs',
+    -- Prioritet: rod (akutt), gul (planlagt) eller gronn (lav prioritet/tilgjengelig)
     Farge VARCHAR(10) NOT NULL DEFAULT 'gronn',
     Lokasjon VARCHAR(255) NOT NULL,
     PunkterJson TEXT NOT NULL,
