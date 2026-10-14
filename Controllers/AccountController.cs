@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using azir_sempro.Data;
 using azir_sempro.Models;
 
@@ -71,9 +72,13 @@ public class AccountController : Controller
         return RedirectToAction("Login");
     }
 
-    [HttpGet("/profile")]
-    public IActionResult Profile()
-    {
-        return View();
-    }
+    [Authorize]
+[HttpGet("/profile")]
+public IActionResult Profile()
+{
+    return View();
 }
+
+}
+
+ 
