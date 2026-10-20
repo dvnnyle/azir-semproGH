@@ -11,11 +11,15 @@ public class AccountController : Controller
 {
     private readonly AppDbContext database;
     private readonly PasswordHasher<User> passwordHasher = new();
+    private readonly SignInManager<IdentityUser> signInManager;
 
-    public AccountController(AppDbContext database)
-    {
-        this.database = database;
-    }
+    public AccountController(
+    AppDbContext database,
+    SignInManager<IdentityUser> signInManager)
+{
+    this.database = database;
+    this.signInManager = signInManager;
+}
 
     [HttpGet("/login")]
     public IActionResult Login()
@@ -24,11 +28,27 @@ public class AccountController : Controller
     }
 
     [HttpPost("/login")]
-    public IActionResult Login(AccountViewModel model)
+public async Task<IActionResult> Login(AccountViewModel model)
+{
+    if (!ModelState.IsValid)
     {
-        // TODO: check credentials once a user store / auth exists
         return View(model);
     }
+
+    var result = await signInManager.PasswordSignInAsync(
+        model.Email,
+        model.Password,
+        false,
+        false);
+
+    if (result.Succeeded)
+    {
+        return RedirectToAction("Profile");
+    }
+
+    ModelState.AddModelError("", "Feil e-post eller passord.");
+    return View(model);
+}
 
     [HttpGet("/register")]
     public IActionResult Register()
