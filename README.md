@@ -7,7 +7,7 @@
 
 ## Medlemmer [G14]
 - Danny Nguyen Le
-
+- Nikolai Muldsvor
 
 ## 1. For å starte applikasjonen: (kan være litt feil / outdated)
 For å gå inn i prosjektmappen: `cd azir-sempro`
