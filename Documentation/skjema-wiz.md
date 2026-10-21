@@ -4,14 +4,18 @@ Kort forklart: det er 4 sider på rad (steg 1-3 + kvittering), og hver side er
 sin egen route/side i FormController. Ikke noe SPA-greie med JS-state, bare
 ordentlig Controller/View/Redirect sånn oppgaven vil ha det.
 
-## Stegene
+## Sidene
 
-1. /Form/Draw - velg Type (ressurs/behov) + tegn område eller slipp en nål på
-   kartet. Geoman gjør selve tegninga (ikke noe vi har skrevet selv), vi bare
-   leser ut punktene når Fullfør tegning trykkes.
-2. /Form/Beskrivelse - tittel, kategori, prioritet (farge), beskrivelse.
-3. /Form/Oppsummering - les-modus, viser alt du har fylt ut før du sender.
-4. /Form/Kvittering - takke-side etter innsending, viser status og sånt.
+- **Draw** (`/Form/Draw`) er hovedsiden/inngangen - dit `Form/Index` alltid
+  redirecter. Steg 1 av 3: velg Type (ressurs/behov) og tegn område eller
+  slipp en nål på kartet. Geoman gjør selve tegninga, vi leser bare ut
+  punktene når Fullfør tegning trykkes.
+- **Beskrivelse** (`/Form/Beskrivelse`) er steg 2 av 3: tittel, kategori,
+  prioritet (farge), beskrivelse.
+- **Oppsummering** (`/Form/Oppsummering`) er steg 3 av 3: les-modus, viser
+  alt du har fylt ut før du sender inn.
+- **Kvittering** (`/Form/Kvittering`) er takke-siden etter innsending, viser
+  status og hva som ble sendt inn.
 
 ## Kartet og tegninga
 

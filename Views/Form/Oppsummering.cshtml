@@ -50,10 +50,7 @@
             </div>
             <div class="ressurs-felt">
                 <label>Type</label>
-                <p>
-                    <i class="fa-solid @(Model.Type == "behov" ? "fa-triangle-exclamation" : "fa-hand-holding-heart")"></i>
-                    @(Model.Type == "behov" ? "Meld behov" : "Tilby ressurs")
-                </p>
+                <p>@(Model.Type == "behov" ? "Meld behov" : "Tilby ressurs")</p>
             </div>
             <div class="ressurs-felt">
                 <label>Prioritet</label>

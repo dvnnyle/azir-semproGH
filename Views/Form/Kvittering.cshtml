@@ -20,19 +20,10 @@
         <div class="ressurs-steg-header">
             <p class="ressurs-kvittering-merke"><i class="fa-solid fa-circle-check"></i> Sendt inn</p>
             <h2 class="ressurs-steg-tittel">Kvittering</h2>
-            <p class="ressurs-kvittering-merke"><i class="fa-solid fa-circle-notch"></i> Status: @Model.Status</p>
-            <p class="ressurs-kvittering-merke"><i class="fa-solid @(Model.Type == "behov" ? "fa-triangle-exclamation" : "fa-hand-holding-heart")"></i> @(Model.Type == "behov" ? "Meld behov" : "Tilby ressurs")</p>
         </div>
 
         <div class="ressurs-split__fields">
-            @if (Model.Type == "behov")
-            {
-                <p class="ressurs-kvittering-tekst">Takk for at du melder <strong>@Model.Tittel</strong> som et behov. Det er registrert og synlig for andre.</p>
-            }
-            else
-            {
-                <p class="ressurs-kvittering-tekst">Takk for at du tilbyr <strong>@Model.Tittel</strong> til beredskapen. Ressursen er registrert og synlig for andre.</p>
-            }
+            <p class="ressurs-kvittering-tekst">Takk for innsendingen. Den er registrert og synlig for andre.</p>
             <i class="fa-regular fa-face-smile ressurs-kvittering-ikon"></i>
 
             <div class="ressurs-split__actions">
