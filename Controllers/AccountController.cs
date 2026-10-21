@@ -55,7 +55,7 @@ this.userManager = userManager;
             return View(model);
         }
 
-        if (await database.Users.AnyAsync(user => user.Phone == model.PhoneNumber))
+        if (await userManager.Users.AnyAsync(user => user.PhoneNumber == model.PhoneNumber))
         {
             ModelState.AddModelError("PhoneNumber", "Dette telefonnummeret er allerede registrert.");
             return View(model);

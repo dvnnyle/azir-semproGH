@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Registrer deg";
 }
+
 <link rel="stylesheet" href="~/css/account.css" asp-append-version="true">
 
 <div class="page-fill konto-wrap">
@@ -44,11 +45,16 @@
                 <input type="password" asp-for="Password" class="konto-input" placeholder="Passord her" minlength="8" required>
             </div>
 
+            <div class="felt-gruppe">
+                <label class="konto-label" asp-for="ConfirmPassword">Bekreft passord</label>
+                <input type="password" asp-for="ConfirmPassword" class="konto-input" placeholder="Gjenta passord" required>
+                <span asp-validation-for="ConfirmPassword"></span>
+            </div>
+
             <button type="submit" class="konto-knapp">Registrer deg</button>
         </form>
 
-        <div class="bytte-row">
-            Har du allerede en konto? <a asp-controller="Account" asp-action="Login">Logg inn</a>
+    n konto? <a asp-controller="Account" asp-action="Login">Logg inn</a>
         </div>
     </div>
 </div>
