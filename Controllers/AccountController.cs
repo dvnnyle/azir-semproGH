@@ -25,7 +25,7 @@ public AccountController(
     this.userManager = userManager;
 }
 
-}
+
 
     [HttpGet("/login")]
     public IActionResult Login()
