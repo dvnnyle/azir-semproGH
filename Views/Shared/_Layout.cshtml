@@ -28,12 +28,12 @@
             </div>
         </div>
         <div class="nav-links">
-            <a asp-controller="Resources" asp-action="Index" class="nav-item @(navController == "Resources" ? "active" : "")">
-                <div class="nav-item-label">Ressurser</div>
-                <div class="active-indicator"></div>
-            </a>
             <a asp-controller="Form" asp-action="Index" class="nav-item @(navController == "Form" ? "active" : "")">
                 <div class="nav-item-label">Skjema</div>
+                <div class="active-indicator"></div>
+            </a>
+            <a asp-controller="Resources" asp-action="Index" class="nav-item @(navController == "Resources" ? "active" : "")">
+                <div class="nav-item-label">Ressurser</div>
                 <div class="active-indicator"></div>
             </a>
         </div>
