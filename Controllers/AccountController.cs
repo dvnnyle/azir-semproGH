@@ -13,12 +13,18 @@ public class AccountController : Controller
     private readonly PasswordHasher<User> passwordHasher = new();
     private readonly SignInManager<IdentityUser> signInManager;
 
-    public AccountController(
+private readonly UserManager<IdentityUser> userManager;
+
+public AccountController(
     AppDbContext database,
-    SignInManager<IdentityUser> signInManager)
+    SignInManager<IdentityUser> signInManager,
+    UserManager<IdentityUser> userManager)
 {
     this.database = database;
     this.signInManager = signInManager;
+    this.userManager = userManager;
+}
+
 }
 
     [HttpGet("/login")]
@@ -77,19 +83,28 @@ public async Task<IActionResult> Login(AccountViewModel model)
             return View(model);
         }
 
-        var user = new User
-        {
-            FirstName = model.FirstName,
-            LastName = model.LastName,
-            Phone = model.PhoneNumber,
-            Email = model.Email
-        };
+       var identityUser = new IdentityUser
+{
+    UserName = model.Email,
+    Email = model.Email,
+    PhoneNumber = model.PhoneNumber
+};
 
-        user.PasswordHash = passwordHasher.HashPassword(user, model.Password);
-        database.Users.Add(user);
-        await database.SaveChangesAsync();
+var result = await userManager.CreateAsync(
+    identityUser,
+    model.Password);
 
-        return RedirectToAction("Login");
+if (!result.Succeeded)
+{
+    foreach (var error in result.Errors)
+    {
+        ModelState.AddModelError("", error.Description);
+    }
+
+    return View(model);
+}
+
+return RedirectToAction("Login");
     }
 
     [Authorize]
