@@ -17,7 +17,12 @@ services:
       MYSQL_DATABASE: krisisdb
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-123}
     ports:
-      - "3306:3306"
+      # 3307 pa verten, ikke 3306 - en nativt installert MySQL (mysqld) kjorer
+      # allerede pa 3306 lokalt, og kolliderte med denne containeren.
+      # Containeren bruker fortsatt 3306 INNI seg selv/Docker-nettverket (se
+      # "Server=db;Port=3306" over - urort, siden det er container-til-
+      # container og ikke pavirkes av dette).
+      - "3307:3306"
     volumes:
       - mysql-data:/var/lib/mysql
       # Filnavnene her styrer rekkefølgen MySQL kjorer dem i (alfabetisk) - roles og
@@ -27,6 +32,7 @@ services:
       - ./Data/sql/users.sql:/docker-entrypoint-initdb.d/02-users.sql:ro
       - ./Data/sql/submissions.sql:/docker-entrypoint-initdb.d/03-submissions.sql:ro
       - ./Data/sql/points.sql:/docker-entrypoint-initdb.d/04-points.sql:ro
+      - ./Data/sql/eksempeldata.sql:/docker-entrypoint-initdb.d/05-eksempeldata.sql:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p$${MYSQL_ROOT_PASSWORD}"]
       interval: 5s
