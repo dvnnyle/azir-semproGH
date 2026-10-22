@@ -56,8 +56,12 @@ public class AccountController : Controller
             return View(model);
         }
 
+        // TODO: la bruker velge rolle ved registrering nar den UI-en bygges.
+        // Default til Privatperson sa alle kan registrere seg i mellomtiden.
+        var standardRolle = await database.Roles.FirstAsync(role => role.Navn == "Privatperson");
         var user = new User
         {
+            RoleId = standardRolle.RoleId,
             FirstName = model.FirstName,
             LastName = model.LastName,
             Phone = model.PhoneNumber,

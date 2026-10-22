@@ -4,16 +4,18 @@ CREATE TABLE Submissions (
     SubmissionId INT AUTO_INCREMENT PRIMARY KEY,
     -- Nullable inntil innlogging finnes - settes til den innloggede brukeren senere
     UserId INT NULL,
+    CategoryId INT NOT NULL,
     Tittel VARCHAR(255) NOT NULL,
-    Kategori VARCHAR(255) NOT NULL,
     -- "ressurs" (tilbyr hjelp) eller "behov" (trenger hjelp)
     Type VARCHAR(10) NOT NULL DEFAULT 'ressurs',
-    -- Prioritet: rod (akutt), gul (planlagt) eller gronn (lav prioritet/tilgjengelig)
-    Farge VARCHAR(10) NOT NULL DEFAULT 'gronn',
-    Lokasjon VARCHAR(255) NOT NULL,
-    PunkterJson TEXT NOT NULL,
+    Adresse VARCHAR(255) NOT NULL,
+    -- "hoy", "middels" eller "lav" - bare for behov. Ressurs er alltid gronn pa
+    -- kartet (utledes fra Type), trenger ikke lagres.
+    Prioritet VARCHAR(10) NULL,
+    Frist DATETIME NULL,
     Beskrivelse TEXT,
     Tidspunkt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     Status VARCHAR(20) NOT NULL DEFAULT 'ny',
-    FOREIGN KEY (UserId) REFERENCES Users(UserId)
+    FOREIGN KEY (UserId) REFERENCES Users(UserId),
+    FOREIGN KEY (CategoryId) REFERENCES Categories(CategoryId)
 );

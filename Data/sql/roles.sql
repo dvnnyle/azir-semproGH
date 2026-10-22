@@ -1,0 +1,16 @@
+USE krisisdb;
+
+CREATE TABLE Roles (
+    RoleId INT AUTO_INCREMENT PRIMARY KEY,
+    Navn VARCHAR(50) NOT NULL UNIQUE,
+    -- "offentlig", "privat" eller "admin" - styrer tilgang
+    Gruppe VARCHAR(20) NOT NULL
+);
+
+INSERT INTO Roles (Navn, Gruppe) VALUES
+    ('Admin', 'admin'),
+    ('Heimevernet', 'offentlig'),
+    ('Kartverket', 'offentlig'),
+    ('Privatperson', 'privat'),
+    ('Frivillig organisasjon', 'privat'),
+    ('Bedrift', 'privat');

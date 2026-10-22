@@ -2,6 +2,7 @@
 @{
     var sideTittel = Model.Type == "behov" ? "Meld behov" : "Tilby ressurs";
     ViewData["Title"] = sideTittel;
+    var kategorier = (List<azir_sempro.Models.Category>)ViewBag.Kategorier;
 }
 <link rel="stylesheet" href="~/lib/leaflet/dist/leaflet.min.css">
 <link rel="stylesheet" href="~/css/form.css" asp-append-version="true">
@@ -21,11 +22,10 @@
 
         <form asp-controller="Form" asp-action="Beskrivelse" method="post" class="ressurs-split__fields">
             <div asp-validation-summary="ModelOnly"></div>
-            @* Lokasjon/PunkterJson tas ikke pa nytt her - asp-for fyller dem automatisk
-               med verdiene fra steg 1, siden FormController.Beskrivelse() henter utkastet
-               fra TempData og sender det inn som modellen for denne siden. De sendes bare
-               skjult videre i POST-en sa de ikke forsvinner nar dette steget lagres. *@
-            <input type="hidden" asp-for="Lokasjon">
+            @* PunkterJson tas ikke pa nytt her - asp-for fyller den automatisk
+               med verdien fra steg 1, siden FormController.Beskrivelse() henter utkastet
+               fra TempData og sender det inn som modellen for denne siden. Den sendes bare
+               skjult videre i POST-en sa den ikke forsvinner nar dette steget lagres. *@
             <input type="hidden" asp-for="PunkterJson" id="punkterJsonInput">
 
             <div class="ressurs-felt">
@@ -33,27 +33,32 @@
                 <input asp-for="Tittel" placeholder="Skriv ressurstittel her" required>
             </div>
             <div class="ressurs-felt">
-                <label asp-for="Kategori">Kategori</label>
-                <select asp-for="Kategori" required>
+                <label asp-for="Adresse">Adresse</label>
+                <input asp-for="Adresse" placeholder="F.eks. Elvegata 12, 4610 Kristiansand" required>
+            </div>
+            <div class="ressurs-felt">
+                <label asp-for="CategoryId">Kategori</label>
+                <select asp-for="CategoryId" required>
                     <option value="">Velg kategori...</option>
-                    <option>Strøm</option>
-                    <option>Medisin</option>
-                    <option>Vann</option>
-                    <option>Mat</option>
-                    <option>Bolig</option>
-                    <option>Transport</option>
-                    <option>Annet</option>
+                    @foreach (var kategori in kategorier)
+                    {
+                        <option value="@kategori.CategoryId">@kategori.Navn</option>
+                    }
                 </select>
             </div>
             @* Type ble valgt pa steg 1 (Draw) - bare fores skjult videre herfra *@
-            <input type="hidden" asp-for="Type">
-            <div class="ressurs-felt">
-                <label asp-for="Farge">Prioritet</label>
-                <select asp-for="Farge" id="fargeValg">
-                    <option value="gronn" style="color:#10b981">Grønn - Lav prioritet</option>
-                    <option value="gul" style="color:#f59e0b">Gul - Planlagt</option>
-                    <option value="rod" style="color:#ef4444">Rød - Akutt</option>
+            <input type="hidden" asp-for="Type" id="typeInput">
+            <div class="ressurs-felt" id="prioritetFelt">
+                <label asp-for="Prioritet">Prioritet</label>
+                <select asp-for="Prioritet" id="prioritetValg">
+                    <option value="lav" style="color:#10b981">Lav</option>
+                    <option value="middels" style="color:#f59e0b">Middels</option>
+                    <option value="hoy" style="color:#ef4444">Høy</option>
                 </select>
+            </div>
+            <div class="ressurs-felt">
+                <label asp-for="Frist">Frist (valgfritt)</label>
+                <input asp-for="Frist" type="date">
             </div>
             <div class="ressurs-felt">
                 <label asp-for="Beskrivelse">Beskrivelse</label>
@@ -77,24 +82,26 @@
 <script>
     /* Det finnes ikke noe "bilde" av tegningen fra steg 1 - det som faktisk folger med
        videre er bare koordinat-listen i PunkterJson (satt av FormController via TempData,
-       se kommentaren ved skjul-feltene over). tegnRessursOmradeKart (wwwroot/js/ressurs-kart.js)
+       se kommentaren ved skjul-feltet over). tegnRessursOmradeKart (wwwroot/js/ressurs-kart.js)
        leser den samme JSON-en pa nytt og tegner et helt nytt polygon/nal pa DETTE sitt eget
        kart - en frisk gjentegning, ikke det samme Leaflet-laget som i Draw.cshtml. */
 
-    /* Fargekoden fra oppgavens kart-legende (case.md) - se samme oppslag i Oppsummering/Kvittering */
-    const fargeHex = { rod: '#ef4444', gul: '#f59e0b', gronn: '#10b981', bla: '#3b82f6' };
+    const standardFarge = '#10b981';
 
     const punkterJson = document.getElementById('punkterJsonInput').value;
-    const fargeValg = document.getElementById('fargeValg');
+    const typeInput = document.getElementById('typeInput');
+    const prioritetFelt = document.getElementById('prioritetFelt');
     let kartInstans = null;
 
     function tegnMedValgtFarge() {
         if (kartInstans) kartInstans.map.remove();
-        kartInstans = tegnRessursOmradeKart('map', punkterJson, { farge: fargeHex[fargeValg.value] });
-        /* <option>-fargen vises ikke alltid i selve den lukkede boksen (varierer per
-           nettleser/OS), sa vi setter fargen pa selve <select>-en direkte i tillegg */
-        fargeValg.style.color = fargeHex[fargeValg.value];
+        kartInstans = tegnRessursOmradeKart('map', punkterJson, { farge: standardFarge });
     }
+
+    function oppdaterPrioritetSynlighet() {
+        prioritetFelt.style.display = typeInput.value === 'behov' ? '' : 'none';
+    }
+
+    oppdaterPrioritetSynlighet();
     tegnMedValgtFarge();
-    fargeValg.addEventListener('change', tegnMedValgtFarge);
 </script>

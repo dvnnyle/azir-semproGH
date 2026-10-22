@@ -97,20 +97,31 @@
         <div class="resource-grid">
             @foreach (var submission in Model.Submissions)
             {
-                var typeLabel = submission.Type == "behov" ? "Etterspørres" : "Tilbys";
-                var typeClass = submission.Type == "behov" ? "need" : "offer";
-                var priority = submission.Farge switch
+                var erBehov = submission.Type == "behov";
+                var typeLabel = erBehov ? "Etterspørres" : "Tilbys";
+                var typeClass = erBehov ? "need" : "offer";
+                // Prioritet gir bare mening for behov - ressurs er alltid "tilgjengelig"/gronn
+                // (case.md sin legende: gronn = tilgjengelig ressurs).
+                var priority = !erBehov ? "available" : submission.Prioritet switch
                 {
-                    "rod" => "urgent",
-                    "gul" => "planned",
+                    "hoy" => "urgent",
+                    "middels" => "planned",
                     _ => "available"
                 };
-                var priorityLabel = submission.Farge switch
+                var priorityLabel = !erBehov ? "Tilgjengelig" : submission.Prioritet switch
                 {
-                    "rod" => "Akutt",
-                    "gul" => "Planlagt",
-                    _ => "Tilgjengelig"
+                    "hoy" => "Høy",
+                    "middels" => "Middels",
+                    _ => "Lav"
                 };
+                var fargeKode = priority switch
+                {
+                    "urgent" => "rod",
+                    "planned" => "gul",
+                    _ => "gronn"
+                };
+                var punkterJson = Model.PunkterPerSubmission.GetValueOrDefault(submission.SubmissionId, "[]");
+                var kategoriNavn = Model.KategoriNavn.GetValueOrDefault(submission.CategoryId, "");
                 var statusLabel = submission.Status switch
                 {
                     "vurderes" => "Vurderes",
@@ -131,17 +142,17 @@
                             class="resource-card__open"
                             data-resource-open
                             data-title="@submission.Tittel"
-                            data-category="@submission.Kategori"
+                            data-category="@kategoriNavn"
                             data-type="@typeLabel"
                             data-priority="@priorityLabel"
                             data-status="@statusLabel"
-                            data-location="@submission.Lokasjon"
+                            data-location="@submission.Adresse"
                             data-description="@submission.Beskrivelse"
                             data-submitted="@submission.Tidspunkt.ToString("dd.MM.yyyy 'kl.' HH:mm")"
-                            data-points="@submission.PunkterJson"
-                            data-color="@submission.Farge"
+                            data-points="@punkterJson"
+                            data-color="@fargeKode"
                             aria-label="Vis detaljer for @submission.Tittel">
-                        <span class="resource-map resource-map--preview" data-map-preview data-points="@submission.PunkterJson" data-color="@submission.Farge"></span>
+                        <span class="resource-map resource-map--preview" data-map-preview data-points="@punkterJson" data-color="@fargeKode"></span>
                         <span class="resource-card__badges">
                             <span class="resource-badge resource-badge--@typeClass">
                                 <i class="fa-solid @(submission.Type == "behov" ? "fa-triangle-exclamation" : "fa-hand-holding-heart")" aria-hidden="true"></i>
@@ -150,10 +161,10 @@
                             <span class="resource-badge resource-badge--priority">@priorityLabel</span>
                         </span>
                         <span class="resource-card__title">@submission.Tittel</span>
-                        <span class="resource-card__category">@submission.Kategori</span>
+                        <span class="resource-card__category">@kategoriNavn</span>
                         <span class="resource-card__location">
                             <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
-                            @(string.IsNullOrWhiteSpace(submission.Lokasjon) ? "Sted ikke oppgitt" : submission.Lokasjon)
+                            @(string.IsNullOrWhiteSpace(submission.Adresse) ? "Sted ikke oppgitt" : submission.Adresse)
                         </span>
                         <span class="resource-card__footer">
                             <span class="resource-status"><span class="resource-status__dot"></span>@statusLabel</span>

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using azir_sempro.Data;
@@ -16,13 +17,11 @@ public class ResourcesController : Controller
 
     public async Task<IActionResult> Index([FromQuery] ResourceListViewModel filters)
     {
-        var categories = await database.Submissions
+        var alleKategorier = await database.Categories
             .AsNoTracking()
-            .Where(submission => submission.Kategori != "")
-            .Select(submission => submission.Kategori)
-            .Distinct()
-            .OrderBy(category => category)
+            .OrderBy(category => category.Navn)
             .ToListAsync();
+        var kategoriNavn = alleKategorier.ToDictionary(c => c.CategoryId, c => c.Navn);
 
         var submissions = database.Submissions.AsNoTracking();
 
@@ -31,15 +30,15 @@ public class ResourcesController : Controller
             var search = filters.Search.Trim();
             submissions = submissions.Where(submission =>
                 submission.Tittel.Contains(search) ||
-                submission.Kategori.Contains(search) ||
-                submission.Lokasjon.Contains(search) ||
+                submission.Adresse.Contains(search) ||
                 (submission.Beskrivelse != null && submission.Beskrivelse.Contains(search)));
             filters.Search = search;
         }
 
         if (!string.IsNullOrWhiteSpace(filters.Category))
         {
-            submissions = submissions.Where(submission => submission.Kategori == filters.Category);
+            var kategoriId = alleKategorier.FirstOrDefault(c => c.Navn == filters.Category)?.CategoryId;
+            submissions = submissions.Where(submission => submission.CategoryId == kategoriId);
         }
 
         if (!string.IsNullOrWhiteSpace(filters.Type))
@@ -63,10 +62,25 @@ public class ResourcesController : Controller
             submissions = submissions.Where(submission => submission.Tidspunkt < dayAfterToDate);
         }
 
-        filters.Categories = categories;
-        filters.Submissions = await submissions
+        var treffliste = await submissions
             .OrderByDescending(submission => submission.Tidspunkt)
             .ToListAsync();
+
+        var submissionIder = treffliste.Select(s => s.SubmissionId).ToList();
+        var punkterPerSubmission = await database.Points
+            .AsNoTracking()
+            .Where(p => submissionIder.Contains(p.SubmissionId))
+            .OrderBy(p => p.Nr)
+            .GroupBy(p => p.SubmissionId)
+            .ToDictionaryAsync(
+                gruppe => gruppe.Key,
+                gruppe => JsonSerializer.Serialize(gruppe.Select(p => new { lat = p.Breddegrad, lng = p.Lengdegrad }))
+            );
+
+        filters.Categories = alleKategorier.Select(c => c.Navn).ToList();
+        filters.KategoriNavn = kategoriNavn;
+        filters.PunkterPerSubmission = punkterPerSubmission;
+        filters.Submissions = treffliste;
 
         return View(filters);
     }

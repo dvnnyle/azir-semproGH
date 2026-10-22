@@ -51,9 +51,8 @@
        tekststreng igjen, sa den kan sendes til tegnRessursOmradeKart pa samme mate som de andre sidene. */
     const punkterJson = JSON.stringify(@Html.Raw(string.IsNullOrWhiteSpace(Model.PunkterJson) ? "[]" : Model.PunkterJson));
 
-    /* Fargekoden fra oppgavens kart-legende (case.md) - samme oppslag som i Beskrivelse/Oppsummering */
-    const fargeHex = { rod: '#ef4444', gul: '#f59e0b', gronn: '#10b981', bla: '#3b82f6' };
-    tegnRessursOmradeKart('map', punkterJson, { farge: fargeHex['@Model.Farge'] || fargeHex.gronn });
+    const farge = '#10b981';
+    tegnRessursOmradeKart('map', punkterJson, { farge });
 
     /* Lagrer ogsa til localStorage, i tillegg til den ekte lagringen pa serveren (Punkt 2/3).
        Dette er bare en ekstra lokal cache (feks for Map-siden a lese senere) - IKKE den egentlige
