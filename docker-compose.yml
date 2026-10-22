@@ -20,10 +20,13 @@ services:
       - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
-      # Filnavnene her styrer rekkefølgen MySQL kjorer dem i (alfabetisk) - users må
-      # opprettes for submissions, siden Submissions har en FOREIGN KEY mot Users.
-      - ./Data/sql/users.sql:/docker-entrypoint-initdb.d/01-users.sql:ro
-      - ./Data/sql/submissions.sql:/docker-entrypoint-initdb.d/02-submissions.sql:ro
+      # Filnavnene her styrer rekkefølgen MySQL kjorer dem i (alfabetisk) - roles og
+      # categories før users/submissions (FK), points sist (FK mot submissions).
+      - ./Data/sql/roles.sql:/docker-entrypoint-initdb.d/00-roles.sql:ro
+      - ./Data/sql/categories.sql:/docker-entrypoint-initdb.d/01-categories.sql:ro
+      - ./Data/sql/users.sql:/docker-entrypoint-initdb.d/02-users.sql:ro
+      - ./Data/sql/submissions.sql:/docker-entrypoint-initdb.d/03-submissions.sql:ro
+      - ./Data/sql/points.sql:/docker-entrypoint-initdb.d/04-points.sql:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p$${MYSQL_ROOT_PASSWORD}"]
       interval: 5s

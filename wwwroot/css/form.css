@@ -290,6 +290,10 @@
     resize: none;
 }
 
+.ressurs-felt input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(2);
+}
+
 .ressurs-split__actions {
     display: flex;
     gap: 12px;

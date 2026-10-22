@@ -11,5 +11,8 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<User> Users { get; set; }
+    public DbSet<Role> Roles { get; set; }
+    public DbSet<Category> Categories { get; set; }
     public DbSet<Submission> Submissions { get; set; }
+    public DbSet<Point> Points { get; set; }
 }

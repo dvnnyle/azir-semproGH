@@ -5,10 +5,11 @@ namespace azir_sempro.Tests;
 public class FormViewModelTests
 {
     [Fact]
-    public void NyModell_HarGronnFargeSomStandard()
+    public void NyModell_HarIngenPrioritetSomStandard()
     {
+        // Prioritet er null som standard - gir bare mening nar Type settes til "behov"
         var model = new FormViewModel();
-        Assert.Equal("gronn", model.Farge);
+        Assert.Null(model.Prioritet);
     }
 
     [Fact]
