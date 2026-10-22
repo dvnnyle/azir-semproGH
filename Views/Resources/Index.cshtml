@@ -104,13 +104,13 @@
                 // (case.md sin legende: gronn = tilgjengelig ressurs).
                 var priority = !erBehov ? "available" : submission.Prioritet switch
                 {
-                    "hoy" => "urgent",
+                    "høy" => "urgent",
                     "middels" => "planned",
                     _ => "available"
                 };
                 var priorityLabel = !erBehov ? "Tilgjengelig" : submission.Prioritet switch
                 {
-                    "hoy" => "Høy",
+                    "høy" => "Høy",
                     "middels" => "Middels",
                     _ => "Lav"
                 };

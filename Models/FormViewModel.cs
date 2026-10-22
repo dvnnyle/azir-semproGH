@@ -8,7 +8,7 @@ public class FormViewModel
     public string Type { get; set; } = "ressurs";
     // Menneskelesbar adresse brukeren skriver inn selv (f.eks. "Elvegata 12, 4610 Kristiansand").
     public string Adresse { get; set; } = "";
-    // "hoy", "middels" eller "lav" - bare for behov. Ressurs er alltid gronn pa
+    // "høy", "middels" eller "lav" - bare for behov. Ressurs er alltid gronn pa
     // kartet (utledes fra Type), trenger ikke velges.
     public string? Prioritet { get; set; }
     public DateTime? Frist { get; set; }
