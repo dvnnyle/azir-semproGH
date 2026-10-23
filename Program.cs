@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using azir_sempro.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
         connectionString,
         ServerVersion.AutoDetect(connectionString)));
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -28,8 +33,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapStaticAssets();
 
 app.MapControllerRoute(
