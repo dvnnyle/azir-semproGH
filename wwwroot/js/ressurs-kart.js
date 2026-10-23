@@ -18,7 +18,7 @@ function tegnRessursOmradeKart(elementId, punkterJsonStr, options) {
     const bounds = L.latLngBounds(punkter);
     const senter = bounds.getCenter();
 
-    const farge = options.farge || '#10b981';
+    const farge = options.farge || '#3388ff';
     if (erOmrade) {
         L.polygon(punkter, { color: farge, fillColor: farge, fillOpacity: 0.35 }).addTo(map);
     } else {

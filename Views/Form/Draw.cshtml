@@ -1,6 +1,7 @@
 @model azir_sempro.Models.FormViewModel
 @{
-    ViewData["Title"] = "Tilby ressurs";
+    var sideTittel = Model.Type == "behov" ? "Meld behov" : "Tilby ressurs";
+    ViewData["Title"] = sideTittel;
 }
 <link rel="stylesheet" href="~/lib/leaflet/dist/leaflet.min.css">
 <link rel="stylesheet" href="~/lib/leaflet-geoman/dist/leaflet-geoman.css">
@@ -9,7 +10,7 @@
 <div class="ressurs-split">
     <div class="ressurs-split__form">
         <div class="ressurs-split__header">
-            <h1 id="sideTittel">Tilby ressurs</h1>
+            <h1 id="sideTittel">@sideTittel</h1>
         </div>
 
         <hr class="ressurs-split__divider">
@@ -18,11 +19,11 @@
             <div class="ressurs-felt">
                 <label>Type</label>
                 <div class="type-valg">
-                    <button type="button" class="type-knapp type-knapp--ressurs active" data-type="ressurs">
+                    <button type="button" class="type-knapp type-knapp--ressurs @(Model.Type != "behov" ? "active" : "")" data-type="ressurs">
                         <i class="fa-solid fa-hand-holding-heart"></i>
                         <span>Tilby ressurs</span>
                     </button>
-                    <button type="button" class="type-knapp type-knapp--behov" data-type="behov">
+                    <button type="button" class="type-knapp type-knapp--behov @(Model.Type == "behov" ? "active" : "")" data-type="behov">
                         <i class="fa-solid fa-triangle-exclamation"></i>
                         <span>Meld behov</span>
                     </button>
@@ -35,7 +36,6 @@
                 <h2 class="ressurs-steg-tittel">Velg omradet</h2>
             </div>
 
-            <input type="hidden" asp-for="Lokasjon" id="lokasjonInput">
             <input type="hidden" asp-for="PunkterJson" id="punkterJsonInput">
 
             <div class="ressurs-tegneverktoy">
@@ -43,7 +43,7 @@
                 <button type="button" class="bar-knapp modus-knapp" id="pinModus" title="Slipp nal"><i class="fa-solid fa-location-dot"></i></button>
                 <button type="button" class="bar-knapp modus-knapp" id="handModus" title="Flytt kart"><i class="fa-solid fa-hand"></i></button>
                 <button type="button" class="bar-knapp" id="nullstillKnapp" title="Nullstill"><i class="fa-solid fa-rotate-left"></i></button>
-                <button type="button" class="ressurs-btn ressurs-btn--submit ressurs-btn--liten" id="fullforKnapp" disabled>Fullf&oslash;r tegning</button>
+                <button type="button" class="ressurs-btn ressurs-btn--submit ressurs-btn--liten" id="fullforKnapp" disabled>Fullfør tegning</button>
             </div>
 
             <div class="mini-kart" id="lokasjonSnapshot">
@@ -101,7 +101,6 @@
     const fullforKnapp = document.getElementById('fullforKnapp');
     const nesteKnapp = document.getElementById('nesteKnapp');
     const lokasjonPlassholder = document.getElementById('lokasjonPlassholder');
-    const lokasjonInput = document.getElementById('lokasjonInput');
     const punkterJsonInput = document.getElementById('punkterJsonInput');
     const modusKnapper = [omradeButton, pinButton, handButton];
 
@@ -173,27 +172,27 @@
     });
 
     /* Kjores nar brukeren trykker "Fullfor tegning". Punktene fra Geoman-laget
-       gjores her om til dataene som faktisk sendes videre i skjemaet
-       (PunkterJson + Lokasjon), og en liten forhandsvisning av omradet bygges
-       i sidepanelet sa brukeren ser hva som er valgt for de gar til neste steg. */
+       gjores her om til PunkterJson som faktisk sendes videre i skjemaet, og
+       en liten forhandsvisning av omradet bygges i sidepanelet sa brukeren ser
+       hva som er valgt for de gar til neste steg. */
     fullforKnapp.addEventListener('click', () => {
         if (!gjeldendeLag) return;
         map.pm.disableDraw();
         const erOmrade = gjeldendeType !== 'Marker';
         const punkter = (erOmrade ? gjeldendeLag.getLatLngs()[0] : [gjeldendeLag.getLatLng()]).map(p => ({ lat: p.lat, lng: p.lng }));
         const bounds = L.latLngBounds(punkter.map(p => [p.lat, p.lng]));
-        const senter = bounds.getCenter(); /* brukes som "Lokasjon" uansett om det er nal eller omrade */
+        const senter = bounds.getCenter();
 
         punkterJsonInput.value = JSON.stringify(punkter);
-        lokasjonInput.value = senter.lat.toFixed(6) + ', ' + senter.lng.toFixed(6);
         visKoordinater(senter);
 
-        /* Samme stil pa selve kartet som i forhandsvisningen: gront omrade, eller en nal
-           hvis det bare er ett punkt - ingen krysshar-markor i tillegg lenger */
-        map.removeLayer(gjeldendeLag);
-        gjeldendeLag = erOmrade
-            ? L.polygon(punkter.map(p => [p.lat, p.lng]), { color: '#10b981', fillColor: '#10b981', fillOpacity: 0.35 }).addTo(map)
-            : L.marker(senter, { icon: nalIkon }).addTo(map);
+        /* Omradet pa selve tegnekartet far sta urort med Geoman sin egen
+           standardstil (blatt) - kun en nal far egen custom-ikon, siden Geoman
+           sin standard nal-markor ikke passer stilen pa resten av siden. */
+        if (!erOmrade) {
+            map.removeLayer(gjeldendeLag);
+            gjeldendeLag = L.marker(senter, { icon: nalIkon }).addTo(map);
+        }
 
         lokasjonPlassholder.hidden = true;
         /* Mini-kartet i forhandsvisningen opprettes forst her (ikke ved siste-lasting av
@@ -203,7 +202,9 @@
             tileLayer().addTo(snapshotKart);
         }
         if (snapshotPolygon) snapshotKart.removeLayer(snapshotPolygon);
-        snapshotPolygon = erOmrade ? L.polygon(punkter.map(p => [p.lat, p.lng]), { color: '#10b981', fillColor: '#10b981', fillOpacity: 0.35 }).addTo(snapshotKart) : null;
+        /* Geoman sin egen standardfarge (blatt) - samme som pa selve tegnekartet,
+           siden Leaflet-lag ikke kan deles mellom to kart, ma den lages pa nytt her. */
+        snapshotPolygon = erOmrade ? L.polygon(punkter.map(p => [p.lat, p.lng]), { color: '#3388ff', fillColor: '#3388ff', fillOpacity: 0.2 }).addTo(snapshotKart) : null;
         if (snapshotMarkor) snapshotKart.removeLayer(snapshotMarkor);
         snapshotMarkor = erOmrade ? null : L.marker(senter, { icon: nalIkon }).addTo(snapshotKart);
         setTimeout(() => {

@@ -3,12 +3,18 @@ namespace azir_sempro.Models;
 public class FormViewModel
 {
     public string Tittel { get; set; } = "";
-    public string Kategori { get; set; } = "";
+    public int CategoryId { get; set; }
     // Hva det er: "ressurs" (tilbyr hjelp) eller "behov" (trenger hjelp) - styrer ikon.
     public string Type { get; set; } = "ressurs";
-    // Hvor viktig det er: rod (akutt), gul (planlagt) eller gronn (lav prioritet/tilgjengelig).
-    public string Farge { get; set; } = "gronn";
-    public string Lokasjon { get; set; } = "";
+    // Menneskelesbar adresse brukeren skriver inn selv (f.eks. "Elvegata 12, 4610 Kristiansand").
+    public string Adresse { get; set; } = "";
+    // "høy", "middels" eller "lav" - bare for behov. Ressurs er alltid gronn pa
+    // kartet (utledes fra Type), trenger ikke velges.
+    public string? Prioritet { get; set; }
+    public DateTime? Frist { get; set; }
+    // Rakoordinater fra Leaflet (JSON-array {lat,lng}) - wire-format som sendes
+    // mellom stegene. FormController.Submit() gjor dette om til Points-rader,
+    // ikke lagret rått noe sted i databasen lenger.
     public string PunkterJson { get; set; } = "";
     public string Beskrivelse { get; set; } = "";
     public DateTime Tidspunkt { get; set; }

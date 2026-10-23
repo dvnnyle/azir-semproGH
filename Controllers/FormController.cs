@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using azir_sempro.Data;
 using azir_sempro.Models;
 
@@ -9,6 +10,7 @@ public class FormController : Controller
 {
     private readonly AppDbContext database;
     private const string UtkastNokkel = "RessursUtkast";
+    private static readonly JsonSerializerOptions CaseInsensitiv = new() { PropertyNameCaseInsensitive = true };
 
     public FormController(AppDbContext database)
     {
@@ -37,7 +39,7 @@ public class FormController : Controller
     }
 
     // Steg 2: fyll ut tittel, kategori og beskrivelse
-    public IActionResult Beskrivelse()
+    public async Task<IActionResult> Beskrivelse()
     {
         var utkast = HentUtkast();
         if (utkast is null || string.IsNullOrWhiteSpace(utkast.PunkterJson))
@@ -45,27 +47,34 @@ public class FormController : Controller
             return RedirectToAction(nameof(Draw));
         }
 
+        ViewBag.Kategorier = await database.Categories.OrderBy(c => c.Navn).ToListAsync();
         return View(utkast);
     }
 
     [HttpPost]
-    public IActionResult Beskrivelse(FormViewModel model)
+    public async Task<IActionResult> Beskrivelse(FormViewModel model)
     {
         var harFeil = false;
-        
+
         if (string.IsNullOrWhiteSpace(model.Tittel))
         {
             ModelState.AddModelError("", "Du ma gi ressursen en tittel.");
             harFeil = true;
         }
-        if (string.IsNullOrWhiteSpace(model.Kategori))
+        if (model.CategoryId <= 0)
         {
             ModelState.AddModelError("", "Du ma velge en kategori.");
             harFeil = true;
         }
-        
+        if (string.IsNullOrWhiteSpace(model.Adresse))
+        {
+            ModelState.AddModelError("", "Du ma skrive inn en adresse.");
+            harFeil = true;
+        }
+
         if (harFeil)
         {
+            ViewBag.Kategorier = await database.Categories.OrderBy(c => c.Navn).ToListAsync();
             return View(model);
         }
 
@@ -74,7 +83,7 @@ public class FormController : Controller
     }
 
     // Steg 3: oppsummering av alt som er fylt ut, les-modus for skjemaet
-    public IActionResult Oppsummering()
+    public async Task<IActionResult> Oppsummering()
     {
         var utkast = HentUtkast();
         if (utkast is null || string.IsNullOrWhiteSpace(utkast.Tittel))
@@ -82,6 +91,8 @@ public class FormController : Controller
             return RedirectToAction(nameof(Draw));
         }
 
+        var kategori = await database.Categories.FindAsync(utkast.CategoryId);
+        ViewBag.KategoriNavn = kategori?.Navn ?? "";
         return View(utkast);
     }
 
@@ -93,16 +104,36 @@ public class FormController : Controller
         var innsending = new Submission
         {
             Tittel = model.Tittel,
-            Kategori = model.Kategori,
+            CategoryId = model.CategoryId,
             Type = model.Type,
-            Farge = model.Farge,
-            Lokasjon = model.Lokasjon,
-            PunkterJson = model.PunkterJson,
+            Adresse = model.Adresse,
+            // Prioritet gir bare mening for behov - ressurs er alltid gronn pa
+            // kartet, utledes fra Type, trenger ikke lagres.
+            Prioritet = model.Type == "behov" ? model.Prioritet : null,
+            Frist = model.Frist,
             Beskrivelse = model.Beskrivelse,
             Tidspunkt = DateTime.Now,
             Status = "ny"
         };
         database.Submissions.Add(innsending);
+        await database.SaveChangesAsync();
+
+        // Punktene fra Leaflet (wire-format i PunkterJson) lagres som egne
+        // rader i Points, en per hjornepunkt, i tegne-rekkefolge.
+        // PropertyNameCaseInsensitive er nodvendig - JS sender sma bokstaver
+        // ("lat"/"lng"), System.Text.Json er case-sensitive som standard (ulikt
+        // Newtonsoft), sa uten denne matcher ingenting og alt blir stille 0.
+        var punkter = JsonSerializer.Deserialize<List<PunktDto>>(model.PunkterJson, CaseInsensitiv) ?? [];
+        for (var i = 0; i < punkter.Count; i++)
+        {
+            database.Points.Add(new Point
+            {
+                SubmissionId = innsending.SubmissionId,
+                Nr = (short)i,
+                Breddegrad = punkter[i].Lat,
+                Lengdegrad = punkter[i].Lng
+            });
+        }
         await database.SaveChangesAsync();
 
         model.Tidspunkt = innsending.Tidspunkt;
@@ -112,6 +143,8 @@ public class FormController : Controller
         LagreUtkast(model);
         return RedirectToAction(nameof(Kvittering));
     }
+
+    private record PunktDto(decimal Lat, decimal Lng);
 
     // Kvittering etter innsending
     public IActionResult Kvittering()

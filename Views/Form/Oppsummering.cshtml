@@ -2,6 +2,7 @@
 @{
     var sideTittel = Model.Type == "behov" ? "Meld behov" : "Tilby ressurs";
     ViewData["Title"] = sideTittel;
+    var erBehov = Model.Type == "behov";
 }
 <link rel="stylesheet" href="~/lib/leaflet/dist/leaflet.min.css">
 <link rel="stylesheet" href="~/css/form.css" asp-append-version="true">
@@ -20,13 +21,14 @@
         </div>
 
         <form asp-controller="Form" asp-action="Submit" method="post" class="ressurs-split__fields">
-            <input type="hidden" asp-for="Lokasjon">
+            <input type="hidden" asp-for="Adresse">
             <input type="hidden" asp-for="PunkterJson" id="punkterJsonInput">
             <input type="hidden" asp-for="Tittel">
-            <input type="hidden" asp-for="Kategori">
+            <input type="hidden" asp-for="CategoryId">
             <input type="hidden" asp-for="Beskrivelse">
             <input type="hidden" asp-for="Type">
-            <input type="hidden" asp-for="Farge">
+            <input type="hidden" asp-for="Prioritet">
+            <input type="hidden" asp-for="Frist">
 
             <div class="ressurs-felt">
                 <label>Lokasjon</label>
@@ -45,24 +47,35 @@
                 <p>@Model.Tittel</p>
             </div>
             <div class="ressurs-felt">
+                <label>Adresse</label>
+                <p>@Model.Adresse</p>
+            </div>
+            <div class="ressurs-felt">
                 <label>Kategori</label>
-                <p>@Model.Kategori</p>
+                <p>@ViewBag.KategoriNavn</p>
             </div>
             <div class="ressurs-felt">
                 <label>Type</label>
-                <p>
-                    <i class="fa-solid @(Model.Type == "behov" ? "fa-triangle-exclamation" : "fa-hand-holding-heart")"></i>
-                    @(Model.Type == "behov" ? "Meld behov" : "Tilby ressurs")
-                </p>
+                <p>@(erBehov ? "Meld behov" : "Tilby ressurs")</p>
             </div>
-            <div class="ressurs-felt">
-                <label>Prioritet</label>
-                <p>@(Model.Farge switch {
-                    "rod" => "Rød - Akutt",
-                    "gul" => "Gul - Planlagt",
-                    _ => "Grønn - Lav prioritet"
-                })</p>
-            </div>
+            @if (erBehov)
+            {
+                <div class="ressurs-felt">
+                    <label>Prioritet</label>
+                    <p>@(Model.Prioritet switch {
+                        "høy" => "Høy",
+                        "middels" => "Middels",
+                        _ => "Lav"
+                    })</p>
+                </div>
+                @if (Model.Frist.HasValue)
+                {
+                    <div class="ressurs-felt">
+                        <label>Frist</label>
+                        <p>@Model.Frist.Value.ToString("dd.MM.yyyy HH:mm")</p>
+                    </div>
+                }
+            }
             <div class="ressurs-felt">
                 <label>Beskrivelse</label>
                 <p>@(string.IsNullOrWhiteSpace(Model.Beskrivelse) ? "Ingen beskrivelse lagt til." : Model.Beskrivelse)</p>
@@ -88,9 +101,7 @@
        tegne den pa nytt, ikke fordi noe nytt tegnes pa denne siden. */
     const punkterJson = document.getElementById('punkterJsonInput').value;
 
-    /* Fargekoden fra oppgavens kart-legende (case.md) - samme oppslag som i Beskrivelse/Kvittering */
-    const fargeHex = { rod: '#ef4444', gul: '#f59e0b', gronn: '#10b981', bla: '#3b82f6' };
-    const farge = fargeHex['@Model.Farge'] || fargeHex.gronn;
+    const farge = '#10b981';
 
     /* Stort kart i bakgrunnen */
     const { senter } = tegnRessursOmradeKart('map', punkterJson, { farge });
