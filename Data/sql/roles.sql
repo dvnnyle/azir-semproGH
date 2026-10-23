@@ -1,4 +1,5 @@
 USE krisisdb;
+SET NAMES utf8mb4;
 
 CREATE TABLE Roles (
     RoleId INT AUTO_INCREMENT PRIMARY KEY,

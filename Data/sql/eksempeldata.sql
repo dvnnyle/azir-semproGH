@@ -1,4 +1,8 @@
 USE krisisdb;
+-- Uten denne tolker mysql-klienten init-scriptet med feil tegnsett, og
+-- æøå blir lagret dobbelt-kodet (f.eks. "ø" -> "Ã¸" i databasen).
+-- testdata som blir lagt inn i databasen ved oppstart av docker-containeren. Dette er kun for å ha noe data å teste med, og kan slettes eller endres etter behov.
+SET NAMES utf8mb4;
 
 -- litt sånn test data xoxo docker
 
