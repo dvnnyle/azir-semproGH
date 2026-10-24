@@ -268,13 +268,6 @@
     color: #f59e0b;
 }
 
-.ressurs-adresse-status {
-    color: #64748b;
-    font-family: 'Manrope', sans-serif;
-    font-size: 12px;
-    margin: 0;
-}
-
 .ressurs-felt input,
 .ressurs-felt select,
 .ressurs-felt textarea {
