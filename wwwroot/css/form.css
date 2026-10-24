@@ -137,6 +137,14 @@
     color: #10b981;
 }
 
+#minPosisjonKnapp {
+    color: #ef4444;
+}
+
+#minPosisjonKnapp:hover {
+    color: #f87171;
+}
+
 .mini-kart {
     background: #0f1729;
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -258,6 +266,13 @@
     background: rgba(245, 158, 11, 0.12);
     border-color: #f59e0b;
     color: #f59e0b;
+}
+
+.ressurs-adresse-status {
+    color: #64748b;
+    font-family: 'Manrope', sans-serif;
+    font-size: 12px;
+    margin: 0;
 }
 
 .ressurs-felt input,

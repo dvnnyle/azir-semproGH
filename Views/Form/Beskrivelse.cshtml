@@ -32,10 +32,9 @@
                 <label asp-for="Tittel">Tittel</label>
                 <input asp-for="Tittel" placeholder="Skriv ressurstittel her" required>
             </div>
-            <div class="ressurs-felt">
-                <label asp-for="Adresse">Adresse</label>
-                <input asp-for="Adresse" placeholder="F.eks. Elvegata 12, 4610 Kristiansand" required>
-            </div>
+            @* Adresse fylles ut pa steg 1 (Draw) rett etter tegningen, basert
+               pa senteret av det som ble tegnet - fores bare skjult videre her. *@
+            <input type="hidden" asp-for="Adresse">
             <div class="ressurs-felt">
                 <label asp-for="CategoryId">Kategori</label>
                 <select asp-for="CategoryId" required>

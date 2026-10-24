@@ -1,0 +1,533 @@
+.hjem-hero,
+.hjem-steg-seksjon,
+.hjem-kart-seksjon,
+.hjem-faq,
+.hjem-avslutning {
+  font-family: 'Manrope', sans-serif;
+}
+
+.hjem-tittel-m {
+  font-size: clamp(24px, 3.2vw, 36px);
+  font-weight: 800;
+  line-height: 1.2;
+  color: #f8fafc;
+  margin-top: 12px;
+  max-width: 560px;
+}
+
+.hjem-tittel-l {
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 800;
+  line-height: 1.2;
+  color: #f8fafc;
+}
+
+.hjem-brodtekst {
+  font-size: 16px;
+  line-height: 1.65;
+  color: #a6b5ca;
+}
+
+.hjem-sentrert {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.hjem-divider {
+  width: 100%;
+  max-width: 1200px;
+  height: 1px;
+  margin: 0 auto;
+  background: #334155;
+}
+
+.hjem-sentrert--rad {
+  display: flex;
+  gap: 100px;
+}
+
+.hjem-knapper {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.hjem-knapp {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  height: 52px;
+  padding: 0 24px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.hjem-knapp--primary {
+  background: #10b981;
+  color: #05251e;
+}
+
+.hjem-knapp--primary:hover {
+  background: #34d399;
+}
+
+.hjem-knapp--secondary {
+  background: transparent;
+  border: 1px solid #334155;
+  color: #f8fafc;
+}
+
+.hjem-knapp--secondary:hover {
+  border-color: #10b981;
+  color: #34d399;
+}
+
+/* ---------- Hero ---------- */
+
+.hjem-hero {
+  position: relative;
+  display: flex;
+  gap: 64px;
+  align-items: center;
+  min-height: calc(100vh - var(--nav-height) - var(--nav-margin));
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 0 72px;
+  box-sizing: border-box;
+}
+
+.hjem-hero::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  background-image:
+    linear-gradient(to right, rgba(148, 163, 184, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.07) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 40%, transparent 80%);
+  mask-image: radial-gradient(ellipse at center, #000 40%, transparent 80%);
+}
+
+.hjem-hero__intro,
+.hjem-hero__visual {
+  position: relative;
+  z-index: 1;
+}
+
+.hjem-hero__intro {
+  flex: 1 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 26px;
+  min-width: 0;
+}
+
+.hjem-hero__tittel {
+  font-size: clamp(32px, 5vw, 58px);
+  font-weight: 800;
+  line-height: 1.13;
+  color: #f8fafc;
+}
+
+.hjem-aksent {
+  color: #55d9b0;
+}
+
+.hjem-hero__tekst {
+  font-size: 19px;
+  line-height: 1.65;
+  color: #a6b5ca;
+  max-width: 560px;
+}
+
+.hjem-hero__notis {
+  font-size: 13px;
+  color: #8394ab;
+}
+
+.hjem-hero__visual {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 530px;
+  flex-shrink: 0;
+}
+
+.hjem-hero__bildetekst {
+  font-size: 12px;
+  color: #8394ab;
+  text-align: center;
+}
+
+/* Ressursliste: speiler de ekte prioritetsfargene fra kartet
+   (rod/gul/gronn) og eksempeldataene i Data/sql/eksempeldata.sql. */
+.hjem-status {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 530px;
+  background: #0b1420;
+  border: 1px solid #1e293b;
+  border-radius: 20px;
+  padding: 8px;
+}
+
+.hjem-status__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  margin-bottom: 6px;
+  background: #1e293b;
+  border-radius: 14px;
+}
+
+.hjem-status__tittel {
+  font-size: 13px;
+  font-weight: 800;
+  color: #f1f5f9;
+}
+
+.hjem-status__lenke {
+  font-size: 12px;
+  font-weight: 700;
+  color: #55d9b0;
+  text-decoration: none;
+}
+
+.hjem-status__lenke:hover {
+  color: #34d399;
+  text-decoration: underline;
+}
+
+.hjem-status__rad {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 14px;
+}
+
+.hjem-status__prikk {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.hjem-status__rad--rod .hjem-status__prikk {
+  background: #ef4444;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+}
+
+.hjem-status__rad--gul .hjem-status__prikk {
+  background: #f59e0b;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+.hjem-status__rad--gronn .hjem-status__prikk {
+  background: #10b981;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.hjem-status__info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.hjem-status__navn {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f1f5f9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hjem-status__merke {
+  font-size: 12px;
+  color: #7d8da1;
+}
+
+.hjem-status__rad--rod .hjem-status__merke {
+  color: #f87171;
+}
+
+.hjem-status__rad--gul .hjem-status__merke {
+  color: #fbbf24;
+}
+
+.hjem-status__rad--gronn .hjem-status__merke {
+  color: #34d399;
+}
+
+.hjem-status__tid {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: #556172;
+}
+
+/* ---------- Slik fungerer Krisis ---------- */
+
+.hjem-steg-seksjon {
+  padding: 64px 0;
+}
+
+.hjem-steg-seksjon .hjem-sentrert {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.hjem-steg-rad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 48px;
+}
+
+.hjem-steg {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.hjem-steg__header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.hjem-steg__nummer {
+  font-size: 20px;
+  font-weight: 600;
+  color: #55d9b0;
+}
+
+.hjem-steg__linje {
+  flex: 1 0 0;
+  height: 1px;
+  background: #334155;
+}
+
+.hjem-steg h3 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.hjem-steg p {
+  font-size: 16px;
+  line-height: 1.65;
+  color: #a6b5ca;
+}
+
+
+/* ---------- Oppdag ressurser på kartet ---------- */
+
+.hjem-kart-seksjon {
+  background: #03080e;
+  width: 100vw;
+  margin-left: 50%;
+  transform: translateX(-50%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 88px 0;
+  box-sizing: border-box;
+}
+
+.hjem-kart-seksjon .hjem-sentrert--rad {
+  width: 100%;
+  gap: 64px;
+  align-items: center;
+}
+
+.hjem-kart-seksjon__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 26px;
+  width: 480px;
+  flex-shrink: 0;
+}
+
+.hjem-kart-seksjon__intro .hjem-tittel-m {
+  font-size: clamp(28px, 4vw, 44px);
+}
+
+.hjem-kart-seksjon__intro .hjem-brodtekst {
+  font-size: 18px;
+}
+
+.hjem-veiledning {
+  display: flex;
+  gap: 10px;
+}
+
+.hjem-veiledning img {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.hjem-veiledning p {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.6;
+  color: #55d9b0;
+}
+
+.hjem-kartkort {
+  flex: 1 0 0;
+  border-radius: 16px;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.hjem-kartkort img {
+  width: 100%;
+  height: 520px;
+  object-fit: cover;
+}
+
+/* ---------- Vanlige spørsmål ---------- */
+
+.hjem-faq {
+  padding: 140px 0 0;
+}
+
+.hjem-faq__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 360px;
+  flex-shrink: 0;
+}
+
+.hjem-faq__liste {
+  flex: 1 0 0;
+}
+
+.hjem-faq__rad {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 18px 0 20px;
+  border-top: 1px solid #334155;
+}
+
+.hjem-faq__rad h3 {
+  font-size: 17px;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.hjem-faq__rad p {
+  font-size: 14px;
+  line-height: 1.65;
+  color: #a6b5ca;
+}
+
+/* ---------- Bli med og sideinformasjon ---------- */
+
+.hjem-avslutning {
+  display: flex;
+  flex-direction: column;
+  gap: 52px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 64px 0 32px;
+  box-sizing: border-box;
+}
+
+.hjem-invitasjon {
+  display: flex;
+  gap: 48px;
+  align-items: center;
+  padding: 40px;
+  border-radius: 24px;
+  background: #1e293b;
+  border: 1px solid #334155;
+}
+
+.hjem-invitasjon__tekst {
+  flex: 1 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.hjem-invitasjon__handling {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.hjem-invitasjon__logginn {
+  display: flex;
+  gap: 6px;
+  font-size: 12px;
+  color: #a6b5ca;
+}
+
+.hjem-invitasjon__logginn a {
+  font-weight: 800;
+  color: #55d9b0;
+  text-decoration: none;
+}
+
+
+/* ---------- Responsiv ---------- */
+
+@media (max-width: 1100px) {
+  .hjem-hero,
+  .hjem-sentrert--rad {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hjem-hero__visual,
+  .hjem-kart-seksjon__intro,
+  .hjem-faq__intro {
+    width: 100%;
+  }
+
+  .hjem-status {
+    width: 100%;
+  }
+
+  .hjem-invitasjon {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 860px) {
+  .hjem-hero,
+  .hjem-avslutning,
+  .hjem-sentrert {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .hjem-steg-rad {
+    grid-template-columns: 1fr;
+  }
+}

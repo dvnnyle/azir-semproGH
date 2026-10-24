@@ -33,6 +33,11 @@ public class FormController : Controller
             ModelState.AddModelError("", "Du ma tegne et omrade eller sette en nal for a ga videre.");
             return View(model);
         }
+        if (string.IsNullOrWhiteSpace(model.Adresse))
+        {
+            ModelState.AddModelError("", "Du ma skrive inn en adresse.");
+            return View(model);
+        }
 
         LagreUtkast(model);
         return RedirectToAction(nameof(Beskrivelse));

@@ -39,11 +39,11 @@
             <input type="hidden" asp-for="PunkterJson" id="punkterJsonInput">
 
             <div class="ressurs-tegneverktoy">
+                <button type="button" class="bar-knapp" id="minPosisjonKnapp" title="Bruk min posisjon"><i class="fa-solid fa-location-crosshairs"></i></button>
                 <button type="button" class="bar-knapp modus-knapp active" id="omradeModus" title="Velg omrade"><i class="fa-solid fa-vector-square"></i></button>
                 <button type="button" class="bar-knapp modus-knapp" id="pinModus" title="Slipp nal"><i class="fa-solid fa-location-dot"></i></button>
                 <button type="button" class="bar-knapp modus-knapp" id="handModus" title="Flytt kart"><i class="fa-solid fa-hand"></i></button>
                 <button type="button" class="bar-knapp" id="nullstillKnapp" title="Nullstill"><i class="fa-solid fa-rotate-left"></i></button>
-                <button type="button" class="ressurs-btn ressurs-btn--submit ressurs-btn--liten" id="fullforKnapp" disabled>Fullfør tegning</button>
             </div>
 
             <div class="mini-kart" id="lokasjonSnapshot">
@@ -57,6 +57,12 @@
             <div class="koordinat-boks" id="koordinatBoks">
                 <div><span>Lat</span><strong id="koordinatLat">-</strong></div>
                 <div><span>Lng</span><strong id="koordinatLng">-</strong></div>
+            </div>
+
+            <div class="ressurs-felt">
+                <label asp-for="Adresse">Adresse</label>
+                <input asp-for="Adresse" placeholder="Fylles ut nar du fullforer tegningen" required>
+                <p id="adresseStatus" class="ressurs-adresse-status"></p>
             </div>
 
             <div class="ressurs-split__actions">
@@ -82,7 +88,7 @@
        sendes videre til steg 2 (Beskrivelse). */
 
     const map = L.map('map', { minZoom: 4, attributionControl: false }).setView([58.1635601, 8.0031555], 17);
-    const tileLayer = () => L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', { maxZoom: 18, noWrap: true });
+    const tileLayer = () => L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', { maxZoom: 20, maxNativeZoom: 18, noWrap: true });
     tileLayer().addTo(map);
 
     const nalIkon = L.divIcon({ html: '<div class="marker-pin"><i class="fa-solid fa-location-dot"></i></div>', className: '', iconSize: [30, 30], iconAnchor: [15, 30] });
@@ -98,10 +104,12 @@
     const pinButton = document.getElementById('pinModus');
     const handButton = document.getElementById('handModus');
     const resetButton = document.getElementById('nullstillKnapp');
-    const fullforKnapp = document.getElementById('fullforKnapp');
+    const minPosisjonKnapp = document.getElementById('minPosisjonKnapp');
     const nesteKnapp = document.getElementById('nesteKnapp');
     const lokasjonPlassholder = document.getElementById('lokasjonPlassholder');
     const punkterJsonInput = document.getElementById('punkterJsonInput');
+    const adresseInput = document.querySelector('[name="Adresse"]');
+    const adresseStatus = document.getElementById('adresseStatus');
     const modusKnapper = [omradeButton, pinButton, handButton];
 
     /* Type (ressurs/behov) avgjores helt i starten av flyten na, sa resten av
@@ -120,7 +128,6 @@
     /* gjeldendeLag er Geoman-laget (L.Polygon eller L.Marker) fra siste
        "pm:create", gjeldendeType forteller hvilken av delene det er, siden
        Leaflet ikke har en enkel type-sjekk pa selve laget. */
-    let modus = 'omrade';
     let gjeldendeLag = null;
     let gjeldendeType = null;
     let snapshotKart = null;  /* eget lite Leaflet-kart i forhandsvisningsboksen (opprettes forst ved fullforing) */
@@ -133,16 +140,16 @@
         if (gjeldendeLag) map.removeLayer(gjeldendeLag);
         gjeldendeLag = null;
         gjeldendeType = null;
-        fullforKnapp.disabled = true;
         nesteKnapp.disabled = true;
         koordinatLat.textContent = '-';
         koordinatLng.textContent = '-';
+        adresseInput.value = '';
+        adresseStatus.textContent = '';
     }
 
     /* Bytter aktivt verktoy: "omrade"/"pin" slar pa riktig Geoman-tegnemodus,
        "hand" skrur av tegning og lar deg bare panorere kartet i stedet. */
     function velgModus(knapp, nyModus) {
-        modus = nyModus;
         map.pm.disableDraw();
         if (nyModus === 'omrade') {
             map.pm.enableDraw('Polygon', { snappable: false });
@@ -158,24 +165,56 @@
     resetButton.addEventListener('click', () => { resetDrawing(); omradeButton.click(); });
     map.dragging.disable();
 
+    /* map.locate() er innebygd i Leaflet selv (ikke Geoman) - bruker
+       nettleserens navigator.geolocation internt og fyrer locationfound/
+       locationerror. Flytter bare kartvisningen, tegner ikke noe selv.
+       setView:false her siden Leaflets egen auto-zoom tilpasser seg
+       noyaktighets-radiusen (ofte flere hundre meter pa desktop uten ekte
+       GPS) - det zoomer da langt ut. Setter fast zoom selv i stedet. */
+    minPosisjonKnapp.addEventListener('click', () => {
+        minPosisjonKnapp.disabled = true;
+        map.locate({ setView: false, maxZoom: 20, enableHighAccuracy: true });
+    });
+    map.on('locationfound', e => {
+        minPosisjonKnapp.disabled = false;
+        map.setView(e.latlng, 16);
+        adresseStatus.textContent = `Posisjon funnet (±${Math.round(e.accuracy)} m noyaktighet).`;
+
+        // Setter ogsaa en nal pa det funnet punktet og fullforer tegningen
+        // automatisk, akkurat som om brukeren selv hadde sluppet en nal der
+        // med pin-verktoyet og trykket "Fullfor tegning".
+        map.pm.disableDraw();
+        if (gjeldendeLag) map.removeLayer(gjeldendeLag);
+        gjeldendeLag = L.marker(e.latlng, { icon: nalIkon }).addTo(map);
+        gjeldendeType = 'Marker';
+        // Ingen av verktoyene er faktisk aktive etter dette (tegningen
+        // fullfores med en gang) - nullstiller highlighten sa den ikke lyver
+        // om at man kan tegne med en gang uten a klikke et verktoy forst.
+        modusKnapper.forEach(k => k.classList.remove('active'));
+        map.dragging.enable();
+        fullforTegning();
+    });
+    map.on('locationerror', e => {
+        minPosisjonKnapp.disabled = false;
+        alert('Fikk ikke tilgang til posisjonen din. (kode ' + e.code + ': ' + e.message + ')');
+    });
+
     /* Geoman legger selv til det ferdige laget pa kartet nar en tegning
        fullfores (dobbeltklikk/klikk-pa-forste-punkt for omrade, ett klikk
-       for nal) og skrur draw-modus av igjen automatisk etterpa. */
+       for nal) og skrur draw-modus av igjen automatisk etterpa. Tegningen
+       fullfores da med en gang - ingen egen "Fullfor tegning"-knapp a trykke. */
     map.on('pm:create', event => {
         if (gjeldendeLag) map.removeLayer(gjeldendeLag);
         gjeldendeLag = event.layer;
         gjeldendeType = event.shape;
-        fullforKnapp.disabled = false;
-
-        const senter = gjeldendeType === 'Marker' ? gjeldendeLag.getLatLng() : gjeldendeLag.getBounds().getCenter();
-        visKoordinater(senter);
+        fullforTegning();
     });
 
-    /* Kjores nar brukeren trykker "Fullfor tegning". Punktene fra Geoman-laget
-       gjores her om til PunkterJson som faktisk sendes videre i skjemaet, og
-       en liten forhandsvisning av omradet bygges i sidepanelet sa brukeren ser
-       hva som er valgt for de gar til neste steg. */
-    fullforKnapp.addEventListener('click', () => {
+    /* Punktene fra Geoman-laget gjores her om til PunkterJson som faktisk
+       sendes videre i skjemaet, og en liten forhandsvisning av omradet
+       bygges i sidepanelet sa brukeren ser hva som er valgt. Kalles rett
+       etter en tegning er ferdig (pm:create) eller posisjon er funnet. */
+    function fullforTegning() {
         if (!gjeldendeLag) return;
         map.pm.disableDraw();
         const erOmrade = gjeldendeType !== 'Marker';
@@ -214,7 +253,25 @@
         }, 50);
 
         nesteKnapp.disabled = false;
-    });
+
+        // Slar opp adresse for senteret av det som nettopp ble tegnet,
+        // i stedet for a be om ny posisjonstilgang fra nettleseren.
+        adresseStatus.textContent = 'Henter adresse for punktet...';
+        fetch(`https://ws.geonorge.no/adresser/v1/punktsok?lat=${senter.lat}&lon=${senter.lng}&radius=100`)
+            .then(svar => svar.json())
+            .then(data => {
+                const treff = data.adresser && data.adresser[0];
+                if (treff) {
+                    adresseInput.value = `${treff.adressetekst}, ${treff.postnummer} ${treff.poststed}`;
+                    adresseStatus.textContent = 'Adresse hentet fra punktet du tegnet.';
+                } else {
+                    adresseStatus.textContent = 'Fant ingen adresse nær punktet. Skriv den inn selv.';
+                }
+            })
+            .catch(() => {
+                adresseStatus.textContent = 'Klarte ikke hente adresse. Skriv den inn selv.';
+            });
+    }
 
     /* Starter i omrade-modus med en gang, siden det er det som star som aktivt i verktoylinja */
     velgModus(omradeButton, 'omrade');
