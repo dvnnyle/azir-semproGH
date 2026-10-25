@@ -9,6 +9,9 @@
 
 <div class="ressurs-split">
     <div class="ressurs-split__form">
+        <button type="button" class="ressurs-split__fullscreen" id="fullscreenToggle" aria-label="Vis skjema i fullskjerm">
+            <i class="fa-solid fa-expand"></i>
+        </button>
         <div class="ressurs-split__header">
             <h1 id="sideTittel">@sideTittel</h1>
         </div>
@@ -78,6 +81,15 @@
 <script src="~/lib/leaflet/dist/leaflet.min.js"></script>
 <script src="~/lib/leaflet-geoman/dist/leaflet-geoman.min.js"></script>
 <script>
+    /* Fullskjerm-knapp for sidepanelet (bare synlig pa mobil, se @@media
+       (max-width:480px) i form.css) - veksler mellom bottom sheet og full hoyde. */
+    const fullscreenToggle = document.getElementById('fullscreenToggle');
+    const splitForm = document.querySelector('.ressurs-split__form');
+    fullscreenToggle.addEventListener('click', () => {
+        const erApen = splitForm.classList.toggle('ressurs-split__form--expanded');
+        fullscreenToggle.querySelector('i').className = erApen ? 'fa-solid fa-compress' : 'fa-solid fa-expand';
+    });
+
     /* Steg 1 av skjema-flyten: bruker tegner enten et omrade eller slipper en
        enkelt nal pa kartet. Selve tegningen gjores av Leaflet-Geoman
        (geoman.io/docs/leaflet) i stedet for handrullet mousedown/mousemove-
@@ -153,14 +165,12 @@
         } else if (nyModus === 'pin') {
             map.pm.enableDraw('Marker', { markerStyle: { icon: nalIkon } });
         }
-        map.dragging[nyModus === 'hand' ? 'enable' : 'disable']();
         modusKnapper.forEach(k => k.classList.toggle('active', k === knapp));
     }
     omradeButton.addEventListener('click', () => velgModus(omradeButton, 'omrade'));
     pinButton.addEventListener('click', () => velgModus(pinButton, 'pin'));
     handButton.addEventListener('click', () => velgModus(handButton, 'hand'));
     resetButton.addEventListener('click', () => { resetDrawing(); omradeButton.click(); });
-    map.dragging.disable();
 
     /* map.locate() er innebygd i Leaflet selv (ikke Geoman) - bruker
        nettleserens navigator.geolocation internt og fyrer locationfound/
