@@ -8,6 +8,9 @@
 
 <div class="ressurs-split">
     <div class="ressurs-split__form">
+        <button type="button" class="ressurs-split__fullscreen" id="fullscreenToggle" aria-label="Vis skjema i fullskjerm">
+            <i class="fa-solid fa-expand"></i>
+        </button>
         <div class="ressurs-split__header">
             <a asp-controller="Resources" asp-action="Index" class="ressurs-split__back"><i class="fa-solid fa-arrow-left"></i></a>
             <div>
@@ -40,6 +43,15 @@
 <script src="~/lib/leaflet/dist/leaflet.min.js"></script>
 <script src="~/js/ressurs-kart.js" asp-append-version="true"></script>
 <script>
+    /* Fullskjerm-knapp for sidepanelet (bare synlig pa mobil, se @@media
+       (max-width:480px) i form.css) - veksler mellom bottom sheet og full hoyde. */
+    const fullscreenToggle = document.getElementById('fullscreenToggle');
+    const splitForm = document.querySelector('.ressurs-split__form');
+    fullscreenToggle.addEventListener('click', () => {
+        const erApen = splitForm.classList.toggle('ressurs-split__form--expanded');
+        fullscreenToggle.querySelector('i').className = erApen ? 'fa-solid fa-compress' : 'fa-solid fa-expand';
+    });
+
     /* Dette er den egne siden som viser det innsendte skjemaet OG kartdataen
        (oppgavepunkt 4/5) - FormController.Submit() legger innsendingen i
        "innsendinger"-listen og redirecter hit, sa Model her er den samme
@@ -52,7 +64,7 @@
     const punkterJson = JSON.stringify(@Html.Raw(string.IsNullOrWhiteSpace(Model.PunkterJson) ? "[]" : Model.PunkterJson));
 
     const farge = '#10b981';
-    tegnRessursOmradeKart('map', punkterJson, { farge });
+    tegnRessursOmradeKart('map', punkterJson, { farge, bottomSheet: true });
 
     /* Lagrer ogsa til localStorage, i tillegg til den ekte lagringen pa serveren (Punkt 2/3).
        Dette er bare en ekstra lokal cache (feks for Map-siden a lese senere) - IKKE den egentlige

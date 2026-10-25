@@ -367,6 +367,46 @@
     width: 100%;
 }
 
+.ressurs-split__fullscreen {
+    display: none;
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    color: #f8fafc;
+    cursor: pointer;
+    z-index: 3;
+}
+
+@media (max-width: 480px) {
+    .ressurs-split__form {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: auto;
+        width: auto;
+        max-height: 50vh;
+        border-radius: 16px 16px 0 0;
+        padding: 18px;
+    }
+
+    .ressurs-split__fullscreen {
+        display: flex;
+    }
+
+    .ressurs-split__form--expanded {
+        top: calc(var(--nav-height) + var(--nav-margin));
+        max-height: none;
+        border-radius: 0;
+    }
+}
+
 .koordinat-boks {
     background: #0f1729;
     border: 1px solid rgba(255, 255, 255, 0.08);
