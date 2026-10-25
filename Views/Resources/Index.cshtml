@@ -137,7 +137,7 @@
                         : minutesAgo < 1440
                             ? $"For {minutesAgo / 60} t siden"
                             : $"For {minutesAgo / 1440} d siden";
-                <article class="resource-card @typeClass @priority">
+                <article class="resource-card @typeClass @priority" data-id="@submission.SubmissionId">
                     <button type="button"
                             class="resource-card__open"
                             data-resource-open

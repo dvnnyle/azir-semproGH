@@ -1,0 +1,92 @@
+.kart-listeelement {
+    align-items: center;
+    background: #0f1729;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    gap: 12px;
+    padding: 12px 14px;
+}
+
+    .kart-listeelement:hover {
+        border-color: #10b981;
+    }
+
+.kart-prikk {
+    border-radius: 50%;
+    flex-shrink: 0;
+    height: 10px;
+    width: 10px;
+}
+
+.kart-listeelement strong {
+    color: #f8fafc;
+    font-size: 14px;
+}
+
+.kart-kategori {
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.kart-knapp {
+    background: #10b981;
+    border-radius: 10px;
+    color: #ffffff;
+    display: block;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-top: auto;
+    padding: 14px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.kart-popup h3 {
+    color: #f8fafc;
+    font-size: 16px;
+    margin: 0 0 6px;
+}
+
+.kart-popup p {
+    color: #94a3b8;
+    font-size: 13px;
+    margin: 0 0 10px;
+}
+
+.leaflet-container a.kart-popup__knapp {
+    background: #10b981;
+    border-radius: 8px;
+    color: #ffffff;
+    display: block;
+    font-weight: 700;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+    background: #0f1729;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+
+    .kart-popup p i {
+        color: #10b981;
+        margin-right: 6px;
+    }
+
+.kart-popup__status {
+    background: rgba(16, 185, 129, 0.15);
+    border-radius: 999px;
+    color: #10b981;
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 14px;
+    padding: 4px 12px;
+    text-transform: uppercase;
+}
