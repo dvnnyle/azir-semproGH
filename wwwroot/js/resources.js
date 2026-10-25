@@ -124,4 +124,10 @@
     dialog.addEventListener('click', event => {
         if (event.target === dialog) dialog.close();
     });
+
+    const apneId = new URLSearchParams(location.search).get('apne');
+    if (apneId) {
+        const kort = document.querySelector(`.resource-card[data-id="${apneId}"]`);
+        if (kort) kort.querySelector('[data-resource-open]').click();
+    }
 })();

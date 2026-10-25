@@ -1,0 +1,65 @@
+@model azir_sempro.Models.ResourceListViewModel
+@{ ViewData["Title"] = "Kart"; }
+<link rel="stylesheet" href="~/lib/leaflet/dist/leaflet.min.css">
+<link rel="stylesheet" href="~/css/form.css" asp-append-version="true">
+<link rel="stylesheet" href="~/css/map.css" asp-append-version="true">
+
+<div class="ressurs-split">
+    <div class="ressurs-split__form">
+        <div class="ressurs-split__header">
+            <h1>Kart</h1>
+        </div>
+        <hr class="ressurs-split__divider">
+
+            @foreach (var s in Model.Submissions)
+            {
+                var erBehov = s.Type == "behov";
+                var fargeNavn = !erBehov ? "gronn" : s.Prioritet switch
+                {
+                    "høy" => "rod",
+                    "middels" => "gul",
+                    _ => "gronn"
+                };
+                var hex = fargeNavn switch
+                {
+                    "rod" => "#ef4444",
+                    "gul" => "#f59e0b",
+                    _ => "#10b981"
+                };
+                var kategori = Model.KategoriNavn.GetValueOrDefault(s.CategoryId, "");
+                var status = s.Status switch
+                {
+                    "vurderes" => "Vurderes",
+                    "tildelt" => "Tildelt",
+                    "lost" => "Løst",
+                    _ => "Ny"
+                };
+                <div class="kart-listeelement"
+                     data-points="@Model.PunkterPerSubmission.GetValueOrDefault(s.SubmissionId, "[]")"
+                     data-color="@fargeNavn"
+                     data-title="@s.Tittel"
+                     data-type="@(erBehov ? "Behov" : "Ressurs")"
+                     data-erbehov="@(erBehov ? "1" : "0")"
+                     data-category="@kategori"
+                     data-status="@status"
+                     data-id="@s.SubmissionId">
+                    <span class="kart-prikk" style="background:@hex"></span>
+                    <div>
+                        <strong>@s.Tittel</strong>
+                        <div class="kart-kategori">@kategori</div>
+                    </div>
+                </div>
+            }
+
+        <a asp-controller="Resources" asp-action="Index" class="kart-knapp">GÅ TIL RESSURSLISTE</a>
+    </div>
+
+    <div class="ressurs-split__map-wrap">
+        <div id="map"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/leaflet/dist/leaflet.min.js"></script>
+    <script src="~/js/map.js" asp-append-version="true"></script>
+}

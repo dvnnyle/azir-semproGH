@@ -1,7 +1,8 @@
 ﻿@{
     var navController = ViewContext.RouteData.Values["controller"]?.ToString();
     var navAction = ViewContext.RouteData.Values["action"]?.ToString();
-    var erFullsideForm = navController == "Form" && (navAction == "Draw" || navAction == "Beskrivelse");
+    var erFullsideForm = (navController == "Form" && (navAction == "Draw" || navAction == "Beskrivelse"))
+                     || navController == "Map";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -34,6 +35,10 @@
             </a>
             <a asp-controller="Resources" asp-action="Index" class="nav-item @(navController == "Resources" ? "active" : "")">
                 <div class="nav-item-label">Ressurser</div>
+                <div class="active-indicator"></div>
+            </a>
+            <a asp-controller="Map" asp-action="Index" class="nav-item @(navController == "Map" ? "active" : "")">
+                <div class="nav-item-label">Kart</div>
                 <div class="active-indicator"></div>
             </a>
         </div>
