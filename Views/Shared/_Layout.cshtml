@@ -22,13 +22,17 @@
 </head>
 <body class="@(erFullsideForm ? "no-footer" : "")">
     <nav class="nav-bar">
-        <div class="brand">
+        <a asp-controller="Home" asp-action="Index" class="brand">
             <img src="~/assets/icons/logoGreen.svg" alt="" class="brand-logo">
             <div class="brand-text">
                 <div class="brand-name">Krisis</div>
             </div>
-        </div>
+        </a>
         <div class="nav-links">
+            <a asp-controller="Home" asp-action="Index" class="nav-item @(navController == "Home" ? "active" : "")">
+                <div class="nav-item-label">Hjem</div>
+                <div class="active-indicator"></div>
+            </a>
             <a asp-controller="Form" asp-action="Index" class="nav-item @(navController == "Form" ? "active" : "")">
                 <div class="nav-item-label">Skjema</div>
                 <div class="active-indicator"></div>
@@ -52,7 +56,42 @@
                 <a asp-controller="Account" asp-action="Register" class="konto-dropdown__pill konto-dropdown__pill--secondary">Registrer deg</a>
             </div>
         </div>
+        <button type="button" class="nav-hamburger" id="navHamburgerToggle" aria-expanded="false" aria-controls="navMobilMeny">
+            <i class="fa-solid fa-bars"></i>
+        </button>
     </nav>
+
+    <div class="mobil-meny" id="navMobilMeny">
+        <div class="mobil-meny__lenker">
+            <a asp-controller="Home" asp-action="Index" class="mobil-meny__element @(navController == "Home" ? "active" : "")">
+                <span>Hjem</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+            <a asp-controller="Form" asp-action="Index" class="mobil-meny__element @(navController == "Form" ? "active" : "")">
+                <span>Skjema</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+            <a asp-controller="Resources" asp-action="Index" class="mobil-meny__element @(navController == "Resources" ? "active" : "")">
+                <span>Ressurser</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+            <a asp-controller="Map" asp-action="Index" class="mobil-meny__element @(navController == "Map" ? "active" : "")">
+                <span>Kart</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+        </div>
+
+        <hr class="mobil-meny__delelinje">
+
+        <div class="mobil-meny__konto">
+            <div class="mobil-meny__avatar"><i class="fa-solid fa-user"></i></div>
+            <div class="mobil-meny__konto-tekst">
+                <p>Ikke innlogget</p>
+                <p>Trykk for å logge inn</p>
+            </div>
+            <a asp-controller="Account" asp-action="Login" class="mobil-meny__logg-inn">Logg inn</a>
+        </div>
+    </div>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -84,6 +123,24 @@
             if (!navAccountDropdown.contains(e.target) && !navAccountToggle.contains(e.target)) {
                 navAccountDropdown.classList.remove('open');
                 navAccountToggle.setAttribute('aria-expanded', false);
+            }
+        });
+
+        const navHamburgerToggle = document.getElementById('navHamburgerToggle');
+        const navMobilMeny = document.getElementById('navMobilMeny');
+
+        navHamburgerToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = navMobilMeny.classList.toggle('open');
+            navHamburgerToggle.setAttribute('aria-expanded', isOpen);
+            navHamburgerToggle.querySelector('i').className = isOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!navMobilMeny.contains(e.target) && !navHamburgerToggle.contains(e.target)) {
+                navMobilMeny.classList.remove('open');
+                navHamburgerToggle.setAttribute('aria-expanded', false);
+                navHamburgerToggle.querySelector('i').className = 'fa-solid fa-bars';
             }
         });
     </script>

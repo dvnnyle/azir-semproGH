@@ -166,6 +166,18 @@
   flex-shrink: 0;
 }
 
+.hjem-hero__halo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 140%;
+  max-width: none;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
 .hjem-hero__bildetekst {
   font-size: 12px;
   color: #8394ab;
@@ -340,7 +352,7 @@
 /* ---------- Oppdag ressurser på kartet ---------- */
 
 .hjem-kart-seksjon {
-  background: #03080e;
+  background: #081120;
   width: 100vw;
   margin-left: 50%;
   transform: translateX(-50%);
