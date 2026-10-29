@@ -11,10 +11,15 @@ public class AccountController : Controller
     private readonly AppDbContext database;
     private readonly PasswordHasher<User> passwordHasher = new();
 
-    public AccountController(AppDbContext database)
-    {
-        this.database = database;
-    }
+    private readonly UserManager<IdentityUser> userManager;
+
+    public AccountController(
+AppDbContext database,
+UserManager<IdentityUser> userManager)
+{
+this.database = database;
+this.userManager = userManager;
+}
 
     [HttpGet("/login")]
     public IActionResult Login()
@@ -50,29 +55,34 @@ public class AccountController : Controller
             return View(model);
         }
 
-        if (await database.Users.AnyAsync(user => user.Phone == model.PhoneNumber))
+        if (await userManager.Users.AnyAsync(user => user.PhoneNumber == model.PhoneNumber))
         {
             ModelState.AddModelError("PhoneNumber", "Dette telefonnummeret er allerede registrert.");
             return View(model);
         }
 
-        // TODO: la bruker velge rolle ved registrering nar den UI-en bygges.
-        // Default til Privatperson sa alle kan registrere seg i mellomtiden.
-        var standardRolle = await database.Roles.FirstAsync(role => role.Navn == "Privatperson");
-        var user = new User
-        {
-            RoleId = standardRolle.RoleId,
-            FirstName = model.FirstName,
-            LastName = model.LastName,
-            Phone = model.PhoneNumber,
-            Email = model.Email
-        };
+       var identityUser = new IdentityUser
+{
+    UserName = model.Email,
+    Email = model.Email,
+    PhoneNumber = model.PhoneNumber
+};
 
-        user.PasswordHash = passwordHasher.HashPassword(user, model.Password);
-        database.Users.Add(user);
-        await database.SaveChangesAsync();
+var result = await userManager.CreateAsync(
+    identityUser,
+    model.Password);
 
-        return RedirectToAction("Login");
+if (!result.Succeeded)
+{
+    foreach (var error in result.Errors)
+    {
+        ModelState.AddModelError("", error.Description);
+    }
+
+    return View(model);
+}
+
+return RedirectToAction("Login");
     }
 
     [HttpGet("/profile")]
