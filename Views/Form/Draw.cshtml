@@ -161,7 +161,12 @@
     function velgModus(knapp, nyModus) {
         map.pm.disableDraw();
         if (nyModus === 'omrade') {
-            map.pm.enableDraw('Polygon', { snappable: false });
+            map.pm.enableDraw('Polygon', {
+                snappable: false,
+                templineStyle: { color: '#dc2626' },
+                hintlineStyle: { color: '#dc2626' },
+                pathOptions: { color: '#dc2626', fillColor: '#dc2626' }
+            });
         } else if (nyModus === 'pin') {
             map.pm.enableDraw('Marker', { markerStyle: { icon: nalIkon } });
         }
