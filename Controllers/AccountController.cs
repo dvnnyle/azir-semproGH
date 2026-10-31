@@ -10,15 +10,14 @@ namespace azir_sempro.Controllers;
 public class AccountController : Controller
 {
     private readonly AppDbContext database;
-    private readonly PasswordHasher<User> passwordHasher = new();
-    private readonly SignInManager<IdentityUser> signInManager;
+       private readonly SignInManager<IdentityUser<int>> signInManager;
 
-private readonly UserManager<IdentityUser> userManager;
+private readonly UserManager<IdentityUser<int>> userManager;
 
 public AccountController(
     AppDbContext database,
-    SignInManager<IdentityUser> signInManager,
-    UserManager<IdentityUser> userManager)
+    SignInManager<IdentityUser<int>> signInManager,
+    UserManager<IdentityUser<int>> userManager)
 {
     this.database = database;
     this.signInManager = signInManager;
@@ -27,34 +26,35 @@ public AccountController(
 
 
 
-    [HttpGet("/login")]
+       [HttpGet("/login")]
     public IActionResult Login()
     {
-        return View(new AccountViewModel());
+        return View(new LoginViewModel());
     }
 
     [HttpPost("/login")]
-public async Task<IActionResult> Login(AccountViewModel model)
-{
-    if (!ModelState.IsValid)
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Login(LoginViewModel model)
     {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var result = await signInManager.PasswordSignInAsync(
+            model.Email,
+            model.Password,
+            false,
+            false);
+
+        if (result.Succeeded)
+        {
+            return RedirectToAction("Profile");
+        }
+
+        ModelState.AddModelError("", "Feil e-post eller passord.");
         return View(model);
     }
-
-    var result = await signInManager.PasswordSignInAsync(
-        model.Email,
-        model.Password,
-        false,
-        false);
-
-    if (result.Succeeded)
-    {
-        return RedirectToAction("Profile");
-    }
-
-    ModelState.AddModelError("", "Feil e-post eller passord.");
-    return View(model);
-}
 
     [HttpGet("/register")]
     public IActionResult Register()
@@ -71,19 +71,19 @@ public async Task<IActionResult> Login(AccountViewModel model)
             return View(model);
         }
 
-        if (await database.Users.AnyAsync(user => user.Email == model.Email))
+        if (await userManager.FindByEmailAsync(model.Email) != null)
         {
             ModelState.AddModelError("Email", "Denne e-posten er allerede registrert.");
             return View(model);
         }
 
-        if (await database.Users.AnyAsync(user => user.Phone == model.PhoneNumber))
+        if (await database.Users.AnyAsync(user => user.PhoneNumber == model.PhoneNumber))
         {
             ModelState.AddModelError("PhoneNumber", "Dette telefonnummeret er allerede registrert.");
             return View(model);
         }
 
-       var identityUser = new IdentityUser
+       var identityUser = new IdentityUser<int>
 {
     UserName = model.Email,
     Email = model.Email,

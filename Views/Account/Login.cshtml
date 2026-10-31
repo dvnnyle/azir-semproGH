@@ -1,4 +1,4 @@
-@model AccountViewModel
+@model LoginViewModel
 @{
     ViewData["Title"] = "Logg inn";
 }
@@ -15,6 +15,7 @@
         </div>
 
         <form class="inputs-stack" method="post" asp-controller="Account" asp-action="Login">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="felt-gruppe">
                 <label class="konto-label" asp-for="Email">E-post</label>
                 <input type="email" asp-for="Email" class="konto-input" placeholder="navn@eksempel.no" required>

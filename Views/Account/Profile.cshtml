@@ -1,0 +1,16 @@
+@{
+    ViewData["Title"] = "Profil";
+}
+<link rel="stylesheet" href="~/css/account.css" asp-append-version="true">
+
+<div class="page-fill konto-wrap">
+    <div class="kort">
+        <div class="konto-header">
+            <div class="avatar-sirkel"><i class="fa-solid fa-user"></i></div>
+            <div class="tittel-blokk">
+                <h1>Profil</h1>
+                <p>Innlogget som @User.Identity?.Name</p>
+            </div>
+        </div>
+    </div>
+</div>
