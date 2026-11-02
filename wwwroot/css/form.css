@@ -5,6 +5,10 @@
     paint-order: stroke fill;
 }
 
+.ressurs-split__map-wrap .marker-icon {
+    border-color: #dc2626;
+}
+
 .ressurs-split__form {
     background: rgba(15, 23, 42, 0.88);
     backdrop-filter: blur(12px);
