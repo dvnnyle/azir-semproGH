@@ -108,6 +108,14 @@ return RedirectToAction("Login");
     }
 
     [Authorize]
+    [HttpPost("/logout")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Logout()
+    {
+        await signInManager.SignOutAsync();
+        return RedirectToAction("Login");
+    }
+    [Authorize]
 [HttpGet("/profile")]
 public IActionResult Profile()
 {

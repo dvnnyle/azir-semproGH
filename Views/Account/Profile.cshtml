@@ -12,5 +12,9 @@
                 <p>Innlogget som @User.Identity?.Name</p>
             </div>
         </div>
+
+        <form method="post" asp-controller="Account" asp-action="Logout">
+            <button type="submit" class="konto-knapp">Logg ut</button>
+        </form>
     </div>
 </div>
