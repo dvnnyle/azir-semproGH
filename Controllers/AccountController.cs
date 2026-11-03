@@ -149,6 +149,53 @@ return RedirectToAction("Login");
         return RedirectToAction("MineRessurser");
     }
    
+       [Authorize]
+    [HttpGet("/endre-ressurs/{id}")]
+    public async Task<IActionResult> EndreRessurs(int id)
+    {
+        var brukerId = int.Parse(userManager.GetUserId(User)!);
+
+        var innsending = await database.Submissions
+            .FirstOrDefaultAsync(s => s.SubmissionId == id && s.UserId == brukerId);
+
+        if (innsending == null)
+        {
+            return RedirectToAction("MineRessurser");
+        }
+
+        return View(new EndreRessursViewModel
+        {
+            SubmissionId = innsending.SubmissionId,
+            Tittel = innsending.Tittel,
+            Beskrivelse = innsending.Beskrivelse
+        });
+    }
+
+    [Authorize]
+    [HttpPost("/endre-ressurs/{id}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EndreRessurs(int id, EndreRessursViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var brukerId = int.Parse(userManager.GetUserId(User)!);
+
+        var innsending = await database.Submissions
+            .FirstOrDefaultAsync(s => s.SubmissionId == id && s.UserId == brukerId);
+
+        if (innsending != null)
+        {
+            innsending.Tittel = model.Tittel;
+            innsending.Beskrivelse = model.Beskrivelse;
+            await database.SaveChangesAsync();
+        }
+
+        return RedirectToAction("MineRessurser");
+    }
+    
     [Authorize]
 [HttpGet("/profile")]
 public IActionResult Profile()

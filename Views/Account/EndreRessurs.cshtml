@@ -1,0 +1,34 @@
+@model EndreRessursViewModel
+@{
+    ViewData["Title"] = "Endre ressurs";
+}
+<link rel="stylesheet" href="~/css/account.css" asp-append-version="true">
+
+<div class="page-fill konto-wrap">
+    <div class="kort">
+        <div class="konto-header">
+            <div class="tittel-blokk">
+                <h1>Endre</h1>
+            </div>
+        </div>
+
+        <form class="inputs-stack" method="post" asp-controller="Account" asp-action="EndreRessurs" asp-route-id="@Model.SubmissionId">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="felt-gruppe">
+                <label class="konto-label" asp-for="Tittel">Tittel</label>
+                <input asp-for="Tittel" class="konto-input" required>
+            </div>
+
+            <div class="felt-gruppe">
+                <label class="konto-label" asp-for="Beskrivelse">Beskrivelse</label>
+                <textarea asp-for="Beskrivelse" class="konto-input" rows="4"></textarea>
+            </div>
+
+            <button type="submit" class="konto-knapp">Lagre</button>
+        </form>
+
+        <a asp-controller="Account" asp-action="MineRessurser" class="konto-knapp"
+           style="display:block;text-align:center;text-decoration:none;margin-top:1rem;">Avbryt</a>
+    </div>
+</div>
