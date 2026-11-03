@@ -25,6 +25,7 @@ Appen er bygget med ASP.NET Core MVC. Viewene (HTML, CSS, JS) sender forespørsl
 
 - `FormController`: skjemaet for å tilby en ressurs, i tre steg: tegne på kartet, fylle ut detaljer og oppsummering. Ved innsending lagres alt i databasen, og brukeren får en kvittering.
 - `ResourcesController`: viser alle innsendinger fra databasen.
+- `AdminController`: gir Admin- og Heimevernet-brukere oversikt over og administrasjon av alle innsendinger.
 - `AccountController`: registrering, innlogging og utlogging via ASP.NET Core Identity. Passord lagres med Identity sin passordhasher.
 - `ErrorController`: feilside.
 
@@ -32,13 +33,13 @@ Appen er bygget med ASP.NET Core MVC. Viewene (HTML, CSS, JS) sender forespørsl
 
 ### Tilgangskontroll
 
-Ressurslisten og kartet kan leses offentlig. Hele skjemaet for å opprette en innsending krever innlogging. Nye kontoer får automatisk Identity-rollen `Privatperson`; offentlig registrering kan ikke velge eller gi `Admin`. Rollen `AdminOnly` er konfigurert for admin-endepunkter, som må merkes med `[Authorize(Policy = AppRoles.AdminOnly)]`. Tildeling av Admin må gjøres av en betrodd driftsansvarlig, ikke gjennom registreringsskjemaet.
+Ressurslisten og kartet kan leses offentlig. Hele skjemaet for å opprette en innsending krever innlogging. Nye kontoer får automatisk Identity-rollen `Privatperson`; offentlig registrering kan ikke velge eller gi `Admin` eller `Heimevernet`. Admin-oversikten og endring/sletting av innsendinger er begrenset til Identity-rollene `Admin` og `Heimevernet`. Endepunkter som kun er for administratorer kan bruke `[Authorize(Policy = AppRoles.AdminOnly)]`. Tildeling av privilegerte roller må gjøres av en betrodd driftsansvarlig, ikke gjennom registreringsskjemaet.
 
 Innlogging bruker Identity-cookies, og mislykkede passordforsøk låser kontoen midlertidig etter fem forsøk. MVC validerer anti-forgery-token på alle usikre HTTP-metoder.
 
-Identity-kontoer kobles til nye innsendinger gjennom `Submissions.IdentityUserId`; den eldre `Submissions.UserId`-kolonnen er fortsatt en nullable heltallsreferanse til legacy `Users`. Det finnes ingen redigerings- eller slettingshandlinger for innsendinger ennå; slike handlinger må kontrollere eierens Identity-ID på serveren før de innføres.
+Identity-kontoer kobles til nye innsendinger gjennom `Submissions.IdentityUserId`; den eldre `Submissions.UserId`-kolonnen er fortsatt en nullable heltallsreferanse til legacy `Users`. Den offentlige ressurslisten er skrivebeskyttet. Den rollebeskyttede admin-oversikten kan redigere alle innsendinger; type kan ikke endres hvis innsendingen allerede inngår i en forespørsel. Sletting fjerner først tilhørende forespørsler og sletter deretter innsendingen; kartpunkter slettes via databasens kaskaderegel.
 
-Identity bruker `AspNetUsers`, `AspNetRoles` og tilhørende tabeller. `Data/sql/identity.sql` oppretter disse uten å endre de eksisterende `Users`- og `Roles`-tabellene. `Submissions.IdentityUserId` lagrer eierens ASP.NET Identity-ID og peker på `AspNetUsers`; `Submissions.UserId` er fortsatt bare for den eldre kontomodellen. Admin kan bare gis av en betrodd databaseansvarlig: registrer den valgte kontoen først, sett inn e-postadressen i spørringen under, kjør den én gang, og kontroller at nøyaktig én rad ble lagt til. Registreringsskjemaet kan ikke velge eller gi Admin.
+Identity bruker `AspNetUsers`, `AspNetRoles` og tilhørende tabeller. `Data/sql/identity.sql` oppretter disse uten å endre de eksisterende `Users`- og `Roles`-tabellene. `Submissions.IdentityUserId` lagrer eierens ASP.NET Identity-ID og peker på `AspNetUsers`; `Submissions.UserId` er fortsatt bare for den eldre kontomodellen. Privilegerte roller kan bare gis av en betrodd databaseansvarlig: registrer den valgte kontoen først, velg rollen i spørringen under, kjør den én gang, og kontroller at nøyaktig én rad ble lagt til. Registreringsskjemaet kan ikke velge eller gi privilegerte roller. Eksempelet gir rollen `Admin`; rollen `Heimevernet` opprettes også automatisk ved oppstart og kan tildeles på samme måte.
 
 ```sql
 INSERT INTO AspNetUserRoles (UserId, RoleId)

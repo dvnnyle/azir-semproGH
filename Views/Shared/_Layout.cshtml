@@ -40,6 +40,13 @@
                 <div class="nav-item-label">Ressurser</div>
                 <div class="active-indicator"></div>
             </a>
+            @if (User.IsInRole(azir_sempro.Data.AppRoles.Admin) || User.IsInRole(azir_sempro.Data.AppRoles.Heimevernet))
+            {
+                <a asp-controller="Admin" asp-action="Index" class="nav-item @(navController == "Admin" ? "active" : "")">
+                    <div class="nav-item-label">Administrasjon</div>
+                    <div class="active-indicator"></div>
+                </a>
+            }
             <a asp-controller="Map" asp-action="Index" class="nav-item @(navController == "Map" ? "active" : "")">
                 <div class="nav-item-label">Kart</div>
                 <div class="active-indicator"></div>
@@ -84,6 +91,13 @@
                 <span>Ressurser</span>
                 <i class="fa-solid fa-chevron-right"></i>
             </a>
+            @if (User.IsInRole(azir_sempro.Data.AppRoles.Admin) || User.IsInRole(azir_sempro.Data.AppRoles.Heimevernet))
+            {
+                <a asp-controller="Admin" asp-action="Index" class="mobil-meny__element @(navController == "Admin" ? "active" : "")">
+                    <span>Administrasjon</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+            }
             <a asp-controller="Map" asp-action="Index" class="mobil-meny__element @(navController == "Map" ? "active" : "")">
                 <span>Kart</span>
                 <i class="fa-solid fa-chevron-right"></i>

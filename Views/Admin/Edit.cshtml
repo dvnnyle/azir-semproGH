@@ -1,0 +1,92 @@
+@model azir_sempro.Models.AdminSubmissionEditViewModel
+@{
+    ViewData["Title"] = "Rediger melding";
+    var categories = ViewBag.Categories as List<azir_sempro.Models.Category> ?? [];
+}
+<link rel="stylesheet" href="~/css/admin.css" asp-append-version="true">
+
+<section class="admin-page admin-edit-page">
+    <a asp-controller="Admin" asp-action="Index" class="admin-back">
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Tilbake til oversikten
+    </a>
+    <header class="admin-heading admin-edit-heading">
+        <div>
+            <p class="admin-eyebrow">Krisis · administrasjon</p>
+            <h1>Rediger melding</h1>
+            <p>Oppdater ressursen eller behovet. Kartområdet beholdes uendret.</p>
+        </div>
+    </header>
+
+    <form asp-controller="Admin" asp-action="Edit" asp-route-id="@ViewContext.RouteData.Values["id"]" method="post" class="admin-edit-form">
+        <div asp-validation-summary="ModelOnly" class="admin-validation" role="alert"></div>
+        <label>
+            <span>Tittel</span>
+            <input asp-for="Tittel" autocomplete="off">
+            <span asp-validation-for="Tittel"></span>
+        </label>
+        <div class="admin-edit-grid">
+            <label>
+                <span>Type</span>
+                <select asp-for="Type">
+                    <option value="ressurs">Ressurs</option>
+                    <option value="behov">Behov</option>
+                </select>
+                <span asp-validation-for="Type"></span>
+            </label>
+            <label>
+                <span>Status</span>
+                <select asp-for="Status">
+                    <option value="ny">Ny</option>
+                    <option value="vurderes">Vurderes</option>
+                    <option value="tildelt">Tildelt</option>
+                    <option value="lost">Løst</option>
+                </select>
+                <span asp-validation-for="Status"></span>
+            </label>
+            <label>
+                <span>Kategori</span>
+                <select asp-for="CategoryId">
+                    <option value="">Velg kategori</option>
+                    @foreach (var category in categories)
+                    {
+                        <option value="@category.CategoryId">@category.Navn</option>
+                    }
+                </select>
+                <span asp-validation-for="CategoryId"></span>
+            </label>
+            <label>
+                <span>Prioritet</span>
+                <select asp-for="Prioritet">
+                    <option value="">Ikke relevant</option>
+                    <option value="høy">Høy</option>
+                    <option value="middels">Middels</option>
+                    <option value="lav">Lav</option>
+                </select>
+                <span asp-validation-for="Prioritet"></span>
+            </label>
+            <label class="admin-edit-wide">
+                <span>Adresse / sted</span>
+                <input asp-for="Adresse" autocomplete="street-address">
+                <span asp-validation-for="Adresse"></span>
+            </label>
+            <label>
+                <span>Frist</span>
+                <input asp-for="Frist" type="date">
+                <span asp-validation-for="Frist"></span>
+            </label>
+            <label class="admin-edit-wide">
+                <span>Beskrivelse</span>
+                <textarea asp-for="Beskrivelse" rows="5"></textarea>
+                <span asp-validation-for="Beskrivelse"></span>
+            </label>
+        </div>
+        <div class="admin-edit-actions">
+            <a asp-controller="Admin" asp-action="Index" class="admin-cancel">Avbryt</a>
+            <button type="submit" class="admin-filter-submit">Lagre endringer</button>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
