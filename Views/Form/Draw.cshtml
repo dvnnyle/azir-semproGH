@@ -19,6 +19,7 @@
         <hr class="ressurs-split__divider">
 
         <form asp-controller="Form" asp-action="Draw" method="post" class="ressurs-steg">
+            <input type="hidden" asp-for="DraftId">
             <div asp-validation-summary="All"></div>
             <div class="ressurs-felt">
                 <label>Type</label>

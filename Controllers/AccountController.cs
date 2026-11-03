@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using System.Security.Claims;
+using System.Text.Json;
 using azir_sempro.Data;
 using azir_sempro.Models;
 
@@ -144,8 +146,126 @@ public class AccountController : Controller
 
     [HttpGet("/profile")]
     [Authorize]
-    public IActionResult Profile()
+    public async Task<IActionResult> Profile()
     {
-        return View();
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? throw new InvalidOperationException("An authenticated user must have an Identity user ID.");
+        var categories = await database.Categories
+            .AsNoTracking()
+            .ToDictionaryAsync(category => category.CategoryId, category => category.Navn);
+        var submissions = await database.Submissions
+            .AsNoTracking()
+            .Where(submission => submission.IdentityUserId == userId)
+            .OrderByDescending(submission => submission.Tidspunkt)
+            .ToListAsync();
+        var drafts = await database.ResourceDrafts
+            .AsNoTracking()
+            .Where(draft => draft.IdentityUserId == userId)
+            .OrderByDescending(draft => draft.UpdatedAt)
+            .ToListAsync();
+
+        return View(new AccountProfileViewModel
+        {
+            Submissions = submissions.Select(submission => new ProfileSubmissionViewModel
+            {
+                SubmissionId = submission.SubmissionId,
+                Tittel = submission.Tittel,
+                Type = submission.Type,
+                Status = submission.Status,
+                Adresse = submission.Adresse,
+                CategoryName = categories.GetValueOrDefault(submission.CategoryId, "Ukjent kategori"),
+                Tidspunkt = submission.Tidspunkt
+            }).ToList(),
+            Drafts = drafts.Select(draft =>
+            {
+                var form = JsonSerializer.Deserialize<FormViewModel>(draft.DataJson)
+                    ?? throw new InvalidOperationException($"Draft {draft.ResourceDraftId} contains invalid form data.");
+                return new ProfileDraftViewModel
+                {
+                    DraftId = draft.ResourceDraftId,
+                    Tittel = form.Tittel,
+                    Type = form.Type,
+                    UpdatedAt = draft.UpdatedAt
+                };
+            }).ToList()
+        });
+    }
+
+    [HttpGet("/profile/edit/{id:int}")]
+    [Authorize]
+    public async Task<IActionResult> EditSubmission(int id)
+    {
+        var submission = await GetOwnedSubmissionAsync(id);
+        if (submission is null)
+        {
+            return NotFound();
+        }
+
+        await PopulateCategoriesAsync();
+        return View(new ProfileSubmissionEditViewModel
+        {
+            Tittel = submission.Tittel,
+            CategoryId = submission.CategoryId,
+            Adresse = submission.Adresse,
+            Prioritet = submission.Prioritet ?? "",
+            Frist = submission.Frist,
+            Beskrivelse = submission.Beskrivelse,
+            Type = submission.Type
+        });
+    }
+
+    [HttpPost("/profile/edit/{id:int}")]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditSubmission(int id, ProfileSubmissionEditViewModel model)
+    {
+        var submission = await GetOwnedSubmissionAsync(id);
+        if (submission is null)
+        {
+            return NotFound();
+        }
+
+        if (!await database.Categories.AnyAsync(category => category.CategoryId == model.CategoryId))
+        {
+            ModelState.AddModelError(nameof(model.CategoryId), "Velg en gyldig kategori.");
+        }
+
+        if (submission.Type == "behov" && string.IsNullOrWhiteSpace(model.Prioritet))
+        {
+            ModelState.AddModelError(nameof(model.Prioritet), "Velg prioritet for et behov.");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            model.Type = submission.Type;
+            await PopulateCategoriesAsync();
+            return View(model);
+        }
+
+        submission.Tittel = model.Tittel.Trim();
+        submission.CategoryId = model.CategoryId;
+        submission.Adresse = model.Adresse.Trim();
+        submission.Prioritet = submission.Type == "behov" ? model.Prioritet : null;
+        submission.Frist = model.Frist;
+        submission.Beskrivelse = string.IsNullOrWhiteSpace(model.Beskrivelse) ? null : model.Beskrivelse.Trim();
+        await database.SaveChangesAsync();
+
+        TempData["ProfileMessage"] = "Meldingen er oppdatert.";
+        return RedirectToAction(nameof(Profile));
+    }
+
+    private async Task<Submission?> GetOwnedSubmissionAsync(int id)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return await database.Submissions.FirstOrDefaultAsync(submission =>
+            submission.SubmissionId == id && submission.IdentityUserId == userId);
+    }
+
+    private async Task PopulateCategoriesAsync()
+    {
+        ViewBag.Categories = await database.Categories
+            .AsNoTracking()
+            .OrderBy(category => category.Navn)
+            .ToListAsync();
     }
 }

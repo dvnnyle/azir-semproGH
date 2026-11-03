@@ -39,10 +39,11 @@ services:
       - ./Data/sql/users.sql:/docker-entrypoint-initdb.d/03-users.sql:ro
       - ./Data/sql/submissions.sql:/docker-entrypoint-initdb.d/04-submissions.sql:ro
       - ./Data/sql/submission-identity-owner.sql:/docker-entrypoint-initdb.d/05-submission-identity-owner.sql:ro
-      - ./Data/sql/requests.sql:/docker-entrypoint-initdb.d/06-requests.sql:ro
-      - ./Data/sql/points.sql:/docker-entrypoint-initdb.d/07-points.sql:ro
-      - ./Data/sql/eksempeldata.sql:/docker-entrypoint-initdb.d/08-eksempeldata.sql:ro
-      - ./Data/sql/restrict-app-user.sql:/docker-entrypoint-initdb.d/09-restrict-app-user.sql:ro
+      - ./Data/sql/resource-drafts.sql:/docker-entrypoint-initdb.d/06-resource-drafts.sql:ro
+      - ./Data/sql/requests.sql:/docker-entrypoint-initdb.d/07-requests.sql:ro
+      - ./Data/sql/points.sql:/docker-entrypoint-initdb.d/08-points.sql:ro
+      - ./Data/sql/eksempeldata.sql:/docker-entrypoint-initdb.d/09-eksempeldata.sql:ro
+      - ./Data/sql/restrict-app-user.sql:/docker-entrypoint-initdb.d/10-restrict-app-user.sql:ro
     healthcheck:
       test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-uroot", "-p$${MYSQL_ROOT_PASSWORD}"]
       interval: 5s

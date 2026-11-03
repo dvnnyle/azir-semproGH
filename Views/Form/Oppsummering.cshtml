@@ -25,6 +25,7 @@
 
         <form asp-controller="Form" asp-action="Submit" method="post" class="ressurs-split__fields">
             <div asp-validation-summary="All"></div>
+            <input type="hidden" asp-for="DraftId">
             <input type="hidden" asp-for="Adresse">
             <input type="hidden" asp-for="PunkterJson" id="punkterJsonInput">
             <input type="hidden" asp-for="Tittel">
@@ -86,7 +87,7 @@
             </div>
 
             <div class="ressurs-split__actions">
-                <a asp-controller="Form" asp-action="Beskrivelse" class="ressurs-btn ressurs-btn--cancel">Tilbake</a>
+                <a asp-controller="Form" asp-action="Beskrivelse" asp-route-draftId="@Model.DraftId" class="ressurs-btn ressurs-btn--cancel">Tilbake</a>
                 <button type="submit" class="ressurs-btn ressurs-btn--submit">Bekreft og send inn</button>
             </div>
         </form>
@@ -109,9 +110,7 @@
         fullscreenToggle.querySelector('i').className = erApen ? 'fa-solid fa-compress' : 'fa-solid fa-expand';
     });
 
-    /* Samme prinsipp som Beskrivelse.cshtml: PunkterJson er allerede fylt inn av
-       asp-for fra utkastet i TempData - vi leser den bare ut igjen her for a
-       tegne den pa nytt, ikke fordi noe nytt tegnes pa denne siden. */
+    /* Punktene lastes fra det kontoeide utkastet og tegnes pa nytt her. */
     const punkterJson = document.getElementById('punkterJsonInput').value;
 
     const farge = '#10b981';

@@ -52,10 +52,7 @@
         fullscreenToggle.querySelector('i').className = erApen ? 'fa-solid fa-compress' : 'fa-solid fa-expand';
     });
 
-    /* Dette er den egne siden som viser det innsendte skjemaet OG kartdataen
-       (oppgavepunkt 4/5) - FormController.Submit() legger innsendingen i
-       "innsendinger"-listen og redirecter hit, sa Model her er den samme
-       FormViewModel-en som ble sendt inn, hentet tilbake fra TempData. */
+    /* Kvitteringssiden laster inn den lagrede innsendingen og kartpunktene. */
 
     /* Serialize the submitted JSON as a JavaScript string literal so it cannot
        terminate this script block before being passed to the map renderer. */
