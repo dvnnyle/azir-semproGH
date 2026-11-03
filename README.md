@@ -12,15 +12,17 @@
 ## 1. For å starte applikasjonen: (kan være litt feil / outdated)
 For å gå inn i prosjektmappen: `cd azir-sempro`
 
-Bygg og start webapplikasjonen og MySQL-databasen med Docker Compose:
+Sett sterke, ulike passord lokalt (ikke i Git), og bygg/start webappen og databasen med Docker Compose:
 
 ```bash
+$env:MYSQL_ROOT_PASSWORD = '<strong-root-password>'
+$env:DB_APP_PASSWORD = '<different-strong-app-password>'
 docker compose up --build
 ```
 
-Åpne `http://localhost:8080`
+Åpne `http://localhost:8080` (lokal utvikling; porten bindes kun til localhost).
 
-Docker Compose oppretter databasen `krisisdb` og tabellene `Users`/`Submissions` automatisk fra `Data/sql/users.sql` og `Data/sql/submissions.sql`.
+Docker Compose oppretter databasen og tabellene fra `Data/sql/`. Appen bruker en egen databasekonto med begrensede rettigheter; databaseporten er kun tilgjengelig fra localhost.
 
 Stopp containerne med:
 
@@ -28,15 +30,9 @@ Stopp containerne med:
 docker compose down
 ```
 
-**Fikk du nye endringer med `git pull`?** Init-scriptene over kjøres kun når MySQL-volumet er helt tomt - de kjører ikke på nytt av seg selv. For å faktisk få nye tabeller/kolonner:
+**Fikk du nye endringer med `git pull`?** Init-scriptene kjøres bare når databasevolumet opprettes første gang. Ta sikkerhetskopi og bruk den dokumenterte, additive SQL-endringen for eksisterende databaser. Ikke slett volumet bare for å oppdatere skjemaet; det sletter testdata.
 
-```bash
-git pull
-docker compose down -v
-docker compose up --build
-```
-
-`-v` sletter det lokale databasevolumet (og all lokal testdata) - det er det som trigger at init-scriptene kjøres på nytt.
+Sett de samme miljøvariablene på nytt i hvert PowerShell-vindu før du starter Compose.
 
 ## 2. Lokal development
 
@@ -68,4 +64,3 @@ Applikasjonen vil være tilgjengelig på `http://localhost:5253`
 <p align="center">
   <img src="wwwroot/assets/readme_assets/bottom-banner.png" width="100%">
 </p>
-

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using azir_sempro.Data;
 using azir_sempro.Models;
 
@@ -9,28 +11,55 @@ namespace azir_sempro.Controllers;
 public class AccountController : Controller
 {
     private readonly AppDbContext database;
-    private readonly PasswordHasher<User> passwordHasher = new();
-
     private readonly UserManager<IdentityUser> userManager;
+    private readonly SignInManager<IdentityUser> signInManager;
 
     public AccountController(
-AppDbContext database,
-UserManager<IdentityUser> userManager)
-{
-this.database = database;
-this.userManager = userManager;
-}
+        AppDbContext database,
+        UserManager<IdentityUser> userManager,
+        SignInManager<IdentityUser> signInManager)
+    {
+        this.database = database;
+        this.userManager = userManager;
+        this.signInManager = signInManager;
+    }
 
     [HttpGet("/login")]
-    public IActionResult Login()
+    public IActionResult Login(string? returnUrl = null)
     {
-        return View(new AccountViewModel());
+        return View(new LoginViewModel
+        {
+            ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : null
+        });
     }
 
     [HttpPost("/login")]
-    public IActionResult Login(AccountViewModel model)
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("login")]
+    public async Task<IActionResult> Login(LoginViewModel model)
     {
-        // TODO: check credentials once a user store / auth exists
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var result = await signInManager.PasswordSignInAsync(
+            model.Email,
+            model.Password,
+            isPersistent: false,
+            lockoutOnFailure: true);
+
+        if (result.Succeeded)
+        {
+            if (Url.IsLocalUrl(model.ReturnUrl))
+            {
+                return LocalRedirect(model.ReturnUrl!);
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        ModelState.AddModelError("", "Feil e-post/passord eller kontoen er midlertidig låst.");
         return View(model);
     }
 
@@ -42,6 +71,7 @@ this.userManager = userManager;
 
     [HttpPost("/register")]
     [ValidateAntiForgeryToken]
+    [EnableRateLimiting("registration")]
     public async Task<IActionResult> Register(AccountViewModel model)
     {
         if (!ModelState.IsValid)
@@ -49,7 +79,7 @@ this.userManager = userManager;
             return View(model);
         }
 
-        if (await database.Users.AnyAsync(user => user.Email == model.Email))
+        if (await userManager.FindByEmailAsync(model.Email) is not null)
         {
             ModelState.AddModelError("Email", "Denne e-posten er allerede registrert.");
             return View(model);
@@ -61,31 +91,59 @@ this.userManager = userManager;
             return View(model);
         }
 
-       var identityUser = new IdentityUser
-{
-    UserName = model.Email,
-    Email = model.Email,
-    PhoneNumber = model.PhoneNumber
-};
+        var identityUser = new IdentityUser
+        {
+            UserName = model.Email,
+            Email = model.Email,
+            PhoneNumber = model.PhoneNumber
+        };
 
-var result = await userManager.CreateAsync(
-    identityUser,
-    model.Password);
+        var result = await userManager.CreateAsync(identityUser, model.Password);
+        if (!result.Succeeded)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
 
-if (!result.Succeeded)
-{
-    foreach (var error in result.Errors)
+            return View(model);
+        }
+
+        var roleResult = await userManager.AddToRoleAsync(identityUser, AppRoles.Privatperson);
+        if (!roleResult.Succeeded)
+        {
+            var rollback = await userManager.DeleteAsync(identityUser);
+            if (!rollback.Succeeded)
+            {
+                var errors = string.Join("; ", rollback.Errors.Select(error => error.Description));
+                throw new InvalidOperationException($"Could not roll back registration after role assignment failed: {errors}");
+            }
+
+            foreach (var error in roleResult.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+
+            return View(model);
+        }
+
+        return RedirectToAction(nameof(Login));
+    }
+
+    [HttpPost("/logout")]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Logout()
     {
-        ModelState.AddModelError("", error.Description);
+        await signInManager.SignOutAsync();
+        return RedirectToAction("Index", "Home");
     }
 
-    return View(model);
-}
-
-return RedirectToAction("Login");
-    }
+    [HttpGet("/access-denied")]
+    public IActionResult AccessDenied() => View();
 
     [HttpGet("/profile")]
+    [Authorize]
     public IActionResult Profile()
     {
         return View();

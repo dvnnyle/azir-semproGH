@@ -24,6 +24,7 @@
         </div>
 
         <form asp-controller="Form" asp-action="Submit" method="post" class="ressurs-split__fields">
+            <div asp-validation-summary="All"></div>
             <input type="hidden" asp-for="Adresse">
             <input type="hidden" asp-for="PunkterJson" id="punkterJsonInput">
             <input type="hidden" asp-for="Tittel">
@@ -98,7 +99,7 @@
 
 <script src="~/lib/leaflet/dist/leaflet.min.js"></script>
 <script src="~/js/ressurs-kart.js" asp-append-version="true"></script>
-<script>
+<script nonce="@(Context.Items["CspNonce"])">
     /* Fullskjerm-knapp for sidepanelet (bare synlig pa mobil, se @@media
        (max-width:480px) i form.css) - veksler mellom bottom sheet og full hoyde. */
     const fullscreenToggle = document.getElementById('fullscreenToggle');

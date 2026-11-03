@@ -11,7 +11,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Krisis</title>
     <link rel="icon" type="image/svg+xml" href="~/assets/icons/logoGreen.svg">
-    <script type="importmap"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;800&family=Poppins:wght@400;500;600&family=Space+Mono:wght@400;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -52,8 +51,18 @@
                 <i class="fa-solid fa-user"></i>
             </button>
             <div class="konto-dropdown" id="navAccountDropdown">
-                <a asp-controller="Account" asp-action="Login" class="konto-dropdown__pill konto-dropdown__pill--primary">Logg inn</a>
-                <a asp-controller="Account" asp-action="Register" class="konto-dropdown__pill konto-dropdown__pill--secondary">Registrer deg</a>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <span class="konto-dropdown__pill">@User.Identity.Name</span>
+                    <form asp-controller="Account" asp-action="Logout" method="post">
+                        <button type="submit" class="konto-dropdown__pill konto-dropdown__pill--secondary">Logg ut</button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" class="konto-dropdown__pill konto-dropdown__pill--primary">Logg inn</a>
+                    <a asp-controller="Account" asp-action="Register" class="konto-dropdown__pill konto-dropdown__pill--secondary">Registrer deg</a>
+                }
             </div>
         </div>
         <button type="button" class="nav-hamburger" id="navHamburgerToggle" aria-expanded="false" aria-controls="navMobilMeny">
@@ -86,10 +95,27 @@
         <div class="mobil-meny__konto">
             <div class="mobil-meny__avatar"><i class="fa-solid fa-user"></i></div>
             <div class="mobil-meny__konto-tekst">
-                <p>Ikke innlogget</p>
-                <p>Trykk for å logge inn</p>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <p>@User.Identity.Name</p>
+                    <p>Innlogget</p>
+                }
+                else
+                {
+                    <p>Ikke innlogget</p>
+                    <p>Trykk for å logge inn</p>
+                }
             </div>
-            <a asp-controller="Account" asp-action="Login" class="mobil-meny__logg-inn">Logg inn</a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <form asp-controller="Account" asp-action="Logout" method="post">
+                    <button type="submit" class="mobil-meny__logg-inn">Logg ut</button>
+                </form>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login" class="mobil-meny__logg-inn">Logg inn</a>
+            }
         </div>
     </div>
     <div class="container">
@@ -109,7 +135,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script>
+    <script nonce="@(Context.Items["CspNonce"])">
         const navAccountToggle = document.getElementById('navAccountToggle');
         const navAccountDropdown = document.getElementById('navAccountDropdown');
 

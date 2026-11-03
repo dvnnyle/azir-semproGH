@@ -14,4 +14,5 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
 
     public DbSet<Submission> Submissions { get; set; }
     public DbSet<Point> Points { get; set; }
+    public DbSet<Category> Categories { get; set; }
 }

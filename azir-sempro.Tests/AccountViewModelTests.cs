@@ -19,7 +19,8 @@ public class AccountViewModelTests
         LastName = "Johnson",
         Email = "juan@example.com",
         PhoneNumber = "12345678",
-        Password = "passord123"
+        Password = "passord123",
+        ConfirmPassword = "passord123"
     };
 
     [Fact]

@@ -1,12 +1,20 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace azir_sempro.Models;
 
 public class ResourceListViewModel
 {
+    [StringLength(100)]
     public string Search { get; set; } = "";
+    [StringLength(100)]
     public string Category { get; set; } = "";
+    [RegularExpression("^(|ressurs|behov)$")]
     public string Type { get; set; } = "";
+    [RegularExpression("^(|ny|vurderes|tildelt|lost)$")]
     public string Status { get; set; } = "";
+    [Range(typeof(DateTime), "1900-01-01", "2100-12-31")]
     public DateTime? FromDate { get; set; }
+    [Range(typeof(DateTime), "1900-01-01", "2100-12-31")]
     public DateTime? ToDate { get; set; }
     public List<string> Categories { get; set; } = [];
     public List<Submission> Submissions { get; set; } = [];
