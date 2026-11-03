@@ -1,8 +1,8 @@
 USE krisisdb;
 
--- HUSK: Submissions.UserId er nullable inntil innlogging finnes (se Data/sql/submissions.sql
--- og TODO-en i FormController.Submit()). Når auth er pa plass, sett Submissions.UserId til
--- den innloggede brukerens UserId ved innsending, i stedet for a la den sta null.
+-- Denne eldre Users-tabellen er ikke ASP.NET Identity sin AspNetUsers-tabell.
+-- Innlogging bruker AspNetUsers; Submission.UserId forblir null til de to
+-- brukermodellene eventuelt kobles sammen med en egen databaseskjemaendring.
 
 CREATE TABLE Users (
     UserId INT AUTO_INCREMENT PRIMARY KEY,

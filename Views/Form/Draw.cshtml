@@ -19,6 +19,7 @@
         <hr class="ressurs-split__divider">
 
         <form asp-controller="Form" asp-action="Draw" method="post" class="ressurs-steg">
+            <div asp-validation-summary="All"></div>
             <div class="ressurs-felt">
                 <label>Type</label>
                 <div class="type-valg">
@@ -80,7 +81,7 @@
 
 <script src="~/lib/leaflet/dist/leaflet.min.js"></script>
 <script src="~/lib/leaflet-geoman/dist/leaflet-geoman.min.js"></script>
-<script>
+<script nonce="@(Context.Items["CspNonce"])">
     /* Fullskjerm-knapp for sidepanelet (bare synlig pa mobil, se @@media
        (max-width:480px) i form.css) - veksler mellom bottom sheet og full hoyde. */
     const fullscreenToggle = document.getElementById('fullscreenToggle');

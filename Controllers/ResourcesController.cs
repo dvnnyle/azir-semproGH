@@ -17,6 +17,16 @@ public class ResourcesController : Controller
 
     public async Task<IActionResult> Index([FromQuery] ResourceListViewModel filters)
     {
+        if (filters.FromDate.HasValue && filters.ToDate.HasValue && filters.FromDate > filters.ToDate)
+        {
+            ModelState.AddModelError(nameof(filters.ToDate), "Til-datoen kan ikke være før fra-datoen.");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         var alleKategorier = await database.Categories
             .AsNoTracking()
             .OrderBy(category => category.Navn)
