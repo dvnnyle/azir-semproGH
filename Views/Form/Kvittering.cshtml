@@ -57,11 +57,10 @@
        "innsendinger"-listen og redirecter hit, sa Model her er den samme
        FormViewModel-en som ble sendt inn, hentet tilbake fra TempData. */
 
-    /* Her, i motsetning til Beskrivelse/Oppsummering, finnes det ikke noe skjult inputfelt a lese fra -
-       PunkterJson skrives direkte inn i siden av Razor pa server-siden (@@Html.Raw skriver den
-       raa JSON-teksten inn i JS-koden ufiltrert). JSON.stringify pakker den om til en vanlig
-       tekststreng igjen, sa den kan sendes til tegnRessursOmradeKart pa samme mate som de andre sidene. */
-    const punkterJson = JSON.stringify(@Html.Raw(string.IsNullOrWhiteSpace(Model.PunkterJson) ? "[]" : Model.PunkterJson));
+    /* Serialize the submitted JSON as a JavaScript string literal so it cannot
+       terminate this script block before being passed to the map renderer. */
+    const punkterJson = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+        string.IsNullOrWhiteSpace(Model.PunkterJson) ? "[]" : Model.PunkterJson));
 
     const farge = '#10b981';
     tegnRessursOmradeKart('map', punkterJson, { farge, bottomSheet: true });
