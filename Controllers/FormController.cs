@@ -2,9 +2,12 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using azir_sempro.Data;
 using azir_sempro.Models;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace azir_sempro.Controllers;
 
+[Authorize]
 public class FormController : Controller
 {
     private readonly AppDbContext database;
@@ -88,10 +91,9 @@ public class FormController : Controller
     [HttpPost]
     public async Task<IActionResult> Submit(FormViewModel model)
     {
-        // UserId er nullable helt til innlogging finnes - se Data/sql/submissions.sql.
-        // TODO: sett til den innloggede brukerens UserId nar auth er pa plass.
         var innsending = new Submission
         {
+            UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!),
             Tittel = model.Tittel,
             Kategori = model.Kategori,
             Type = model.Type,

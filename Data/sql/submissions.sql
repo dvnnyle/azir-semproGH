@@ -2,7 +2,8 @@ USE krisisdb;
 
 CREATE TABLE Submissions (
     SubmissionId INT AUTO_INCREMENT PRIMARY KEY,
-    -- Nullable inntil innlogging finnes - settes til den innloggede brukeren senere
+    -- Id til den innloggede brukeren i AspNetUsers (Identity). Ingen fremmednøkkel,
+    -- siden AspNetUsers opprettes av migrasjonen etter at denne filen er kjørt.
     UserId INT NULL,
     Tittel VARCHAR(255) NOT NULL,
     Kategori VARCHAR(255) NOT NULL,
@@ -14,6 +15,5 @@ CREATE TABLE Submissions (
     PunkterJson TEXT NOT NULL,
     Beskrivelse TEXT,
     Tidspunkt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    Status VARCHAR(20) NOT NULL DEFAULT 'ny',
-    FOREIGN KEY (UserId) REFERENCES Users(UserId)
+    Status VARCHAR(20) NOT NULL DEFAULT 'ny'
 );
