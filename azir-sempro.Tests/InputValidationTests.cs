@@ -59,4 +59,34 @@ public class InputValidationTests
 
         Assert.Contains(Validate(model), error => error.MemberNames.Contains(nameof(model.Status)));
     }
+
+    [Fact]
+    public void AdminSubmission_RejectsUnknownStatus()
+    {
+        var model = new AdminSubmissionEditViewModel
+        {
+            Tittel = "Telt",
+            Type = "ressurs",
+            Status = "publisert",
+            CategoryId = 1,
+            Adresse = "Kristiansand"
+        };
+
+        Assert.Contains(Validate(model), error => error.MemberNames.Contains(nameof(model.Status)));
+    }
+
+    [Fact]
+    public void AdminSubmission_RejectsUnknownType()
+    {
+        var model = new AdminSubmissionEditViewModel
+        {
+            Tittel = "Telt",
+            Type = "admin",
+            Status = "ny",
+            CategoryId = 1,
+            Adresse = "Kristiansand"
+        };
+
+        Assert.Contains(Validate(model), error => error.MemberNames.Contains(nameof(model.Type)));
+    }
 }
