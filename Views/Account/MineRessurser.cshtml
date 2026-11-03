@@ -1,0 +1,41 @@
+@model List<Submission>
+@{
+    ViewData["Title"] = "Mine ressurser og behov";
+}
+<link rel="stylesheet" href="~/css/account.css" asp-append-version="true">
+
+<div class="page-fill konto-wrap">
+    <div class="kort">
+        <div class="konto-header">
+            <div class="tittel-blokk">
+                <h1>Mine ressurser og behov</h1>
+            </div>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <p>Du har ikke registrert noe ennå.</p>
+        }
+        else
+        {
+                        <ul style="list-style:none;padding:0;text-align:left;color:#e5e7eb;">
+                @foreach (var s in Model)
+                {
+                                        <li style="margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #334155;">
+                        <strong>@s.Tittel</strong><br>
+                        @s.Type · @s.Kategori · @s.Status<br>
+                        <small>@s.Tidspunkt.ToString("dd.MM.yyyy HH:mm")</small>
+                                                <form method="post" asp-controller="Account" asp-action="SlettRessurs"
+                              onsubmit="return confirm('Vil du slette denne?');">
+                            <input type="hidden" name="id" value="@s.SubmissionId" />
+                            <button type="submit" style="margin-top:.5rem;">Slett</button>
+                        </form>
+                    </li>
+                }
+            </ul>
+        }
+
+        <a asp-controller="Account" asp-action="Profile" class="konto-knapp"
+           style="display:block;text-align:center;text-decoration:none;">Tilbake til profil</a>
+    </div>
+</div>

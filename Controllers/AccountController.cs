@@ -115,6 +115,40 @@ return RedirectToAction("Login");
         await signInManager.SignOutAsync();
         return RedirectToAction("Login");
     }
+      
+        [Authorize]
+    [HttpGet("/mine-ressurser")]
+    public async Task<IActionResult> MineRessurser()
+    {
+        var brukerId = int.Parse(userManager.GetUserId(User)!);
+
+        var innsendinger = await database.Submissions
+            .Where(s => s.UserId == brukerId)
+            .OrderByDescending(s => s.Tidspunkt)
+            .ToListAsync();
+
+        return View(innsendinger);
+    }
+
+        [Authorize]
+    [HttpPost("/slett-ressurs")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SlettRessurs(int id)
+    {
+        var brukerId = int.Parse(userManager.GetUserId(User)!);
+
+        var innsending = await database.Submissions
+            .FirstOrDefaultAsync(s => s.SubmissionId == id && s.UserId == brukerId);
+
+        if (innsending != null)
+        {
+            database.Submissions.Remove(innsending);
+            await database.SaveChangesAsync();
+        }
+
+        return RedirectToAction("MineRessurser");
+    }
+   
     [Authorize]
 [HttpGet("/profile")]
 public IActionResult Profile()

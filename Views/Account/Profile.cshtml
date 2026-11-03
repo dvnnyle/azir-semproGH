@@ -12,6 +12,8 @@
                 <p>Innlogget som @User.Identity?.Name</p>
             </div>
         </div>
+        <a asp-controller="Account" asp-action="MineRessurser" class="konto-knapp"
+           style="display:block;text-align:center;text-decoration:none;margin-bottom:1rem;">Mine ressurser/behov</a>
 
         <form method="post" asp-controller="Account" asp-action="Logout">
             <button type="submit" class="konto-knapp">Logg ut</button>
