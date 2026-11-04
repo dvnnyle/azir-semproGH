@@ -25,10 +25,8 @@
 
         <form asp-controller="Form" asp-action="Beskrivelse" method="post" class="ressurs-split__fields">
             <div asp-validation-summary="All"></div>
-            @* PunkterJson tas ikke pa nytt her - asp-for fyller den automatisk
-               med verdien fra steg 1, siden FormController.Beskrivelse() henter utkastet
-               fra TempData og sender det inn som modellen for denne siden. Den sendes bare
-               skjult videre i POST-en sa den ikke forsvinner nar dette steget lagres. *@
+            <input type="hidden" asp-for="DraftId">
+            @* Punktene lastes fra det kontoeide utkastet og sendes videre skjult. *@
             <input type="hidden" asp-for="PunkterJson" id="punkterJsonInput">
 
             <div class="ressurs-felt">
@@ -71,7 +69,7 @@
             </div>
 
             <div class="ressurs-split__actions">
-                <a asp-controller="Form" asp-action="Draw" class="ressurs-btn ressurs-btn--cancel">Tilbake</a>
+                <a asp-controller="Form" asp-action="Draw" asp-route-draftId="@Model.DraftId" class="ressurs-btn ressurs-btn--cancel">Tilbake</a>
                 <button type="submit" class="ressurs-btn ressurs-btn--submit">Neste</button>
             </div>
         </form>
@@ -95,7 +93,7 @@
     });
 
     /* Det finnes ikke noe "bilde" av tegningen fra steg 1 - det som faktisk folger med
-       videre er bare koordinat-listen i PunkterJson (satt av FormController via TempData,
+       videre er bare koordinat-listen i PunkterJson (lastet fra det kontoeide utkastet,
        se kommentaren ved skjul-feltet over). tegnRessursOmradeKart (wwwroot/js/ressurs-kart.js)
        leser den samme JSON-en pa nytt og tegner et helt nytt polygon/nal pa DETTE sitt eget
        kart - en frisk gjentegning, ikke det samme Leaflet-laget som i Draw.cshtml. */

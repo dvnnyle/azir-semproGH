@@ -4,6 +4,8 @@ namespace azir_sempro.Models;
 
 public class FormViewModel
 {
+    public int? DraftId { get; set; }
+
     [StringLength(255)]
     public string Tittel { get; set; } = "";
     public int CategoryId { get; set; }

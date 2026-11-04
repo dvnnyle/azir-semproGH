@@ -61,6 +61,7 @@
                 @if (User.Identity?.IsAuthenticated == true)
                 {
                     <span class="konto-dropdown__pill">@User.Identity.Name</span>
+                    <a asp-controller="Account" asp-action="Profile" class="konto-dropdown__pill konto-dropdown__pill--secondary">Min profil</a>
                     <form asp-controller="Account" asp-action="Logout" method="post">
                         <button type="submit" class="konto-dropdown__pill konto-dropdown__pill--secondary">Logg ut</button>
                     </form>
@@ -122,6 +123,7 @@
             </div>
             @if (User.Identity?.IsAuthenticated == true)
             {
+                <a asp-controller="Account" asp-action="Profile" class="mobil-meny__logg-inn">Min profil</a>
                 <form asp-controller="Account" asp-action="Logout" method="post">
                     <button type="submit" class="mobil-meny__logg-inn">Logg ut</button>
                 </form>

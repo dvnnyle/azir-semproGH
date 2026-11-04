@@ -15,7 +15,7 @@ Bytt ut plassholderne med tilfeldige passord, helst 64 heksadesimale tegn genere
 - Stoppe appen: `docker compose down`
 - Nullstille databasen: `docker compose down -v`, deretter `docker compose up --build`
 
-Init-skriptene og brukerrettighetene kjøres bare når MariaDB-volumet opprettes første gang. For en eksisterende database må databaseansvarlig ta sikkerhetskopi, opprette/oppdatere `krisisapp` med passordet i `DB_APP_PASSWORD`, gi den bare SELECT/INSERT/UPDATE/DELETE på `krisisdb`, og kjøre `Data/sql/submission-identity-owner.sql`. Ikke slett volumet for å få nye sikkerhetsendringer; det sletter alle data.
+Init-skriptene og brukerrettighetene kjøres bare når MariaDB-volumet opprettes første gang. For en eksisterende database må databaseansvarlig ta sikkerhetskopi, opprette/oppdatere `krisisapp` med passordet i `DB_APP_PASSWORD`, gi den bare SELECT/INSERT/UPDATE/DELETE på `krisisdb`, og kjøre `Data/sql/submission-identity-owner.sql` og `Data/sql/resource-drafts.sql`. Ikke slett volumet for å få nye sikkerhetsendringer; det sletter alle data.
 
 ## Systemarkitektur
 
@@ -26,7 +26,7 @@ Appen er bygget med ASP.NET Core MVC. Viewene (HTML, CSS, JS) sender forespørsl
 - `FormController`: skjemaet for å tilby en ressurs, i tre steg: tegne på kartet, fylle ut detaljer og oppsummering. Ved innsending lagres alt i databasen, og brukeren får en kvittering.
 - `ResourcesController`: viser alle innsendinger fra databasen.
 - `AdminController`: gir Admin- og Heimevernet-brukere oversikt over og administrasjon av alle innsendinger.
-- `AccountController`: registrering, innlogging og utlogging via ASP.NET Core Identity. Passord lagres med Identity sin passordhasher.
+- `AccountController`: registrering, innlogging og utlogging via ASP.NET Core Identity, samt profiloversikt og redigering av egne meldinger. Passord lagres med Identity sin passordhasher.
 - `ErrorController`: feilside.
 
 **Database:** MySQL 8.4. Identity lagrer kontoer og roller i `AspNetUsers`/`AspNetRoles`; innsendinger og kartdata bruker de eksisterende `Submissions`/`Points`-tabellene.
@@ -37,7 +37,7 @@ Ressurslisten og kartet kan leses offentlig. Hele skjemaet for å opprette en in
 
 Innlogging bruker Identity-cookies, og mislykkede passordforsøk låser kontoen midlertidig etter fem forsøk. MVC validerer anti-forgery-token på alle usikre HTTP-metoder.
 
-Identity-kontoer kobles til nye innsendinger gjennom `Submissions.IdentityUserId`; den eldre `Submissions.UserId`-kolonnen er fortsatt en nullable heltallsreferanse til legacy `Users`. Den offentlige ressurslisten er skrivebeskyttet. Den rollebeskyttede admin-oversikten kan redigere alle innsendinger; type kan ikke endres hvis innsendingen allerede inngår i en forespørsel. Sletting fjerner først tilhørende forespørsler og sletter deretter innsendingen; kartpunkter slettes via databasens kaskaderegel.
+Identity-kontoer kobles til nye innsendinger gjennom `Submissions.IdentityUserId`; den eldre `Submissions.UserId`-kolonnen er fortsatt en nullable heltallsreferanse til legacy `Users`. Profilen viser bare den innloggede brukerens egne innsendinger og utkast. Utkast lagres i `ResourceDrafts` ved hvert steg i skjemaet og kan fortsettes etter ny innlogging eller fra en annen enhet. Innsendingseiere kan redigere egne detaljer, men ikke endre status, type eller kartområde. Den offentlige ressurslisten er skrivebeskyttet. Den rollebeskyttede admin-oversikten kan redigere alle innsendinger; type kan ikke endres hvis innsendingen allerede inngår i en forespørsel. Sletting fjerner først tilhørende forespørsler og sletter deretter innsendingen; kartpunkter slettes via databasens kaskaderegel.
 
 Identity bruker `AspNetUsers`, `AspNetRoles` og tilhørende tabeller. `Data/sql/identity.sql` oppretter disse uten å endre de eksisterende `Users`- og `Roles`-tabellene. `Submissions.IdentityUserId` lagrer eierens ASP.NET Identity-ID og peker på `AspNetUsers`; `Submissions.UserId` er fortsatt bare for den eldre kontomodellen. Privilegerte roller kan bare gis av en betrodd databaseansvarlig: registrer den valgte kontoen først, velg rollen i spørringen under, kjør den én gang, og kontroller at nøyaktig én rad ble lagt til. Registreringsskjemaet kan ikke velge eller gi privilegerte roller. Eksempelet gir rollen `Admin`; rollen `Heimevernet` opprettes også automatisk ved oppstart og kan tildeles på samme måte.
 
@@ -54,7 +54,7 @@ WHERE u.NormalizedEmail = UPPER('admin@example.com')
   );
 ```
 
-Docker init scripts run only when the database volume is first created. For an existing database, take a backup, create/update the dedicated database account and its limited grants, then run `Data/sql/identity.sql` and `Data/sql/submission-identity-owner.sql` in that order. Never drop a data volume to apply schema changes. Do not use the old `AddIdentity` migration; it attempts to create an outdated `Submissions` table. Email confirmation is not enabled yet; registration still allows sign-in without proving control of the email address.
+Docker init scripts run only when the database volume is first created. For an existing database, take a backup, create/update the dedicated database account and its limited grants, then run `Data/sql/identity.sql`, `Data/sql/submission-identity-owner.sql`, and `Data/sql/resource-drafts.sql` in that order. Never drop a data volume to apply schema changes. Do not use the old `AddIdentity` migration; it attempts to create an outdated `Submissions` table. Email confirmation is not enabled yet; registration still allows sign-in without proving control of the email address.
 
 ### Validering av inndata
 
