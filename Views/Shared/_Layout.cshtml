@@ -142,9 +142,24 @@
 
     @if (!erFullsideForm)
     {
-        <footer class="border-top footer text-muted">
-            <div class="container">
-                &copy; 2026 - azir_sempro
+        <footer class="site-footer">
+            <div class="site-footer__top">
+                <div class="site-footer__brand">
+                    <div class="site-footer__brand-rad">
+                        <img src="~/assets/icons/logoGreen.svg" alt="" class="site-footer__logo">
+                        <span class="site-footer__brand-navn">Krisis</span>
+                    </div>
+                    <p class="site-footer__tagline">Kobler behov og ressurser i nærmiljøet.</p>
+                </div>
+                <nav class="site-footer__lenker">
+                    <a asp-controller="Home" asp-action="Index">Hjem</a>
+                    <a asp-controller="Form" asp-action="Index">Skjema</a>
+                    <a asp-controller="Resources" asp-action="Index">Ressurser</a>
+                    <a asp-controller="Map" asp-action="Index">Kart</a>
+                </nav>
+            </div>
+            <div class="site-footer__bunn">
+                <span>&copy; 2026 Krisis</span>
             </div>
         </footer>
     }

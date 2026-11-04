@@ -120,6 +120,9 @@
                     "planned" => "gul",
                     _ => "gronn"
                 };
+                var publisertAv = submission.IdentityUserId is not null
+                    ? Model.BrukerNavn.GetValueOrDefault(submission.IdentityUserId, "Ukjent bruker")
+                    : "Ikke oppgitt";
                 var punkterJson = Model.PunkterPerSubmission.GetValueOrDefault(submission.SubmissionId, "[]");
                 var kategoriNavn = Model.KategoriNavn.GetValueOrDefault(submission.CategoryId, "");
                 var statusLabel = submission.Status switch
@@ -149,6 +152,7 @@
                             data-location="@submission.Adresse"
                             data-description="@submission.Beskrivelse"
                             data-submitted="@submission.Tidspunkt.ToString("dd.MM.yyyy 'kl.' HH:mm")"
+                            data-publisher="@publisertAv"
                             data-points="@punkterJson"
                             data-color="@fargeKode"
                             aria-label="Vis detaljer for @submission.Tittel">
@@ -169,6 +173,10 @@
                         <span class="resource-card__footer">
                             <span class="resource-status"><span class="resource-status__dot"></span>@statusLabel</span>
                             <span>@submittedLabel</span>
+                        </span>
+                        <span class="resource-card__publisher">
+                            <i class="fa-solid fa-user" aria-hidden="true"></i>
+                            @publisertAv
                         </span>
                     </button>
                 </article>
@@ -194,6 +202,7 @@
                 <div><dt>Kategori</dt><dd id="detailCategory"></dd></div>
                 <div><dt>Lokasjon</dt><dd id="detailLocation"></dd></div>
                 <div><dt>Meldt inn</dt><dd id="detailSubmitted"></dd></div>
+                <div><dt>Publisert av</dt><dd id="detailPublisher"></dd></div>
             </dl>
             <div class="resource-detail__description" id="detailDescription"></div>
             <div class="resource-detail__actions">

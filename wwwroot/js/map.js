@@ -7,6 +7,7 @@
     L.tileLayer(fliser, { maxZoom: 18 }).addTo(kart);
 
     const alleBounds = [];
+    const nodetatLag = [];
 
     document.querySelectorAll('.kart-listeelement').forEach(el => {
         const punkter = JSON.parse(el.dataset.points || '[]').map(p => [p.lat, p.lng]);
@@ -39,14 +40,73 @@
 
         lag.bindPopup(popup).addTo(kart);
         el.addEventListener('click', () => lag.openPopup());
+        el._kartLag = lag;
 
         alleBounds.push(...punkter);
     });
 
-    setTimeout(() => {
+    const nodetatIkoner = {
+        sykehus: { ikon: 'fa-hospital', farge: '#16a34a' },
+        ambulanse: { ikon: 'fa-truck-medical', farge: '#16a34a' },
+        politi: { ikon: 'fa-building-shield', farge: '#1e3a8a' },
+        brann: { ikon: 'fa-fire-extinguisher', farge: '#dc2626' }
+    };
+
+    const visVisning = () => {
         kart.invalidateSize();
         if (alleBounds.length > 0) {
-            kart.fitBounds(L.latLngBounds(alleBounds), { padding: [80, 80] });
+            kart.fitBounds(L.latLngBounds(alleBounds), { padding: [80, 80], maxZoom: 11 });
         }
-    }, 50);
+    };
+
+    fetch('/data/nodetat-stasjoner.json')
+        .then(r => r.json())
+        .then(stasjoner => {
+            stasjoner.forEach(s => {
+                const { ikon, farge } = nodetatIkoner[s.type] || nodetatIkoner.brann;
+                const merke = L.divIcon({
+                    html: `<i class="fa-solid ${ikon}" style="color:${farge};font-size:22px;-webkit-text-stroke:1.5px #f1f5f9;paint-order:stroke fill"></i>`,
+                    className: '',
+                    iconSize: [22, 22],
+                    iconAnchor: [11, 22]
+                });
+                const nodetatMerke = L.marker([s.lat, s.lng], { icon: merke })
+                    .bindPopup(`<div class="kart-popup"><h3>${s.navn}</h3><p>${s.adresse}</p></div>`)
+                    .addTo(kart);
+                nodetatLag.push(nodetatMerke);
+                alleBounds.push([s.lat, s.lng]);
+            });
+        })
+        .catch(() => {})
+        .finally(() => setTimeout(visVisning, 50));
+
+    const oppdaterFilter = () => {
+        const vis = type => document.querySelector(`.kart-filter input[data-filter="${type}"]`)?.checked ?? true;
+        const visRessurs = vis('ressurs');
+        const visBehov = vis('behov');
+        const visNodetat = vis('nodetat');
+
+        document.querySelectorAll('.kart-listeelement').forEach(el => {
+            const skalVises = el.dataset.erbehov === '1' ? visBehov : visRessurs;
+            el.style.display = skalVises ? '' : 'none';
+            if (!el._kartLag) return;
+            if (skalVises) {
+                kart.addLayer(el._kartLag);
+            } else {
+                kart.removeLayer(el._kartLag);
+            }
+        });
+
+        nodetatLag.forEach(lag => {
+            if (visNodetat) {
+                kart.addLayer(lag);
+            } else {
+                kart.removeLayer(lag);
+            }
+        });
+    };
+
+    document.querySelectorAll('.kart-filter input[data-filter]').forEach(input => {
+        input.addEventListener('change', oppdaterFilter);
+    });
 })();

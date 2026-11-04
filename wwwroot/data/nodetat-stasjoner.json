@@ -1,0 +1,20 @@
+[
+  { "navn": "Sørlandet sykehus Kristiansand", "type": "sykehus", "adresse": "Egsveien 100, 4615 Kristiansand", "lat": 58.16510196222823, "lng": 7.983115087143573 },
+  { "navn": "Sørlandet Privatsykehus", "type": "sykehus", "adresse": "Barstølveien 34, 4636 Kristiansand", "lat": 58.1765, "lng": 8.1290 },
+
+  { "navn": "Ambulansestasjon Kristiansand", "type": "ambulanse", "adresse": "Egsveien 100, 4615 Kristiansand", "lat": 58.1638, "lng": 8.0125 },
+  { "navn": "Ambulansestasjon Lillesand", "type": "ambulanse", "adresse": "Møglestuveien 27, 4790 Lillesand", "lat": 58.2480, "lng": 8.3760 },
+
+  { "navn": "Kristiansand politistasjon", "type": "politi", "adresse": "Vestre Strandgate 55, 4614 Kristiansand", "lat": 58.1465, "lng": 7.9955 },
+  { "navn": "Søgne og Songdalen politistasjon", "type": "politi", "adresse": "Brennåsmoen 1, 4647 Brennåsen", "lat": 58.1350, "lng": 7.8350 },
+  { "navn": "Vennesla og Iveland politistasjon", "type": "politi", "adresse": "Torsbyvegen 16, 4700 Vennesla", "lat": 58.2680, "lng": 7.9700 },
+  { "navn": "Lillesand og Birkenes politistasjon", "type": "politi", "adresse": "Vestregate 15B, 4790 Lillesand", "lat": 58.2485, "lng": 8.3780 },
+
+  { "navn": "Kristiansand brannstasjon", "type": "brann", "adresse": "Klynga 50, 4630 Kristiansand", "lat": 58.15565, "lng": 7.99938 },
+  { "navn": "Lillesand brannstasjon", "type": "brann", "adresse": "Stykkene 1, 4790 Lillesand", "lat": 58.2530, "lng": 8.3900 },
+  { "navn": "Søgne brannstasjon", "type": "brann", "adresse": "Salemsveien 24, 4640 Søgne", "lat": 58.09627, "lng": 7.78023 },
+  { "navn": "Vennesla brannstasjon", "type": "brann", "adresse": "Moseidmoen Industriområde 15, 4700 Vennesla", "lat": 58.2650, "lng": 7.9617 },
+  { "navn": "Birkenes / Birkeland brannstasjon", "type": "brann", "adresse": "Tollenesveien 31, 4760 Birkeland", "lat": 58.3380, "lng": 8.2180 },
+  { "navn": "Finsland brannstasjon", "type": "brann", "adresse": "Songdalsveien 756, 4646 Finsland", "lat": 58.27152, "lng": 7.65236 },
+  { "navn": "Hægeland brannstasjon", "type": "brann", "adresse": "Hægelandssletta 85, 4720 Hægeland", "lat": 58.38217, "lng": 7.74945 }
+]

@@ -23,4 +23,6 @@ public class ResourceListViewModel
     // SubmissionId -> JSON-array av punkter ({lat,lng}), siden punktene na ligger i
     // en egen Points-tabell og ikke lenger pa Submission selv.
     public Dictionary<int, string> PunkterPerSubmission { get; set; } = [];
+    // IdentityUserId -> visningsnavn (e-post/brukernavn), for a vise hvem som publiserte.
+    public Dictionary<string, string> BrukerNavn { get; set; } = [];
 }

@@ -367,6 +367,16 @@
     width: 6px;
 }
 
+.resource-card__publisher {
+    align-items: center;
+    color: #64748b;
+    display: flex;
+    font-size: 9px;
+    gap: 6px;
+    margin-top: 6px;
+    width: 100%;
+}
+
 .resource-empty {
     align-items: center;
     background: #111d2d;

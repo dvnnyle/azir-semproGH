@@ -1,3 +1,4 @@
+@model List<azir_sempro.Models.Submission>
 @{
     ViewData["Title"] = "Velkommen";
 }
@@ -29,30 +30,45 @@
                 <span class="hjem-status__tittel">Nylige ressurser</span>
                 <a asp-controller="Resources" asp-action="Index" class="hjem-status__lenke">Gå til ressurser</a>
             </div>
-            <div class="hjem-status__rad hjem-status__rad--rod">
-                <span class="hjem-status__prikk"></span>
-                <div class="hjem-status__info">
-                    <span class="hjem-status__navn">Mangler strøm til eldresenter</span>
-                    <span class="hjem-status__merke">akutt</span>
+            @if (!Model.Any())
+            {
+                <p class="hjem-status__tom">Ingen innmeldinger ennå.</p>
+            }
+            @foreach (var innsending in Model)
+            {
+                var erBehov = innsending.Type == "behov";
+                var prioritet = !erBehov ? "available" : innsending.Prioritet switch
+                {
+                    "høy" => "urgent",
+                    "middels" => "planned",
+                    _ => "available"
+                };
+                var merke = !erBehov ? "Tilgjengelig" : innsending.Prioritet switch
+                {
+                    "høy" => "Høy",
+                    "middels" => "Middels",
+                    _ => "Lav"
+                };
+                var fargeKlasse = prioritet switch
+                {
+                    "urgent" => "rod",
+                    "planned" => "gul",
+                    _ => "gronn"
+                };
+                var minutterSiden = Math.Max(0, (int)(DateTime.Now - innsending.Tidspunkt).TotalMinutes);
+                var tid = minutterSiden < 1 ? "nå"
+                    : minutterSiden < 60 ? $"{minutterSiden} min"
+                    : minutterSiden < 1440 ? $"{minutterSiden / 60} t"
+                    : $"{minutterSiden / 1440} d";
+                <div class="hjem-status__rad hjem-status__rad--@fargeKlasse">
+                    <span class="hjem-status__prikk"></span>
+                    <div class="hjem-status__info">
+                        <span class="hjem-status__navn">@innsending.Tittel</span>
+                        <span class="hjem-status__merke">@merke</span>
+                    </div>
+                    <span class="hjem-status__tid">@tid</span>
                 </div>
-                <span class="hjem-status__tid">12 min</span>
-            </div>
-            <div class="hjem-status__rad hjem-status__rad--gul">
-                <span class="hjem-status__prikk"></span>
-                <div class="hjem-status__info">
-                    <span class="hjem-status__navn">Sandsekker mot flom</span>
-                    <span class="hjem-status__merke">planlagt</span>
-                </div>
-                <span class="hjem-status__tid">2 t</span>
-            </div>
-            <div class="hjem-status__rad hjem-status__rad--gronn">
-                <span class="hjem-status__prikk"></span>
-                <div class="hjem-status__info">
-                    <span class="hjem-status__navn">Strømaggregat til utlån</span>
-                    <span class="hjem-status__merke">tilgjengelig</span>
-                </div>
-                <span class="hjem-status__tid">nå</span>
-            </div>
+            }
         </aside>
     </div>
 </section>
