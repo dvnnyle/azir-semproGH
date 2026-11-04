@@ -2,8 +2,9 @@ USE krisisdb;
 
 CREATE TABLE Submissions (
     SubmissionId INT AUTO_INCREMENT PRIMARY KEY,
-    -- Nullable inntil innlogging finnes - settes til den innloggede brukeren senere
+    -- References legacy Users, not ASP.NET Identity; remains NULL until they are mapped.
     UserId INT NULL,
+    IdentityUserId INT NULL,
     CategoryId INT NOT NULL,
     Tittel VARCHAR(255) NOT NULL,
     -- "ressurs" (tilbyr hjelp) eller "behov" (trenger hjelp)
@@ -17,5 +18,7 @@ CREATE TABLE Submissions (
     Tidspunkt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     Status VARCHAR(20) NOT NULL DEFAULT 'ny',
     FOREIGN KEY (UserId) REFERENCES Users(UserId),
+    CONSTRAINT FK_Submissions_AspNetUsers_IdentityUserId
+        FOREIGN KEY (IdentityUserId) REFERENCES AspNetUsers(Id) ON DELETE SET NULL,
     FOREIGN KEY (CategoryId) REFERENCES Categories(CategoryId)
 );

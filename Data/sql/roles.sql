@@ -11,7 +11,5 @@ CREATE TABLE Roles (
 INSERT INTO Roles (Navn, Gruppe) VALUES
     ('Admin', 'admin'),
     ('Heimevernet', 'offentlig'),
-    ('Kartverket', 'offentlig'),
     ('Privatperson', 'privat'),
-    ('Frivillig organisasjon', 'privat'),
     ('Bedrift', 'privat');

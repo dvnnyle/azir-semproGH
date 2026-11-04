@@ -16,4 +16,6 @@ INSERT INTO Categories (Navn) VALUES
     ('Kommunikasjonsutstyr'),
     ('Personell'),
     ('Sand og grus'),
-    ('Drivstoff');
+    ('Drivstoff'),
+    ('Mat og drikke'),
+    ('Annet');

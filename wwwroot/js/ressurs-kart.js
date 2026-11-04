@@ -29,7 +29,25 @@ function tegnRessursOmradeKart(elementId, punkterJsonStr, options) {
     const padding = options.padding || [40, 40];
     setTimeout(() => {
         map.invalidateSize();
-        map.fitBounds(erOmrade ? bounds : bounds.pad(2), { padding, maxZoom: 17, animate: false });
+        const fitBounds = erOmrade ? bounds : bounds.pad(2);
+        // Pa mobil (se @media (max-width:480px) i form.css) dekker skjemaet som
+        // bottom sheet nedre ~50% av skjermen - fitBounds vet ikke om det, sa uten
+        // ekstra bunn-padding blir punktet sentrert for hele skjermhoyden og havner
+        // delvis under arket. Legger pa ekstra "usynlig" padding nederst sa Leaflet
+        // sentrerer innenfor den faktisk synlige ovre halvdelen i stedet. Gjelder kun
+        // nar kallet eksplisitt ber om det (options.bottomSheet) - det store
+        // bakgrunnskartet trenger det, en liten mini-forhandsvisning (som
+        // lokasjonKartForhandsvisning pa Oppsummering) ville fatt alt for mye padding.
+        if (options.bottomSheet && window.innerWidth <= 480) {
+            map.fitBounds(fitBounds, {
+                paddingTopLeft: padding,
+                paddingBottomRight: [padding[0], window.innerHeight * 0.5 + 40],
+                maxZoom: 17,
+                animate: false
+            });
+        } else {
+            map.fitBounds(fitBounds, { padding, maxZoom: 17, animate: false });
+        }
     }, 50);
 
     return { map, punkter, erOmrade, bounds, senter };

@@ -18,7 +18,8 @@ public class AccountViewModel
     public string Email { get; set; } = "";
 
     [Required]
-    [StringLength(15)]
+    [StringLength(15, MinimumLength = 7)]
+    [RegularExpression(@"^\+?[0-9][0-9\s()-]{5,14}$")]
     public string PhoneNumber { get; set; } = "";
 
     [Required]
@@ -26,6 +27,7 @@ public class AccountViewModel
     public string Password { get; set; } = "";
 
     [Required]
+    [StringLength(100)]
     [Compare("Password")]
     public string ConfirmPassword { get; set; } = "";
 }

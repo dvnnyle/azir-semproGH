@@ -1,7 +1,8 @@
 ﻿@{
     var navController = ViewContext.RouteData.Values["controller"]?.ToString();
     var navAction = ViewContext.RouteData.Values["action"]?.ToString();
-    var erFullsideForm = navController == "Form" && (navAction == "Draw" || navAction == "Beskrivelse");
+    var erFullsideForm = (navController == "Form" && (navAction == "Draw" || navAction == "Beskrivelse"))
+                     || navController == "Map";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -10,7 +11,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Krisis</title>
     <link rel="icon" type="image/svg+xml" href="~/assets/icons/logoGreen.svg">
-    <script type="importmap"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;800&family=Poppins:wght@400;500;600&family=Space+Mono:wght@400;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -21,19 +21,34 @@
 </head>
 <body class="@(erFullsideForm ? "no-footer" : "")">
     <nav class="nav-bar">
-        <div class="brand">
+        <a asp-controller="Home" asp-action="Index" class="brand">
             <img src="~/assets/icons/logoGreen.svg" alt="" class="brand-logo">
             <div class="brand-text">
                 <div class="brand-name">Krisis</div>
             </div>
-        </div>
+        </a>
         <div class="nav-links">
+            <a asp-controller="Home" asp-action="Index" class="nav-item @(navController == "Home" ? "active" : "")">
+                <div class="nav-item-label">Hjem</div>
+                <div class="active-indicator"></div>
+            </a>
             <a asp-controller="Form" asp-action="Index" class="nav-item @(navController == "Form" ? "active" : "")">
                 <div class="nav-item-label">Skjema</div>
                 <div class="active-indicator"></div>
             </a>
             <a asp-controller="Resources" asp-action="Index" class="nav-item @(navController == "Resources" ? "active" : "")">
                 <div class="nav-item-label">Ressurser</div>
+                <div class="active-indicator"></div>
+            </a>
+            @if (User.IsInRole(azir_sempro.Data.AppRoles.Admin) || User.IsInRole(azir_sempro.Data.AppRoles.Heimevernet))
+            {
+                <a asp-controller="Admin" asp-action="Index" class="nav-item @(navController == "Admin" ? "active" : "")">
+                    <div class="nav-item-label">Administrasjon</div>
+                    <div class="active-indicator"></div>
+                </a>
+            }
+            <a asp-controller="Map" asp-action="Index" class="nav-item @(navController == "Map" ? "active" : "")">
+                <div class="nav-item-label">Kart</div>
                 <div class="active-indicator"></div>
             </a>
         </div>
@@ -43,11 +58,82 @@
                 <i class="fa-solid fa-user"></i>
             </button>
             <div class="konto-dropdown" id="navAccountDropdown">
-                <a asp-controller="Account" asp-action="Login" class="konto-dropdown__pill konto-dropdown__pill--primary">Logg inn</a>
-                <a asp-controller="Account" asp-action="Register" class="konto-dropdown__pill konto-dropdown__pill--secondary">Registrer deg</a>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <span class="konto-dropdown__pill">@User.Identity.Name</span>
+                    <a asp-controller="Account" asp-action="Profile" class="konto-dropdown__pill konto-dropdown__pill--secondary">Min profil</a>
+                    <form asp-controller="Account" asp-action="Logout" method="post">
+                        <button type="submit" class="konto-dropdown__pill konto-dropdown__pill--secondary">Logg ut</button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" class="konto-dropdown__pill konto-dropdown__pill--primary">Logg inn</a>
+                    <a asp-controller="Account" asp-action="Register" class="konto-dropdown__pill konto-dropdown__pill--secondary">Registrer deg</a>
+                }
             </div>
         </div>
+        <button type="button" class="nav-hamburger" id="navHamburgerToggle" aria-expanded="false" aria-controls="navMobilMeny">
+            <i class="fa-solid fa-bars"></i>
+        </button>
     </nav>
+
+    <div class="mobil-meny" id="navMobilMeny">
+        <div class="mobil-meny__lenker">
+            <a asp-controller="Home" asp-action="Index" class="mobil-meny__element @(navController == "Home" ? "active" : "")">
+                <span>Hjem</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+            <a asp-controller="Form" asp-action="Index" class="mobil-meny__element @(navController == "Form" ? "active" : "")">
+                <span>Skjema</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+            <a asp-controller="Resources" asp-action="Index" class="mobil-meny__element @(navController == "Resources" ? "active" : "")">
+                <span>Ressurser</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+            @if (User.IsInRole(azir_sempro.Data.AppRoles.Admin) || User.IsInRole(azir_sempro.Data.AppRoles.Heimevernet))
+            {
+                <a asp-controller="Admin" asp-action="Index" class="mobil-meny__element @(navController == "Admin" ? "active" : "")">
+                    <span>Administrasjon</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+            }
+            <a asp-controller="Map" asp-action="Index" class="mobil-meny__element @(navController == "Map" ? "active" : "")">
+                <span>Kart</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+        </div>
+
+        <hr class="mobil-meny__delelinje">
+
+        <div class="mobil-meny__konto">
+            <div class="mobil-meny__avatar"><i class="fa-solid fa-user"></i></div>
+            <div class="mobil-meny__konto-tekst">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <p>@User.Identity.Name</p>
+                    <p>Innlogget</p>
+                }
+                else
+                {
+                    <p>Ikke innlogget</p>
+                    <p>Trykk for å logge inn</p>
+                }
+            </div>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a asp-controller="Account" asp-action="Profile" class="mobil-meny__logg-inn">Min profil</a>
+                <form asp-controller="Account" asp-action="Logout" method="post">
+                    <button type="submit" class="mobil-meny__logg-inn">Logg ut</button>
+                </form>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login" class="mobil-meny__logg-inn">Logg inn</a>
+            }
+        </div>
+    </div>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -56,16 +142,31 @@
 
     @if (!erFullsideForm)
     {
-        <footer class="border-top footer text-muted">
-            <div class="container">
-                &copy; 2026 - azir_sempro
+        <footer class="site-footer">
+            <div class="site-footer__top">
+                <div class="site-footer__brand">
+                    <div class="site-footer__brand-rad">
+                        <img src="~/assets/icons/logoGreen.svg" alt="" class="site-footer__logo">
+                        <span class="site-footer__brand-navn">Krisis</span>
+                    </div>
+                    <p class="site-footer__tagline">Kobler behov og ressurser i nærmiljøet.</p>
+                </div>
+                <nav class="site-footer__lenker">
+                    <a asp-controller="Home" asp-action="Index">Hjem</a>
+                    <a asp-controller="Form" asp-action="Index">Skjema</a>
+                    <a asp-controller="Resources" asp-action="Index">Ressurser</a>
+                    <a asp-controller="Map" asp-action="Index">Kart</a>
+                </nav>
+            </div>
+            <div class="site-footer__bunn">
+                <span>&copy; 2026 Krisis</span>
             </div>
         </footer>
     }
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script>
+    <script nonce="@(Context.Items["CspNonce"])">
         const navAccountToggle = document.getElementById('navAccountToggle');
         const navAccountDropdown = document.getElementById('navAccountDropdown');
 
@@ -79,6 +180,24 @@
             if (!navAccountDropdown.contains(e.target) && !navAccountToggle.contains(e.target)) {
                 navAccountDropdown.classList.remove('open');
                 navAccountToggle.setAttribute('aria-expanded', false);
+            }
+        });
+
+        const navHamburgerToggle = document.getElementById('navHamburgerToggle');
+        const navMobilMeny = document.getElementById('navMobilMeny');
+
+        navHamburgerToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = navMobilMeny.classList.toggle('open');
+            navHamburgerToggle.setAttribute('aria-expanded', isOpen);
+            navHamburgerToggle.querySelector('i').className = isOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!navMobilMeny.contains(e.target) && !navHamburgerToggle.contains(e.target)) {
+                navMobilMeny.classList.remove('open');
+                navHamburgerToggle.setAttribute('aria-expanded', false);
+                navHamburgerToggle.querySelector('i').className = 'fa-solid fa-bars';
             }
         });
     </script>

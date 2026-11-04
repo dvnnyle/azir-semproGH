@@ -16,16 +16,18 @@
         </div>
 
         <form class="inputs-stack" method="post" asp-controller="Account" asp-action="Register">
-            <div asp-validation-summary="ModelOnly"></div>
+            <div asp-validation-summary="All"></div>
 
             <div class="felt-gruppe">
                 <label class="konto-label" asp-for="FirstName">Fornavn</label>
                 <input type="text" asp-for="FirstName" class="konto-input" placeholder="Daymian" required>
+                <span asp-validation-for="FirstName"></span>
             </div>
 
             <div class="felt-gruppe">
                 <label class="konto-label" asp-for="LastName">Etternavn</label>
                 <input type="text" asp-for="LastName" class="konto-input" placeholder="EX" required>
+                <span asp-validation-for="LastName"></span>
             </div>
 
             <div class="felt-gruppe">
@@ -43,6 +45,7 @@
             <div class="felt-gruppe">
                 <label class="konto-label" asp-for="Password">Passord</label>
                 <input type="password" asp-for="Password" class="konto-input" placeholder="Passord her" minlength="8" required>
+                <span asp-validation-for="Password"></span>
             </div>
 
             <div class="felt-gruppe">

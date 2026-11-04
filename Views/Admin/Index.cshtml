@@ -1,0 +1,137 @@
+@model azir_sempro.Models.AdminResourceOverviewViewModel
+@{
+    ViewData["Title"] = "Administrasjon";
+    var statusLabels = new Dictionary<string, string>
+    {
+        ["ny"] = "Ny",
+        ["vurderes"] = "Vurderes",
+        ["tildelt"] = "Tildelt",
+        ["lost"] = "Løst"
+    };
+}
+<link rel="stylesheet" href="~/css/admin.css" asp-append-version="true">
+
+<section class="admin-page">
+    <header class="admin-heading">
+        <div>
+            <p class="admin-eyebrow">Krisis · administrasjon</p>
+            <h1>Ressurser</h1>
+            <p>Alle innsendte meldinger fra brukere og organisasjoner.</p>
+        </div>
+        <div class="admin-stats" aria-label="Oversikt over meldinger">
+            <span><strong>@Model.TotalCount</strong> totalt</span>
+            <span><strong>@Model.ResourceCount</strong> ressurser</span>
+            <span><strong>@Model.NeedCount</strong> behov</span>
+            <span><strong>@Model.NewCount</strong> nye</span>
+        </div>
+    </header>
+
+    @if (TempData["AdminMessage"] is string message)
+    {
+        <div class="admin-notice" role="status">@message</div>
+    }
+
+    <form class="admin-filters" method="get" asp-controller="Admin" asp-action="Index">
+        <label class="admin-search">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <span class="visually-hidden">Søk etter tittel, sted eller eier</span>
+            <input type="search" name="Search" value="@Model.Search" placeholder="Søk etter tittel, sted eller eier">
+        </label>
+        <label class="admin-filter">
+            <span>Kategori</span>
+            <select name="Category">
+                <option value="">Alle kategorier</option>
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category" selected="@(Model.Category == category)">@category</option>
+                }
+            </select>
+        </label>
+        <label class="admin-filter">
+            <span>Type</span>
+            <select name="Type">
+                <option value="">Alle typer</option>
+                <option value="ressurs" selected="@(Model.Type == "ressurs")">Ressurser</option>
+                <option value="behov" selected="@(Model.Type == "behov")">Behov</option>
+            </select>
+        </label>
+        <label class="admin-filter">
+            <span>Status</span>
+            <select name="Status">
+                <option value="">Alle statuser</option>
+                <option value="ny" selected="@(Model.Status == "ny")">Ny</option>
+                <option value="vurderes" selected="@(Model.Status == "vurderes")">Vurderes</option>
+                <option value="tildelt" selected="@(Model.Status == "tildelt")">Tildelt</option>
+                <option value="lost" selected="@(Model.Status == "lost")">Løst</option>
+            </select>
+        </label>
+        <button type="submit" class="admin-filter-submit">Filtrer</button>
+        @if (!string.IsNullOrWhiteSpace(Model.Search) || !string.IsNullOrWhiteSpace(Model.Category) || !string.IsNullOrWhiteSpace(Model.Type) || !string.IsNullOrWhiteSpace(Model.Status))
+        {
+            <a class="admin-filter-clear" asp-controller="Admin" asp-action="Index">Nullstill</a>
+        }
+    </form>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th scope="col">Tittel</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Eier</th>
+                    <th scope="col">Meldt inn</th>
+                    <th scope="col"><span class="visually-hidden">Handlinger</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var submission in Model.Submissions)
+                {
+                    <tr>
+                        <td data-label="Tittel">
+                            <span class="admin-title">@submission.Tittel</span>
+                            <span class="admin-subtitle">@submission.CategoryName · @submission.Adresse</span>
+                        </td>
+                        <td data-label="Type">
+                            <span class="admin-badge @(submission.Type == "behov" ? "admin-badge--need" : "admin-badge--resource")">
+                                @(submission.Type == "behov" ? "Behov" : "Ressurs")
+                            </span>
+                        </td>
+                        <td data-label="Status">
+                            <span class="admin-status admin-status--@submission.Status">
+                                <span aria-hidden="true"></span>@statusLabels.GetValueOrDefault(submission.Status, submission.Status)
+                            </span>
+                        </td>
+                        <td data-label="Eier">@submission.OwnerName</td>
+                        <td data-label="Meldt inn" class="admin-date">@submission.Tidspunkt.ToString("dd. MMM yyyy")</td>
+                        <td data-label="Handlinger" class="admin-actions">
+                            <a asp-controller="Admin" asp-action="Edit" asp-route-id="@submission.SubmissionId"
+                               class="admin-action" aria-label="Rediger @submission.Tittel" title="Rediger">
+                                <i class="fa-solid fa-pen" aria-hidden="true"></i>
+                            </a>
+                            <form asp-controller="Admin" asp-action="Delete" asp-route-id="@submission.SubmissionId"
+                                  method="post" data-confirm-delete="Er du sikker på at du vil slette denne meldingen?">
+                                <button type="submit" class="admin-action admin-action--delete"
+                                        aria-label="Slett @submission.Tittel" title="Slett">
+                                    <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (Model.Submissions.Count == 0)
+        {
+            <div class="admin-empty">Ingen meldinger samsvarer med søket.</div>
+        }
+        else
+        {
+            <p class="admin-table-count">Viser @Model.Submissions.Count av @Model.TotalCount meldinger</p>
+        }
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/admin.js" asp-append-version="true"></script>
+}

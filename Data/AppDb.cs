@@ -15,4 +15,6 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>
     public DbSet<Submission> Submissions { get; set; }
     public DbSet<Point> Points { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<Request> Requests { get; set; }
+    public DbSet<ResourceDraft> ResourceDrafts { get; set; }
 }

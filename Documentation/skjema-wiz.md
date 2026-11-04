@@ -58,11 +58,12 @@ som FormViewModel - se Models/Submission.cs) og lagrer den ekte i
 Submissions-tabellen via Entity Framework. Skjema for tabellen ligger i
 Data/sql/submissions.sql.
 
-## Ting som ikke er ferdig enda (ikke min jobb, men greit å vite)
+## Administrasjon
 
-- Ingen innlogging. UserId på hver submission er null inntil noen bygger
-  ekte login/auth - se TODO i Submit().
-- Status endres ikke noe sted enda. Alt starter som ny, men det finnes
-  ingen admin-side som kan flytte den til vurderes/tildelt/løst.
-- Kart-siden (/Map) viser ikke disse innsendingene noe sted likevel - det
-  er egen greie, ikke bygd av meg.
+`AdminController` viser alle innsendinger i admin-oversikten (`/Admin`) for
+brukere med rollen `Admin` eller `Heimevernet`. Der kan de søke, filtrere,
+endre tittel, type, status, kategori, sted, frist og beskrivelse, eller slette
+en innsending. Type kan ikke endres når innsendingen har en tilknyttet
+forespørsel. Sletting fjerner også forespørsler som peker på innsendingen.
+
+Kart-siden (`/Map`) viser ikke disse innsendingene.

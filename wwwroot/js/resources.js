@@ -83,6 +83,7 @@
         document.getElementById('detailCategory').textContent = card.dataset.category || 'Ikke oppgitt';
         document.getElementById('detailLocation').textContent = card.dataset.location || 'Sted ikke oppgitt';
         document.getElementById('detailSubmitted').textContent = card.dataset.submitted || '';
+        document.getElementById('detailPublisher').textContent = card.dataset.publisher || 'Ikke oppgitt';
         document.getElementById('detailDescription').textContent = card.dataset.description || '';
 
         const type = document.getElementById('detailType');
@@ -124,4 +125,10 @@
     dialog.addEventListener('click', event => {
         if (event.target === dialog) dialog.close();
     });
+
+    const apneId = new URLSearchParams(location.search).get('apne');
+    if (apneId) {
+        const kort = document.querySelector(`.resource-card[data-id="${apneId}"]`);
+        if (kort) kort.querySelector('[data-resource-open]').click();
+    }
 })();

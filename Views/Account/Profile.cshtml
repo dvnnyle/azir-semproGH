@@ -1,0 +1,148 @@
+@model azir_sempro.Models.AccountProfileViewModel
+@{
+    ViewData["Title"] = "Min profil";
+    var resourceCount = Model.Submissions.Count(item => item.Type == "ressurs");
+    var needCount = Model.Submissions.Count(item => item.Type == "behov");
+}
+<link rel="stylesheet" href="~/css/profile.css" asp-append-version="true">
+
+<section class="profile-page">
+    <a asp-controller="Home" asp-action="Index" class="profile-back">
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Min profil
+        <span>/</span> Mine delte ressurser
+    </a>
+
+    <header class="profile-heading">
+        <div>
+            <p class="profile-eyebrow">Krisis · kontooversikt</p>
+            <h1>Mine delte ressurser</h1>
+            <p>Her finner du det du deler med nærmiljøet, og utkastene dine som ikke er publisert ennå.</p>
+        </div>
+        <a asp-controller="Form" asp-action="Draw" class="profile-add">
+            <i class="fa-solid fa-plus" aria-hidden="true"></i> Tilby en ny ressurs
+        </a>
+    </header>
+
+    @if (TempData["ProfileMessage"] is string message)
+    {
+        <p class="profile-notice" role="status">@message</p>
+    }
+
+    <div class="profile-summary" aria-label="Oversikt over dine meldinger">
+        <div><strong>@Model.Submissions.Count</strong><span>Publiserte meldinger</span></div>
+        <div><strong>@resourceCount</strong><span>Ressurser</span></div>
+        <div><strong>@needCount</strong><span>Behov</span></div>
+        <div><strong>@Model.Drafts.Count</strong><span>Utkast</span></div>
+    </div>
+
+    <section class="profile-list-section" aria-labelledby="submitted-heading">
+        <div class="profile-section-heading">
+            <div>
+                <h2 id="submitted-heading">Dine ressurser og behov</h2>
+                <p>Publiserte meldinger er synlige for andre.</p>
+            </div>
+            <span class="profile-count">@Model.Submissions.Count</span>
+        </div>
+
+        @if (Model.Submissions.Count == 0)
+        {
+            <div class="profile-empty">
+                <span class="profile-empty__icon"><i class="fa-solid fa-box-open" aria-hidden="true"></i></span>
+                <h3>Du har ikke delt noe ennå</h3>
+                <p>Legg ut en ressurs du kan tilby, eller meld et behov du trenger hjelp med.</p>
+                <a asp-controller="Form" asp-action="Draw" class="profile-add">Opprett en melding</a>
+            </div>
+        }
+        else
+        {
+            <div class="profile-rows">
+                @foreach (var item in Model.Submissions)
+                {
+                    var isNeed = item.Type == "behov";
+                    var statusLabel = item.Status switch
+                    {
+                        "vurderes" => "Til vurdering",
+                        "tildelt" => "Tildelt",
+                        "lost" => "Løst",
+                        _ => "Ny"
+                    };
+                    <article class="profile-row">
+                        <span class="profile-row__icon @(isNeed ? "profile-row__icon--need" : "")">
+                            <i class="fa-solid @(isNeed ? "fa-triangle-exclamation" : "fa-hand-holding-heart")" aria-hidden="true"></i>
+                        </span>
+                        <div class="profile-row__main">
+                            <h3>@item.Tittel</h3>
+                            <p>@item.CategoryName · @item.Adresse</p>
+                            <span class="profile-tag @(isNeed ? "profile-tag--need" : "")">@(isNeed ? "Behov" : "Ressurs")</span>
+                        </div>
+                        <div class="profile-row__state">
+                            <span class="profile-status"><i class="fa-solid fa-circle" aria-hidden="true"></i> @statusLabel</span>
+                            <small>Oppdatert @item.Tidspunkt.ToString("dd.MM.yyyy")</small>
+                        </div>
+                        <div class="profile-row__actions">
+                            <a asp-controller="Resources" asp-action="Index" asp-route-Search="@item.Tittel" class="profile-button">Vis melding</a>
+                            <a asp-controller="Account" asp-action="EditSubmission" asp-route-id="@item.SubmissionId" class="profile-button profile-button--edit">
+                                <i class="fa-solid fa-pen" aria-hidden="true"></i> Rediger
+                            </a>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+    </section>
+
+    <section class="profile-list-section" aria-labelledby="drafts-heading">
+        <div class="profile-section-heading">
+            <div>
+                <h2 id="drafts-heading">Utkast</h2>
+                <p>Utkastene lagres på kontoen din og er bare synlige for deg.</p>
+            </div>
+            <span class="profile-count">@Model.Drafts.Count</span>
+        </div>
+
+        @if (Model.Drafts.Count == 0)
+        {
+            <div class="profile-empty profile-empty--compact">
+                <p>Du har ingen påbegynte utkast.</p>
+            </div>
+        }
+        else
+        {
+            <div class="profile-rows">
+                @foreach (var draft in Model.Drafts)
+                {
+                    var isNeed = draft.Type == "behov";
+                    <article class="profile-row profile-row--draft">
+                        <span class="profile-row__icon profile-row__icon--draft">
+                            <i class="fa-solid fa-box" aria-hidden="true"></i>
+                        </span>
+                        <div class="profile-row__main">
+                            <h3>@(string.IsNullOrWhiteSpace(draft.Tittel) ? "Uten tittel" : draft.Tittel)</h3>
+                            <p>Fortsett der du slapp, og send inn når meldingen er klar.</p>
+                            <span class="profile-tag @(isNeed ? "profile-tag--need" : "")">@(isNeed ? "Behov" : "Ressurs")</span>
+                        </div>
+                        <div class="profile-row__state">
+                            <span class="profile-status profile-status--draft"><i class="fa-solid fa-circle" aria-hidden="true"></i> Utkast</span>
+                            <small>Sist lagret @draft.UpdatedAt.ToString("dd.MM.yyyy")</small>
+                        </div>
+                        <div class="profile-row__actions">
+                            <a asp-controller="Form" asp-action="Draw" asp-route-draftId="@draft.DraftId" class="profile-button profile-button--edit">
+                                <i class="fa-solid fa-pen" aria-hidden="true"></i> Fortsett utkast
+                            </a>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+    </section>
+
+    <aside class="profile-tip">
+        <i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i>
+        <div>
+            <strong>Hold ressursene dine oppdatert</strong>
+            <p>Endre tilgjengelighet under «Rediger» når noe er utlånt eller ikke kan deles. Avtal alltid henting direkte.</p>
+        </div>
+        <a asp-controller="Resources" asp-action="Index">Hjelp til å dele <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+    </aside>
+    <p class="profile-footnote">Krisis viser meldinger du har registrert. Tilgjengelighet er ikke verifisert.</p>
+</section>

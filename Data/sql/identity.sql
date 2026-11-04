@@ -1,7 +1,7 @@
 USE krisisdb;
 SET NAMES utf8mb4;
 
-CREATE TABLE AspNetRoles (
+CREATE TABLE IF NOT EXISTS AspNetRoles (
     Id INT NOT NULL AUTO_INCREMENT,
     Name VARCHAR(256) NULL,
     NormalizedName VARCHAR(256) NULL,
@@ -10,7 +10,7 @@ CREATE TABLE AspNetRoles (
     UNIQUE INDEX RoleNameIndex (NormalizedName)
 ) CHARACTER SET=utf8mb4;
 
-CREATE TABLE AspNetUsers (
+CREATE TABLE IF NOT EXISTS AspNetUsers (
     Id INT NOT NULL AUTO_INCREMENT,
     FirstName LONGTEXT NOT NULL,
     LastName LONGTEXT NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE AspNetUsers (
     INDEX EmailIndex (NormalizedEmail)
 ) CHARACTER SET=utf8mb4;
 
-CREATE TABLE AspNetRoleClaims (
+CREATE TABLE IF NOT EXISTS AspNetRoleClaims (
     Id INT NOT NULL AUTO_INCREMENT,
     RoleId INT NOT NULL,
     ClaimType LONGTEXT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE AspNetRoleClaims (
         FOREIGN KEY (RoleId) REFERENCES AspNetRoles (Id) ON DELETE CASCADE
 ) CHARACTER SET=utf8mb4;
 
-CREATE TABLE AspNetUserClaims (
+CREATE TABLE IF NOT EXISTS AspNetUserClaims (
     Id INT NOT NULL AUTO_INCREMENT,
     UserId INT NOT NULL,
     ClaimType LONGTEXT NULL,
@@ -55,7 +55,7 @@ CREATE TABLE AspNetUserClaims (
         FOREIGN KEY (UserId) REFERENCES AspNetUsers (Id) ON DELETE CASCADE
 ) CHARACTER SET=utf8mb4;
 
-CREATE TABLE AspNetUserLogins (
+CREATE TABLE IF NOT EXISTS AspNetUserLogins (
     LoginProvider VARCHAR(255) NOT NULL,
     ProviderKey VARCHAR(255) NOT NULL,
     ProviderDisplayName LONGTEXT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE AspNetUserLogins (
         FOREIGN KEY (UserId) REFERENCES AspNetUsers (Id) ON DELETE CASCADE
 ) CHARACTER SET=utf8mb4;
 
-CREATE TABLE AspNetUserRoles (
+CREATE TABLE IF NOT EXISTS AspNetUserRoles (
     UserId INT NOT NULL,
     RoleId INT NOT NULL,
     PRIMARY KEY (UserId, RoleId),
@@ -77,7 +77,7 @@ CREATE TABLE AspNetUserRoles (
         FOREIGN KEY (UserId) REFERENCES AspNetUsers (Id) ON DELETE CASCADE
 ) CHARACTER SET=utf8mb4;
 
-CREATE TABLE AspNetUserTokens (
+CREATE TABLE IF NOT EXISTS AspNetUserTokens (
     UserId INT NOT NULL,
     LoginProvider VARCHAR(255) NOT NULL,
     Name VARCHAR(255) NOT NULL,
