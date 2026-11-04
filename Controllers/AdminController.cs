@@ -190,10 +190,10 @@ public class AdminController : Controller
             .ToListAsync();
     }
 
-    private static string OwnerName(Submission submission, IReadOnlyDictionary<string, string> users)
+    private static string OwnerName(Submission submission, IReadOnlyDictionary<int, string> users)
     {
-        if (submission.IdentityUserId is not null &&
-            users.TryGetValue(submission.IdentityUserId, out var ownerName))
+        if (submission.IdentityUserId.HasValue &&
+            users.TryGetValue(submission.IdentityUserId.Value, out var ownerName))
         {
             return ownerName;
         }

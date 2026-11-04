@@ -20,6 +20,9 @@ public class FormController : Controller
         this.database = database;
     }
 
+    private int GetUserId() => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)
+        ?? throw new InvalidOperationException("An authenticated user must have an Identity user ID."));
+
     public IActionResult Index() => RedirectToAction(nameof(Draw));
 
     // Steg 1: tegn omrade eller slipp en nal pa kartet
@@ -131,7 +134,7 @@ public class FormController : Controller
         if (model.DraftId.HasValue &&
             !await database.ResourceDrafts.AnyAsync(draft =>
                 draft.ResourceDraftId == model.DraftId.Value &&
-                draft.IdentityUserId == User.FindFirstValue(ClaimTypes.NameIdentifier)))
+                draft.IdentityUserId == GetUserId()))
         {
             return NotFound();
         }
@@ -139,7 +142,7 @@ public class FormController : Controller
         var innsending = new Submission
         {
             Tittel = model.Tittel,
-            IdentityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+            IdentityUserId = GetUserId(),
             CategoryId = model.CategoryId,
             Type = model.Type,
             Adresse = model.Adresse,
@@ -252,10 +255,9 @@ public class FormController : Controller
     // Kvittering etter innsending
     public async Task<IActionResult> Kvittering(int id)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var submission = await database.Submissions
             .AsNoTracking()
-            .FirstOrDefaultAsync(item => item.SubmissionId == id && item.IdentityUserId == userId);
+            .FirstOrDefaultAsync(item => item.SubmissionId == id && item.IdentityUserId == GetUserId());
         if (submission is null)
         {
             return NotFound();
@@ -285,11 +287,10 @@ public class FormController : Controller
 
     private async Task<FormViewModel?> HentUtkastAsync(int draftId)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var draft = await database.ResourceDrafts
             .AsNoTracking()
             .FirstOrDefaultAsync(item =>
-                item.ResourceDraftId == draftId && item.IdentityUserId == userId);
+                item.ResourceDraftId == draftId && item.IdentityUserId == GetUserId());
         if (draft is null)
             return null;
 
@@ -301,8 +302,7 @@ public class FormController : Controller
 
     private async Task<bool> LagreUtkastAsync(FormViewModel model)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
-            ?? throw new InvalidOperationException("An authenticated user must have an Identity user ID.");
+        var userId = GetUserId();
         await using var transaction = await database.Database.BeginTransactionAsync();
         ResourceDraft draft;
         var isNew = !model.DraftId.HasValue;

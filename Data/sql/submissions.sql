@@ -4,7 +4,7 @@ CREATE TABLE Submissions (
     SubmissionId INT AUTO_INCREMENT PRIMARY KEY,
     -- References legacy Users, not ASP.NET Identity; remains NULL until they are mapped.
     UserId INT NULL,
-    IdentityUserId VARCHAR(255) NULL,
+    IdentityUserId INT NULL,
     CategoryId INT NOT NULL,
     Tittel VARCHAR(255) NOT NULL,
     -- "ressurs" (tilbyr hjelp) eller "behov" (trenger hjelp)

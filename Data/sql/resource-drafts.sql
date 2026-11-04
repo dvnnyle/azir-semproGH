@@ -2,7 +2,7 @@ USE krisisdb;
 
 CREATE TABLE IF NOT EXISTS ResourceDrafts (
     ResourceDraftId INT AUTO_INCREMENT PRIMARY KEY,
-    IdentityUserId VARCHAR(255) NOT NULL,
+    IdentityUserId INT NOT NULL,
     DataJson LONGTEXT NOT NULL,
     CreatedAt DATETIME(6) NOT NULL,
     UpdatedAt DATETIME(6) NOT NULL,

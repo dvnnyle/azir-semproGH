@@ -9,7 +9,12 @@ public class AccountViewModelTests
     private static List<ValidationResult> Valider(AccountViewModel model)
     {
         var resultater = new List<ValidationResult>();
-        Validator.TryValidateObject(model, new ValidationContext(model), resultater, validateAllProperties: true);
+        Validator.TryValidateObject(
+            model,
+            new ValidationContext(model),
+            resultater,
+            validateAllProperties: true);
+
         return resultater;
     }
 
@@ -34,6 +39,7 @@ public class AccountViewModelTests
     {
         var model = GyldigModell();
         model.Email = "ikke-en-epost";
+
         Assert.NotEmpty(Valider(model));
     }
 
@@ -42,6 +48,7 @@ public class AccountViewModelTests
     {
         var model = GyldigModell();
         model.Password = "kort";
+
         Assert.NotEmpty(Valider(model));
     }
 
@@ -50,6 +57,7 @@ public class AccountViewModelTests
     {
         var model = GyldigModell();
         model.FirstName = "";
+
         Assert.NotEmpty(Valider(model));
     }
 }

@@ -22,7 +22,7 @@ docker compose up --build
 
 Åpne `http://localhost:8080` (lokal utvikling; porten bindes kun til localhost).
 
-Docker Compose oppretter databasen og tabellene fra `Data/sql/`. Appen bruker en egen databasekonto med begrensede rettigheter; databaseporten er kun tilgjengelig fra localhost.
+Docker Compose oppretter databasen `krisisdb` og tabellene automatisk fra SQL-filene i `Data/sql/`, inkludert ASP.NET Identity-tabellene fra `identity.sql`. Appen bruker en egen databasekonto med begrensede rettigheter; databaseporten er kun tilgjengelig fra localhost.
 
 Stopp containerne med:
 

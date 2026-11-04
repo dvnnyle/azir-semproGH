@@ -6,6 +6,7 @@ using System.Threading.RateLimiting;
 using System.Net;
 using System.Security.Cryptography;
 using azir_sempro.Data;
+using azir_sempro.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,7 +43,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         connectionString,
         ServerVersion.AutoDetect(connectionString)));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
     {
         options.User.RequireUniqueEmail = true;
         options.Lockout.AllowedForNewUsers = true;
@@ -102,7 +103,7 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
     foreach (var roleName in AppRoles.All)
     {
         if (await roleManager.RoleExistsAsync(roleName))
@@ -110,7 +111,7 @@ using (var scope = app.Services.CreateScope())
             continue;
         }
 
-        var result = await roleManager.CreateAsync(new IdentityRole(roleName));
+        var result = await roleManager.CreateAsync(new IdentityRole<int>(roleName));
         if (!result.Succeeded)
         {
             var errors = string.Join("; ", result.Errors.Select(error => error.Description));

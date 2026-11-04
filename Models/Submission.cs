@@ -7,7 +7,7 @@ public class Submission
     public int SubmissionId { get; set; }
     // References the legacy Users table, not ASP.NET Identity's string user IDs.
     public int? UserId { get; set; }
-    public string? IdentityUserId { get; set; }
+    public int? IdentityUserId { get; set; }
     public int CategoryId { get; set; }
     public string Tittel { get; set; } = "";
     public string Type { get; set; } = "ressurs";

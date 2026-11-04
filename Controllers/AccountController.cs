@@ -13,13 +13,13 @@ namespace azir_sempro.Controllers;
 public class AccountController : Controller
 {
     private readonly AppDbContext database;
-    private readonly UserManager<IdentityUser> userManager;
-    private readonly SignInManager<IdentityUser> signInManager;
+    private readonly UserManager<ApplicationUser> userManager;
+    private readonly SignInManager<ApplicationUser> signInManager;
 
     public AccountController(
         AppDbContext database,
-        UserManager<IdentityUser> userManager,
-        SignInManager<IdentityUser> signInManager)
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager)
     {
         this.database = database;
         this.userManager = userManager;
@@ -93,11 +93,13 @@ public class AccountController : Controller
             return View(model);
         }
 
-        var identityUser = new IdentityUser
+        var identityUser = new ApplicationUser
         {
             UserName = model.Email,
             Email = model.Email,
-            PhoneNumber = model.PhoneNumber
+            PhoneNumber = model.PhoneNumber,
+            FirstName = model.FirstName,
+            LastName = model.LastName
         };
 
         var result = await userManager.CreateAsync(identityUser, model.Password);
@@ -148,8 +150,8 @@ public class AccountController : Controller
     [Authorize]
     public async Task<IActionResult> Profile()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
-            ?? throw new InvalidOperationException("An authenticated user must have an Identity user ID.");
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? throw new InvalidOperationException("An authenticated user must have an Identity user ID."));
         var categories = await database.Categories
             .AsNoTracking()
             .ToDictionaryAsync(category => category.CategoryId, category => category.Navn);
@@ -189,6 +191,37 @@ public class AccountController : Controller
                 };
             }).ToList()
         });
+    }
+
+    // Lar en bruker slette sin egen melding fra profilsiden.
+    // GetOwnedSubmissionAsync sjekker at meldingen tilhører innlogget bruker,
+    // så ingen kan slette andres meldinger ved å endre id-en i adressen.
+    [HttpPost("/profile/delete/{id:int}")]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteSubmission(int id)
+    {
+        var submission = await GetOwnedSubmissionAsync(id);
+        if (submission is null)
+        {
+            return NotFound();
+        }
+
+        // Forespørsler som peker på meldingen må slettes først, ellers stopper
+        // fremmednøklene i databasen slettingen (samme rekkefølge som i AdminController).
+        var relatedRequests = await database.Requests
+            .Where(request => request.BehovId == id || request.RessursId == id)
+            .ToListAsync();
+
+        await using var transaction = await database.Database.BeginTransactionAsync();
+        database.Requests.RemoveRange(relatedRequests);
+        await database.SaveChangesAsync();
+        database.Submissions.Remove(submission);
+        await database.SaveChangesAsync();
+        await transaction.CommitAsync();
+
+        TempData["ProfileMessage"] = "Meldingen er slettet.";
+        return RedirectToAction(nameof(Profile));
     }
 
     [HttpGet("/profile/edit/{id:int}")]
@@ -254,40 +287,9 @@ public class AccountController : Controller
         return RedirectToAction(nameof(Profile));
     }
 
-    // Lar en bruker slette sin egen melding fra profilsiden.
-    // GetOwnedSubmissionAsync sjekker at meldingen tilhører innlogget bruker,
-    // så ingen kan slette andres meldinger ved å endre id-en i adressen.
-    [HttpPost("/profile/delete/{id:int}")]
-    [Authorize]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteSubmission(int id)
-    {
-        var submission = await GetOwnedSubmissionAsync(id);
-        if (submission is null)
-        {
-            return NotFound();
-        }
-
-        // Forespørsler som peker på meldingen må slettes først, ellers stopper
-        // fremmednøklene i databasen slettingen (samme rekkefølge som i AdminController).
-        var relatedRequests = await database.Requests
-            .Where(request => request.BehovId == id || request.RessursId == id)
-            .ToListAsync();
-
-        await using var transaction = await database.Database.BeginTransactionAsync();
-        database.Requests.RemoveRange(relatedRequests);
-        await database.SaveChangesAsync();
-        database.Submissions.Remove(submission);
-        await database.SaveChangesAsync();
-        await transaction.CommitAsync();
-
-        TempData["ProfileMessage"] = "Meldingen er slettet.";
-        return RedirectToAction(nameof(Profile));
-    }
-
     private async Task<Submission?> GetOwnedSubmissionAsync(int id)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         return await database.Submissions.FirstOrDefaultAsync(submission =>
             submission.SubmissionId == id && submission.IdentityUserId == userId);
     }

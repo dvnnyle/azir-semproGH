@@ -9,7 +9,7 @@ SET @owner_column_exists = (
 );
 SET @owner_column_ddl = IF(
     @owner_column_exists = 0,
-    'ALTER TABLE Submissions ADD COLUMN IdentityUserId VARCHAR(255) NULL',
+    'ALTER TABLE Submissions ADD COLUMN IdentityUserId INT NULL',
     'SELECT 1'
 );
 PREPARE owner_column_statement FROM @owner_column_ddl;
