@@ -24,6 +24,9 @@ public class ChangePasswordViewModel
     [DataType(DataType.Password)]
     [Compare(nameof(NewPassword), ErrorMessage = "Passordene samsvarer ikke.")]
     public string ConfirmNewPassword { get; set; } = "";
+
+    [Range(typeof(bool), "true", "true", ErrorMessage = "Bekreft at du vil endre passordet.")]
+    public bool ConfirmChange { get; set; }
 }
 
 public class ProfileSubmissionViewModel

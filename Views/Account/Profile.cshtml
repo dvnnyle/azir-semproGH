@@ -18,9 +18,6 @@
             <h1>Mine delte ressurser</h1>
             <p>Her finner du det du deler med nærmiljøet, og utkastene dine som ikke er publisert ennå.</p>
         </div>
-        <a asp-controller="Form" asp-action="Draw" class="profile-add">
-            <i class="fa-solid fa-plus" aria-hidden="true"></i> Tilby en ny ressurs
-        </a>
     </header>
 
     @if (TempData["ProfileMessage"] is string message)
@@ -160,8 +157,13 @@
                 <input asp-for="PasswordChange.ConfirmNewPassword" autocomplete="new-password">
                 <span asp-validation-for="PasswordChange.ConfirmNewPassword"></span>
             </label>
+            <label class="profile-password-confirm">
+                <input asp-for="PasswordChange.ConfirmChange">
+                <span>Jeg bekrefter at jeg vil endre passordet.</span>
+                <span asp-validation-for="PasswordChange.ConfirmChange"></span>
+            </label>
             <div class="profile-edit-actions">
-                <button type="submit" class="profile-add">Lagre nytt passord</button>
+                <button type="submit" class="profile-add">Bekreft og endre passord</button>
             </div>
         </form>
     </section>

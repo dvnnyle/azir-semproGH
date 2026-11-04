@@ -420,6 +420,24 @@
     font-size: 13px;
 }
 
+.profile-password-confirm {
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    column-gap: 10px;
+    row-gap: 6px;
+}
+
+.profile-password-confirm input {
+    width: 16px;
+    min-height: 16px;
+    margin: 0;
+    accent-color: #10b981;
+}
+
+.profile-password-confirm span:last-child {
+    grid-column: 2;
+}
+
 .profile-edit-form input,
 .profile-edit-form select,
 .profile-edit-form textarea {
