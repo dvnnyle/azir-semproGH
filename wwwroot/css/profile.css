@@ -3,6 +3,16 @@
     margin: 0 auto;
     padding: 28px 0 42px;
     color: #e2e8f0;
+    font-family: 'Poppins', sans-serif;
+}
+
+.profile-page h1,
+.profile-page h2,
+.profile-page h3,
+.profile-page h4,
+.profile-page h5,
+.profile-page h6 {
+    font-family: 'Syne', sans-serif;
 }
 
 .profile-back {
@@ -109,7 +119,6 @@
 
 .profile-summary strong {
     color: #f8fafc;
-    font-family: 'Space Mono', monospace;
     font-size: 23px;
 }
 
@@ -148,7 +157,7 @@
     border-radius: 999px;
     background: #29364a;
     color: #cbd5e1;
-    font: 12px 'Space Mono', monospace;
+    font-size: 12px;
 }
 
 .profile-rows {
@@ -199,7 +208,6 @@
     overflow: hidden;
     margin: 0 0 4px;
     color: #f1f5f9;
-    font-family: 'Manrope', sans-serif;
     font-size: 14px;
     font-weight: 800;
     text-overflow: ellipsis;
@@ -322,7 +330,8 @@
 .profile-empty h3 {
     margin: 0 0 6px;
     color: #f1f5f9;
-    font: 700 15px 'Manrope', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
 }
 
 .profile-empty p {
