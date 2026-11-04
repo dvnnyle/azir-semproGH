@@ -193,6 +193,37 @@ public class AccountController : Controller
         });
     }
 
+    // Lar en bruker slette sin egen melding fra profilsiden.
+    // GetOwnedSubmissionAsync sjekker at meldingen tilhører innlogget bruker,
+    // så ingen kan slette andres meldinger ved å endre id-en i adressen.
+    [HttpPost("/profile/delete/{id:int}")]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteSubmission(int id)
+    {
+        var submission = await GetOwnedSubmissionAsync(id);
+        if (submission is null)
+        {
+            return NotFound();
+        }
+
+        // Forespørsler som peker på meldingen må slettes først, ellers stopper
+        // fremmednøklene i databasen slettingen (samme rekkefølge som i AdminController).
+        var relatedRequests = await database.Requests
+            .Where(request => request.BehovId == id || request.RessursId == id)
+            .ToListAsync();
+
+        await using var transaction = await database.Database.BeginTransactionAsync();
+        database.Requests.RemoveRange(relatedRequests);
+        await database.SaveChangesAsync();
+        database.Submissions.Remove(submission);
+        await database.SaveChangesAsync();
+        await transaction.CommitAsync();
+
+        TempData["ProfileMessage"] = "Meldingen er slettet.";
+        return RedirectToAction(nameof(Profile));
+    }
+
     [HttpGet("/profile/edit/{id:int}")]
     [Authorize]
     public async Task<IActionResult> EditSubmission(int id)

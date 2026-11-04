@@ -283,6 +283,23 @@
     color: #6ee7b7;
 }
 
+.profile-delete-form {
+    display: inline-flex;
+    margin: 0;
+}
+
+.profile-button--delete {
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #fecaca;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.profile-button--delete:hover {
+    border-color: #ef4444;
+    color: #fca5a5;
+}
+
 .profile-empty {
     display: flex;
     min-height: 230px;

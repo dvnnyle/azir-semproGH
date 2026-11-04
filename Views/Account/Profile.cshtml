@@ -83,6 +83,13 @@
                             <a asp-controller="Account" asp-action="EditSubmission" asp-route-id="@item.SubmissionId" class="profile-button profile-button--edit">
                                 <i class="fa-solid fa-pen" aria-hidden="true"></i> Rediger
                             </a>
+                            <form asp-controller="Account" asp-action="DeleteSubmission" asp-route-id="@item.SubmissionId"
+                                  method="post" class="profile-delete-form"
+                                  data-confirm-delete="Er du sikker på at du vil slette «@item.Tittel»?">
+                                <button type="submit" class="profile-button profile-button--delete" aria-label="Slett @item.Tittel">
+                                    <i class="fa-solid fa-trash" aria-hidden="true"></i> Slett
+                                </button>
+                            </form>
                         </div>
                     </article>
                 }
@@ -145,3 +152,7 @@
     </aside>
     <p class="profile-footnote">Krisis viser meldinger du har registrert. Tilgjengelighet er ikke verifisert.</p>
 </section>
+
+@section Scripts {
+    <script src="~/js/confirm-delete.js" asp-append-version="true"></script>
+}
