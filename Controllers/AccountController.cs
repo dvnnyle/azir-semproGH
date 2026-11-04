@@ -12,16 +12,13 @@ namespace azir_sempro.Controllers;
 
 public class AccountController : Controller
 {
-    private readonly AppDbContext database;
     private readonly UserManager<IdentityUser> userManager;
     private readonly SignInManager<IdentityUser> signInManager;
 
     public AccountController(
-        AppDbContext database,
         UserManager<IdentityUser> userManager,
         SignInManager<IdentityUser> signInManager)
     {
-        this.database = database;
         this.userManager = userManager;
         this.signInManager = signInManager;
     }
