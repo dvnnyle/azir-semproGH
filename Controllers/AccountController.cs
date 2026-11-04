@@ -148,6 +148,43 @@ public class AccountController : Controller
     [Authorize]
     public async Task<IActionResult> Profile()
     {
+        return View(await BuildProfileViewModelAsync());
+    }
+
+    [HttpPost("/profile/change-password")]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChangePassword([Bind(Prefix = "PasswordChange")] ChangePasswordViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View("Profile", await BuildProfileViewModelAsync(model));
+        }
+
+        var user = await userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return NotFound();
+        }
+
+        var result = await userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+        if (!result.Succeeded)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+
+            return View("Profile", await BuildProfileViewModelAsync(model));
+        }
+
+        await signInManager.RefreshSignInAsync(user);
+        TempData["ProfileMessage"] = "Passordet er endret.";
+        return RedirectToAction(nameof(Profile));
+    }
+
+    private async Task<AccountProfileViewModel> BuildProfileViewModelAsync(ChangePasswordViewModel? passwordChange = null)
+    {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
             ?? throw new InvalidOperationException("An authenticated user must have an Identity user ID.");
         var categories = await database.Categories
@@ -164,7 +201,7 @@ public class AccountController : Controller
             .OrderByDescending(draft => draft.UpdatedAt)
             .ToListAsync();
 
-        return View(new AccountProfileViewModel
+        return new AccountProfileViewModel
         {
             Submissions = submissions.Select(submission => new ProfileSubmissionViewModel
             {
@@ -187,8 +224,9 @@ public class AccountController : Controller
                     Type = form.Type,
                     UpdatedAt = draft.UpdatedAt
                 };
-            }).ToList()
-        });
+            }).ToList(),
+            PasswordChange = passwordChange ?? new ChangePasswordViewModel()
+        };
     }
 
     [HttpGet("/profile/edit/{id:int}")]

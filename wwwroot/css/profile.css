@@ -395,7 +395,24 @@
     background: #1e293b;
 }
 
+.profile-password-form {
+    display: grid;
+    max-width: 560px;
+    gap: 16px;
+    padding: 18px;
+    border: 1px solid #29364a;
+    border-radius: 10px;
+    background: #0f172a;
+}
+
 .profile-edit-form label {
+    display: grid;
+    gap: 6px;
+    color: #cbd5e1;
+    font-size: 12px;
+}
+
+.profile-password-form label {
     display: grid;
     gap: 6px;
     color: #cbd5e1;
@@ -413,7 +430,20 @@
     color: #f1f5f9;
 }
 
+.profile-password-form input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #475569;
+    border-radius: 8px;
+    background: #1e293b;
+    color: #f1f5f9;
+}
+
 .profile-edit-form label span:last-child:not(:first-child) {
+    color: #fca5a5;
+}
+
+.profile-password-form label span:last-child:not(:first-child) {
     color: #fca5a5;
 }
 

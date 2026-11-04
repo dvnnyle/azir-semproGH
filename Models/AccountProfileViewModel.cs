@@ -6,6 +6,24 @@ public class AccountProfileViewModel
 {
     public List<ProfileSubmissionViewModel> Submissions { get; set; } = [];
     public List<ProfileDraftViewModel> Drafts { get; set; } = [];
+    public ChangePasswordViewModel PasswordChange { get; set; } = new();
+}
+
+public class ChangePasswordViewModel
+{
+    [Required(ErrorMessage = "Skriv inn det nåværende passordet.")]
+    [DataType(DataType.Password)]
+    public string CurrentPassword { get; set; } = "";
+
+    [Required(ErrorMessage = "Skriv inn et nytt passord.")]
+    [StringLength(100, MinimumLength = 8, ErrorMessage = "Passordet må være mellom {2} og {1} tegn.")]
+    [DataType(DataType.Password)]
+    public string NewPassword { get; set; } = "";
+
+    [Required(ErrorMessage = "Bekreft det nye passordet.")]
+    [DataType(DataType.Password)]
+    [Compare(nameof(NewPassword), ErrorMessage = "Passordene samsvarer ikke.")]
+    public string ConfirmNewPassword { get; set; } = "";
 }
 
 public class ProfileSubmissionViewModel

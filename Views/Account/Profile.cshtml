@@ -136,6 +136,36 @@
         }
     </section>
 
+    <section class="profile-list-section" aria-labelledby="password-heading">
+        <div class="profile-section-heading">
+            <div>
+                <h2 id="password-heading">Endre passord</h2>
+                <p>Bruk det nåværende passordet ditt for å velge et nytt.</p>
+            </div>
+        </div>
+        <form asp-controller="Account" asp-action="ChangePassword" method="post" class="profile-password-form">
+            <div asp-validation-summary="ModelOnly" class="profile-validation" role="alert"></div>
+            <label asp-for="PasswordChange.CurrentPassword">
+                Nåværende passord
+                <input asp-for="PasswordChange.CurrentPassword" autocomplete="current-password">
+                <span asp-validation-for="PasswordChange.CurrentPassword"></span>
+            </label>
+            <label asp-for="PasswordChange.NewPassword">
+                Nytt passord
+                <input asp-for="PasswordChange.NewPassword" autocomplete="new-password">
+                <span asp-validation-for="PasswordChange.NewPassword"></span>
+            </label>
+            <label asp-for="PasswordChange.ConfirmNewPassword">
+                Bekreft nytt passord
+                <input asp-for="PasswordChange.ConfirmNewPassword" autocomplete="new-password">
+                <span asp-validation-for="PasswordChange.ConfirmNewPassword"></span>
+            </label>
+            <div class="profile-edit-actions">
+                <button type="submit" class="profile-add">Lagre nytt passord</button>
+            </div>
+        </form>
+    </section>
+
     <aside class="profile-tip">
         <i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i>
         <div>
