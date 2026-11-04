@@ -83,6 +83,7 @@
         document.getElementById('detailCategory').textContent = card.dataset.category || 'Ikke oppgitt';
         document.getElementById('detailLocation').textContent = card.dataset.location || 'Sted ikke oppgitt';
         document.getElementById('detailSubmitted').textContent = card.dataset.submitted || '';
+        document.getElementById('detailPublisher').textContent = card.dataset.publisher || 'Ikke oppgitt';
         document.getElementById('detailDescription').textContent = card.dataset.description || '';
 
         const type = document.getElementById('detailType');

@@ -11,6 +11,12 @@
         </div>
         <hr class="ressurs-split__divider">
 
+        <div class="kart-filter">
+            <label><input type="checkbox" data-filter="ressurs" checked> Ressurser</label>
+            <label><input type="checkbox" data-filter="behov" checked> Behov</label>
+            <label><input type="checkbox" data-filter="nodetat" checked> Nødetater</label>
+        </div>
+
             @foreach (var s in Model.Submissions)
             {
                 var erBehov = s.Type == "behov";

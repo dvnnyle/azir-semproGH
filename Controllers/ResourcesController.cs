@@ -76,6 +76,17 @@ public class ResourcesController : Controller
             .OrderByDescending(submission => submission.Tidspunkt)
             .ToListAsync();
 
+        var identityUserIder = treffliste
+            .Where(s => s.IdentityUserId != null)
+            .Select(s => s.IdentityUserId!)
+            .Distinct()
+            .ToList();
+        var brukerNavn = await database.Users
+            .AsNoTracking()
+            .Where(user => identityUserIder.Contains(user.Id))
+            .Select(user => new { user.Id, user.UserName, user.Email })
+            .ToDictionaryAsync(user => user.Id, user => user.Email ?? user.UserName ?? "Ukjent");
+
         var submissionIder = treffliste.Select(s => s.SubmissionId).ToList();
         var punkterPerSubmission = await database.Points
             .AsNoTracking()
@@ -91,6 +102,7 @@ public class ResourcesController : Controller
         filters.KategoriNavn = kategoriNavn;
         filters.PunkterPerSubmission = punkterPerSubmission;
         filters.Submissions = treffliste;
+        filters.BrukerNavn = brukerNavn;
 
         return View(filters);
     }
