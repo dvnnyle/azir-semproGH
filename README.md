@@ -20,7 +20,7 @@ docker compose up --build
 
 Åpne `http://localhost:8080`
 
-Docker Compose oppretter databasen `krisisdb` og tabellene `Users`/`Submissions` automatisk fra `Data/sql/users.sql` og `Data/sql/submissions.sql`.
+Docker Compose oppretter databasen `krisisdb` og tabellene automatisk fra SQL-filene i `Data/sql/`, inkludert ASP.NET Identity-tabellene fra `identity.sql`.
 
 Stopp containerne med:
 
@@ -68,4 +68,3 @@ Applikasjonen vil være tilgjengelig på `http://localhost:5253`
 <p align="center">
   <img src="wwwroot/assets/readme_assets/bottom-banner.png" width="100%">
 </p>
-
