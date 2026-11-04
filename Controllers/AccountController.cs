@@ -7,9 +7,9 @@ namespace azir_sempro.Controllers;
 
 public class AccountController : Controller
 {
-    private readonly UserManager<IdentityUser<int>> userManager;
+    private readonly UserManager<ApplicationUser> userManager;
 
-    public AccountController(UserManager<IdentityUser<int>> userManager)
+    public AccountController(UserManager<ApplicationUser> userManager)
     {
         this.userManager = userManager;
     }
@@ -54,11 +54,13 @@ public class AccountController : Controller
             return View(model);
         }
 
-        var identityUser = new IdentityUser<int>
+        var identityUser = new ApplicationUser
         {
             UserName = model.Email,
             Email = model.Email,
-            PhoneNumber = model.PhoneNumber
+            PhoneNumber = model.PhoneNumber,
+            FirstName = model.FirstName,
+            LastName = model.LastName
         };
 
         var result = await userManager.CreateAsync(identityUser, model.Password);

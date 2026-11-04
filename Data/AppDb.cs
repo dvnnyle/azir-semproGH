@@ -5,7 +5,7 @@ using azir_sempro.Models;
 
 namespace azir_sempro.Data;
 
-public class AppDbContext : IdentityDbContext<IdentityUser<int>, IdentityRole<int>, int>
+public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
@@ -14,4 +14,5 @@ public class AppDbContext : IdentityDbContext<IdentityUser<int>, IdentityRole<in
 
     public DbSet<Submission> Submissions { get; set; }
     public DbSet<Point> Points { get; set; }
+    public DbSet<Category> Categories { get; set; }
 }
