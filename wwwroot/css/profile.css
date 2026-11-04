@@ -3,6 +3,16 @@
     margin: 0 auto;
     padding: 28px 0 42px;
     color: #e2e8f0;
+    font-family: 'Poppins', sans-serif;
+}
+
+.profile-page h1,
+.profile-page h2,
+.profile-page h3,
+.profile-page h4,
+.profile-page h5,
+.profile-page h6 {
+    font-family: 'Syne', sans-serif;
 }
 
 .profile-back {
@@ -109,7 +119,6 @@
 
 .profile-summary strong {
     color: #f8fafc;
-    font-family: 'Space Mono', monospace;
     font-size: 23px;
 }
 
@@ -148,7 +157,7 @@
     border-radius: 999px;
     background: #29364a;
     color: #cbd5e1;
-    font: 12px 'Space Mono', monospace;
+    font-size: 12px;
 }
 
 .profile-rows {
@@ -199,7 +208,6 @@
     overflow: hidden;
     margin: 0 0 4px;
     color: #f1f5f9;
-    font-family: 'Manrope', sans-serif;
     font-size: 14px;
     font-weight: 800;
     text-overflow: ellipsis;
@@ -322,7 +330,8 @@
 .profile-empty h3 {
     margin: 0 0 6px;
     color: #f1f5f9;
-    font: 700 15px 'Manrope', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
 }
 
 .profile-empty p {
@@ -395,11 +404,47 @@
     background: #1e293b;
 }
 
+.profile-password-form {
+    display: grid;
+    width: 100%;
+    gap: 16px;
+    padding: 18px;
+    border: 1px solid #29364a;
+    border-radius: 10px;
+    background: #0f172a;
+    box-sizing: border-box;
+}
+
 .profile-edit-form label {
     display: grid;
     gap: 6px;
     color: #cbd5e1;
     font-size: 12px;
+}
+
+.profile-password-form label {
+    display: grid;
+    gap: 6px;
+    color: #cbd5e1;
+    font-size: 13px;
+}
+
+.profile-password-confirm {
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    column-gap: 10px;
+    row-gap: 6px;
+}
+
+.profile-password-confirm input {
+    width: 16px;
+    min-height: 16px;
+    margin: 0;
+    accent-color: #10b981;
+}
+
+.profile-password-confirm span:last-child {
+    grid-column: 2;
 }
 
 .profile-edit-form input,
@@ -413,7 +458,23 @@
     color: #f1f5f9;
 }
 
+.profile-password-form input {
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 12px;
+    border: 1px solid #475569;
+    border-radius: 8px;
+    background: #1e293b;
+    color: #f1f5f9;
+    box-sizing: border-box;
+    font: inherit;
+}
+
 .profile-edit-form label span:last-child:not(:first-child) {
+    color: #fca5a5;
+}
+
+.profile-password-form label span:last-child:not(:first-child) {
     color: #fca5a5;
 }
 

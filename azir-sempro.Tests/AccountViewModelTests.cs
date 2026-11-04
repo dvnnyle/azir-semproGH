@@ -52,4 +52,71 @@ public class AccountViewModelTests
         model.FirstName = "";
         Assert.NotEmpty(Valider(model));
     }
+
+    [Fact]
+    public void EndrePassord_GyldigeVerdierGirIngenFeil()
+    {
+        var model = new ChangePasswordViewModel
+        {
+            CurrentPassword = "gammeltPassord",
+            NewPassword = "nyttPassord",
+            ConfirmNewPassword = "nyttPassord",
+            ConfirmChange = true
+        };
+
+        var resultater = new List<ValidationResult>();
+        Validator.TryValidateObject(model, new ValidationContext(model), resultater, validateAllProperties: true);
+
+        Assert.Empty(resultater);
+    }
+
+    [Fact]
+    public void EndrePassord_UlikeNyePassordGirFeil()
+    {
+        var model = new ChangePasswordViewModel
+        {
+            CurrentPassword = "gammeltPassord",
+            NewPassword = "nyttPassord",
+            ConfirmNewPassword = "etAnnetPassord",
+            ConfirmChange = true
+        };
+
+        var resultater = new List<ValidationResult>();
+        Validator.TryValidateObject(model, new ValidationContext(model), resultater, validateAllProperties: true);
+
+        Assert.Contains(resultater, result => result.MemberNames.Contains(nameof(model.ConfirmNewPassword)));
+    }
+
+    [Fact]
+    public void EndrePassord_KortNyttPassordGirFeil()
+    {
+        var model = new ChangePasswordViewModel
+        {
+            CurrentPassword = "gammeltPassord",
+            NewPassword = "kort",
+            ConfirmNewPassword = "kort",
+            ConfirmChange = true
+        };
+
+        var resultater = new List<ValidationResult>();
+        Validator.TryValidateObject(model, new ValidationContext(model), resultater, validateAllProperties: true);
+
+        Assert.Contains(resultater, result => result.MemberNames.Contains(nameof(model.NewPassword)));
+    }
+
+    [Fact]
+    public void EndrePassord_ManglerBekreftelseGirFeil()
+    {
+        var model = new ChangePasswordViewModel
+        {
+            CurrentPassword = "gammeltPassord",
+            NewPassword = "nyttPassord",
+            ConfirmNewPassword = "nyttPassord"
+        };
+
+        var resultater = new List<ValidationResult>();
+        Validator.TryValidateObject(model, new ValidationContext(model), resultater, validateAllProperties: true);
+
+        Assert.Contains(resultater, result => result.MemberNames.Contains(nameof(model.ConfirmChange)));
+    }
 }
