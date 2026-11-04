@@ -1,25 +1,18 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
-using azir_sempro.Data;
+using Microsoft.EntityFrameworkCore;
 using azir_sempro.Models;
 
 namespace azir_sempro.Controllers;
 
 public class AccountController : Controller
 {
-    private readonly AppDbContext database;
-    private readonly PasswordHasher<User> passwordHasher = new();
+    private readonly UserManager<IdentityUser<int>> userManager;
 
-    private readonly UserManager<IdentityUser> userManager;
-
-    public AccountController(
-AppDbContext database,
-UserManager<IdentityUser> userManager)
-{
-this.database = database;
-this.userManager = userManager;
-}
+    public AccountController(UserManager<IdentityUser<int>> userManager)
+    {
+        this.userManager = userManager;
+    }
 
     [HttpGet("/login")]
     public IActionResult Login()
@@ -30,7 +23,7 @@ this.userManager = userManager;
     [HttpPost("/login")]
     public IActionResult Login(AccountViewModel model)
     {
-        // TODO: check credentials once a user store / auth exists
+        // Innlogging er foreløpig ikke implementert.
         return View(model);
     }
 
@@ -49,7 +42,7 @@ this.userManager = userManager;
             return View(model);
         }
 
-        if (await database.Users.AnyAsync(user => user.Email == model.Email))
+        if (await userManager.Users.AnyAsync(user => user.Email == model.Email))
         {
             ModelState.AddModelError("Email", "Denne e-posten er allerede registrert.");
             return View(model);
@@ -61,28 +54,26 @@ this.userManager = userManager;
             return View(model);
         }
 
-       var identityUser = new IdentityUser
-{
-    UserName = model.Email,
-    Email = model.Email,
-    PhoneNumber = model.PhoneNumber
-};
+        var identityUser = new IdentityUser<int>
+        {
+            UserName = model.Email,
+            Email = model.Email,
+            PhoneNumber = model.PhoneNumber
+        };
 
-var result = await userManager.CreateAsync(
-    identityUser,
-    model.Password);
+        var result = await userManager.CreateAsync(identityUser, model.Password);
 
-if (!result.Succeeded)
-{
-    foreach (var error in result.Errors)
-    {
-        ModelState.AddModelError("", error.Description);
-    }
+        if (!result.Succeeded)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
 
-    return View(model);
-}
+            return View(model);
+        }
 
-return RedirectToAction("Login");
+        return RedirectToAction(nameof(Login));
     }
 
     [HttpGet("/profile")]

@@ -13,7 +13,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         connectionString,
         ServerVersion.AutoDetect(connectionString)));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<IdentityUser<int>, IdentityRole<int>>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
