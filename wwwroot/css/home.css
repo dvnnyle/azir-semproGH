@@ -167,8 +167,7 @@
   flex-shrink: 0;
 }
 
-/* Ressursliste: speiler de ekte prioritetsfargene fra kartet
-   (rod/gul/gronn) og eksempeldataene i Data/sql/eksempeldata.sql. */
+/* Ressursliste: speiler de ekte prioritetsfargene fra kartet (rod/gul/gronn). */
 .hjem-status__halo {
   position: absolute;
   top: 50%;
