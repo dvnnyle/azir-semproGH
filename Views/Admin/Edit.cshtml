@@ -8,8 +8,8 @@
 <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true">
 
 <section class="admin-page admin-edit-page">
-    <a asp-controller="Admin" asp-action="Index" class="admin-back">
-        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Tilbake til oversikten
+    <a href="@ViewBag.TilbakeUrl" class="admin-back">
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Tilbake
     </a>
     <header class="admin-heading admin-edit-heading">
         <div>
@@ -27,6 +27,7 @@
     </div>
 
     <form asp-controller="Admin" asp-action="Edit" asp-route-id="@ViewContext.RouteData.Values["id"]" method="post" class="admin-edit-form">
+        <input type="hidden" name="returnUrl" value="@ViewBag.TilbakeUrl">
         <div asp-validation-summary="ModelOnly" class="admin-validation" role="alert"></div>
         <label>
             <span>Tittel</span>
@@ -90,7 +91,7 @@
             </label>
         </div>
         <div class="admin-edit-actions">
-            <a asp-controller="Admin" asp-action="Index" class="admin-cancel">Avbryt</a>
+            <a href="@ViewBag.TilbakeUrl" class="admin-cancel">Avbryt</a>
             <button type="submit" class="admin-filter-submit">Lagre endringer</button>
         </div>
     </form>

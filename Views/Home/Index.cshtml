@@ -7,29 +7,29 @@
 <section class="hjem-hero">
     <div class="hjem-hero__intro">
         <h1 class="hjem-hero__tittel">
-            Det du har,<br>
-            kan være det<br>
-            <span class="hjem-aksent">noen trenger.</span>
+            <span class="hjem-aksent--behov">Meld behov,</span><br>
+            eller <span class="hjem-aksent">tilby</span><br>
+            <span class="hjem-aksent">ressurser.</span>
         </h1>
         <p class="hjem-hero__tekst">
-            Krisis gjør det enklere å dele ressurser i nærmiljøet. Tilby det du kan, finn det du trenger, og se hva som finnes i nærheten på kartet.
+            Krisis gir kriseledelsen oversikt over behov og tilgjengelige ressurser ved større hendelser som ekstremvær, strømbrudd og evakuering.
         </p>
         <div class="hjem-knapper">
-            <a asp-controller="Account" asp-action="Register" class="hjem-knapp hjem-knapp--primary">
-                Opprett konto
-                <img src="~/assets/home/arrow-right.svg" alt="" width="18" height="18">
+            <a asp-controller="Form" asp-action="Draw" asp-route-type="behov" class="hjem-knapp hjem-knapp--behov">
+                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Meld behov
             </a>
-            <a asp-controller="Account" asp-action="Login" class="hjem-knapp hjem-knapp--secondary">Logg inn</a>
+            <a asp-controller="Form" asp-action="Draw" asp-route-type="ressurs" class="hjem-knapp hjem-knapp--ressurs">
+                <i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i> Tilby ressurs
+            </a>
         </div>
-        <p class="hjem-hero__notis">For deg som vil bidra, og deg som leter etter noe.</p>
     </div>
 
     <div class="hjem-hero__visual">
         <img src="~/assets/home/halo.png" alt="" class="hjem-status__halo">
         <aside class="hjem-status">
             <div class="hjem-status__header">
-                <span class="hjem-status__tittel">Nylige delinger</span>
-                <a asp-controller="Resources" asp-action="Index" class="hjem-status__lenke">Gå til delinger</a>
+                <span class="hjem-status__tittel">Nylige meldinger</span>
+                <a asp-controller="Resources" asp-action="Index" class="hjem-status__lenke">Se alle</a>
             </div>
             @if (!Model.Any())
             {
@@ -38,24 +38,13 @@
             @foreach (var innsending in Model)
             {
                 var erBehov = innsending.Type == "behov";
-                var prioritet = !erBehov ? "available" : innsending.Prioritet switch
-                {
-                    "høy" => "urgent",
-                    "middels" => "planned",
-                    _ => "available"
-                };
                 var merke = !erBehov ? "Tilgjengelig" : innsending.Prioritet switch
                 {
                     "høy" => "Høy",
                     "middels" => "Middels",
                     _ => "Lav"
                 };
-                var fargeKlasse = prioritet switch
-                {
-                    "urgent" => "rod",
-                    "planned" => "gul",
-                    _ => "gronn"
-                };
+                var fargeKlasse = erBehov ? "gul" : "gronn";
                 var minutterSiden = Math.Max(0, (int)(DateTime.Now - innsending.Tidspunkt).TotalMinutes);
                 var tid = minutterSiden < 1 ? "nå"
                     : minutterSiden < 60 ? $"{minutterSiden} min"
@@ -81,7 +70,7 @@
 <section class="hjem-steg-seksjon">
     <div class="hjem-sentrert">
         <div>
-            <h2 class="hjem-tittel-m">Fra noe du har, til noe vi deler.</h2>
+            <h2 class="hjem-tittel-m">Slik fungerer det</h2>
         </div>
 
         <div class="hjem-steg-rad">
@@ -91,23 +80,23 @@
                     <span class="hjem-steg__linje"></span>
                 </div>
                 <h3>Opprett en konto</h3>
-                <p>Registrer deg for å komme i gang med å dele og finne ressurser.</p>
+                <p>Du må være innlogget for å registrere ressurser og behov.</p>
             </div>
             <div class="hjem-steg">
                 <div class="hjem-steg__header">
                     <span class="hjem-steg__nummer">02</span>
                     <span class="hjem-steg__linje"></span>
                 </div>
-                <h3>Tilby eller finn en ressurs</h3>
-                <p>Bruk skjemaet for å dele noe, eller utforsk ressurser i listen og på kartet.</p>
+                <h3>Registrer det som trengs eller finnes</h3>
+                <p>Oppgi type, område og frist. For eksempel kjøretøy, maskiner, aggregater, samband eller mannskap.</p>
             </div>
             <div class="hjem-steg">
                 <div class="hjem-steg__header">
                     <span class="hjem-steg__nummer">03</span>
                     <span class="hjem-steg__linje"></span>
                 </div>
-                <h3>Avtal direkte</h3>
-                <p>Ta kontakt med den som deler. Avklar tilgjengelighet, bruk og henting sammen.</p>
+                <h3>Behov og ressurs kobles</h3>
+                <p>Kriseledelsen vurderer meldingene og kobler behov med tilgjengelige ressurser.</p>
             </div>
         </div>
     </div>
@@ -116,13 +105,13 @@
 <section class="hjem-kart-seksjon">
     <div class="hjem-sentrert hjem-sentrert--rad">
         <div class="hjem-kart-seksjon__intro">
-            <h2 class="hjem-tittel-m">Det du trenger,<br>kan være nærmere<br>enn du tror.</h2>
+            <h2 class="hjem-tittel-m">Se behov og<br>ressurser på<br>kartet.</h2>
             <p class="hjem-brodtekst">
-                Se hvor ressursene finnes i forhold til deg. Kartet gir en annen vei inn til det naboene dine deler.
+                Kartet viser registrerte behov, tilgjengelige ressurser og nødetater i området.
             </p>
             <div class="hjem-veiledning">
                 <img src="~/assets/home/map-pin-1.svg" width="20" height="20" alt="">
-                <p>Finn et område. Se ressursen.<br>Avtal med den som deler.</p>
+                <p>Finn et område. Se hva som trengs,<br>og hva som er tilgjengelig.</p>
             </div>
             <a asp-controller="Map" asp-action="Index" class="hjem-knapp hjem-knapp--primary">
                 Gå til kart
@@ -139,26 +128,26 @@
 <section class="hjem-faq">
     <div class="hjem-sentrert hjem-sentrert--rad">
         <div class="hjem-faq__intro">
-            <h2 class="hjem-tittel-m">Nytt her?<br>Helt naturlig å lure.</h2>
-            <p class="hjem-brodtekst">Her er noen svar som gjør det enklere å komme i gang.</p>
+            <h2 class="hjem-tittel-m">Spørsmål<br>og svar</h2>
+            <p class="hjem-brodtekst">Det viktigste å vite før du registrerer noe.</p>
         </div>
 
         <div class="hjem-faq__liste">
             <div class="hjem-faq__rad">
-                <h3>Kan jeg bli med uten å ha noe å dele?</h3>
-                <p>Ja. Du kan også bruke Krisis til å finne ressurser og bli kjent med det som deles i nærmiljøet.</p>
+                <h3>Hvilke ressurser er relevante?</h3>
+                <p>Ressurser som kan brukes i en krise, som kjøretøy, maskiner, droner, aggregater, samband, drivstoff, sand og grus eller mannskap.</p>
             </div>
             <div class="hjem-faq__rad">
                 <h3>Er ressursene alltid tilgjengelige?</h3>
-                <p>Nei. En oppføring er ikke en garanti. Avtal tilgjengelighet, vilkår og henting direkte med den som deler.</p>
+                <p>Nei. En registrert ressurs er ingen garanti. Tilgjengelighet må bekreftes med den som har registrert den.</p>
             </div>
             <div class="hjem-faq__rad">
-                <h3>Hva bør jeg tenke på før jeg deler?</h3>
-                <p>Beskriv ressursen tydelig og del bare opplysninger du er komfortabel med. Les personverninformasjonen før du registrerer deg.</p>
+                <h3>Hva må jeg oppgi?</h3>
+                <p>Beskriv behovet eller ressursen presist, med område og eventuell frist. Oppgi bare opplysninger som er nødvendige.</p>
             </div>
             <div class="hjem-faq__rad">
                 <h3>Er Krisis en nødtjeneste?</h3>
-                <p>Nei. Krisis er for ressursdeling, ikke akutt hjelp eller live beredskapsinformasjon. Ved akutt fare, ring riktig nødnummer: 110, 112 eller 113.</p>
+                <p>Nei. Krisis gir oversikt over behov og ressurser, ikke akutt hjelp. Ved akutt fare, ring riktig nødnummer: 110, 112 eller 113.</p>
             </div>
         </div>
     </div>
@@ -167,9 +156,9 @@
 <section class="hjem-avslutning">
     <div class="hjem-invitasjon">
         <div class="hjem-invitasjon__tekst">
-            <h2 class="hjem-tittel-l">Begynn med det du har.</h2>
+            <h2 class="hjem-tittel-l">Har du ressurser som kan brukes i en krise?</h2>
             <p class="hjem-brodtekst">
-                Bli med og gjør det enklere å dele, finne og hjelpe lokalt.<br>
+                Registrer dem nå, så kriseledelsen vet hva som finnes.<br>
                 Det første steget er en konto.
             </p>
         </div>

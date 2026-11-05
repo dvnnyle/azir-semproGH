@@ -1,6 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using azir_sempro.Models
+@using Microsoft.EntityFrameworkCore
 @inject UserManager<ApplicationUser> UserManager
+@inject azir_sempro.Data.AppDbContext Database
 @{
     var navController = ViewContext.RouteData.Values["controller"]?.ToString();
     var navAction = ViewContext.RouteData.Values["action"]?.ToString();
@@ -10,6 +12,17 @@
         ? await UserManager.GetUserAsync(User)
         : null;
     var visningsnavn = navnBruker is not null ? $"{navnBruker.FirstName} {navnBruker.LastName}".Trim() : "";
+    var harPortalTilgang = User.IsInRole(azir_sempro.Data.AppRoles.Admin) || User.IsInRole(azir_sempro.Data.AppRoles.Heimevernet);
+    var erPortalKart = navController == "Map" && harPortalTilgang && Context.Request.Query.ContainsKey("portal");
+    var erPortalKonto = harPortalTilgang && navController is "Account" or "Accessibility";
+    var erPortal = navController == "Admin" || erPortalKart || erPortalKonto;
+    var logoUrl = Url.Content(erPortal ? "~/assets/icons/logoBluePortal.svg" : "~/assets/icons/logoGreen.svg");
+    var antallAapneBehov = erPortal
+        ? await Database.Submissions.CountAsync(submission =>
+            submission.Type == "behov" &&
+            submission.Status != "lost" &&
+            !Database.Requests.Any(request => request.BehovId == submission.SubmissionId))
+        : 0;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -17,50 +30,82 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Krisis</title>
-    <link rel="icon" type="image/svg+xml" href="~/assets/icons/logoGreen.svg">
+    <script src="~/js/tilgjengelighet.js" asp-append-version="true"></script>
+    <link rel="icon" type="image/svg+xml" href="@logoUrl">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;800&family=Poppins:wght@400;500;600&family=Space+Mono:wght@400;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
         <link rel="stylesheet" href="~/azir-sempro.styles.css" asp-append-version="true" />
 </head>
-<body class="@(erFullsideForm ? "no-footer" : "")">
+<body class="@(erFullsideForm ? "no-footer" : "") @(erPortal ? "portal" : "")">
     <nav class="nav-bar">
-        <a asp-controller="Home" asp-action="Index" class="brand">
-            <img src="~/assets/icons/logoGreen.svg" alt="" class="brand-logo">
+        <a asp-controller="@(erPortal ? "Admin" : "Home")" asp-action="Index" class="brand">
+            <img src="@logoUrl" alt="" class="brand-logo">
             <div class="brand-text">
                 <div class="brand-name">Krisis</div>
             </div>
+            @if (erPortal)
+            {
+                <span class="brand-portal">Portal</span>
+            }
         </a>
         <div class="nav-links">
-            <a asp-controller="Home" asp-action="Index" class="nav-item @(navController == "Home" ? "active" : "")">
-                <div class="nav-item-label">Hjem</div>
-                <div class="active-indicator"></div>
-            </a>
-            <a asp-controller="Form" asp-action="Index" class="nav-item @(navController == "Form" ? "active" : "")">
-                <div class="nav-item-label">Skjema</div>
-                <div class="active-indicator"></div>
-            </a>
-            <a asp-controller="Resources" asp-action="Index" class="nav-item @(navController == "Resources" ? "active" : "")">
-                <div class="nav-item-label">Delinger</div>
-                <div class="active-indicator"></div>
-            </a>
-            @if (User.IsInRole(azir_sempro.Data.AppRoles.Admin) || User.IsInRole(azir_sempro.Data.AppRoles.Heimevernet))
+            @if (erPortal)
             {
-                <a asp-controller="Admin" asp-action="Index" class="nav-item @(navController == "Admin" ? "active" : "")">
-                    <div class="nav-item-label">Administrasjon</div>
+                <a asp-controller="Admin" asp-action="Index" class="nav-item @(navController == "Admin" && navAction is "Index" or "Edit" ? "active" : "")">
+                    <div class="nav-item-label">Oversikt</div>
+                    <div class="active-indicator"></div>
+                </a>
+                <a asp-controller="Admin" asp-action="Match" class="nav-item @(navAction is "Match" or "MatchBehov" ? "active" : "")">
+                    <div class="nav-item-label">Kobling <span class="portal-antall" aria-label="@antallAapneBehov åpne behov">@antallAapneBehov</span></div>
+                    <div class="active-indicator"></div>
+                </a>
+                <a asp-controller="Map" asp-action="Index" asp-route-portal="1" class="nav-item @(erPortalKart ? "active" : "")">
+                    <div class="nav-item-label">Kart</div>
+                    <div class="active-indicator"></div>
+                </a>
+                <a asp-controller="Admin" asp-action="Arkiv" class="nav-item @(navAction == "Arkiv" ? "active" : "")">
+                    <div class="nav-item-label">Arkiv</div>
                     <div class="active-indicator"></div>
                 </a>
             }
-            <a asp-controller="Map" asp-action="Index" class="nav-item @(navController == "Map" ? "active" : "")">
-                <div class="nav-item-label">Kart</div>
-                <div class="active-indicator"></div>
-            </a>
+            else
+            {
+                <a asp-controller="Home" asp-action="Index" class="nav-item @(navController == "Home" ? "active" : "")">
+                    <div class="nav-item-label">Hjem</div>
+                    <div class="active-indicator"></div>
+                </a>
+                <a asp-controller="Form" asp-action="Index" class="nav-item @(navController == "Form" ? "active" : "")">
+                    <div class="nav-item-label">Skjema</div>
+                    <div class="active-indicator"></div>
+                </a>
+                <a asp-controller="Resources" asp-action="Index" class="nav-item @(navController == "Resources" ? "active" : "")">
+                    <div class="nav-item-label">Delinger</div>
+                    <div class="active-indicator"></div>
+                </a>
+                <a asp-controller="Map" asp-action="Index" class="nav-item @(navController == "Map" ? "active" : "")">
+                    <div class="nav-item-label">Kart</div>
+                    <div class="active-indicator"></div>
+                </a>
+            }
         </div>
         <div class="nav-account">
-            <a asp-controller="Form" asp-action="Draw" class="nav-cta"><i class="fa-solid fa-plus"></i> Ny</a>
+            @if (erPortal)
+            {
+                <a asp-controller="Form" asp-action="Draw" class="nav-cta"><i class="fa-solid fa-plus" aria-hidden="true"></i> Ny</a>
+                <a asp-controller="Home" asp-action="Index" class="nav-portal"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Til nettstedet</a>
+            }
+            else
+            {
+                <a asp-controller="Form" asp-action="Draw" class="nav-cta"><i class="fa-solid fa-plus"></i> Ny</a>
+                @if (harPortalTilgang)
+                {
+                    <a asp-controller="Admin" asp-action="Index" class="nav-portal"><i class="fa-solid fa-briefcase" aria-hidden="true"></i> Portal</a>
+                }
+            }
             <button type="button" class="nav-avatar" id="navAccountToggle" aria-expanded="false">
                 <i class="fa-solid fa-user"></i>
             </button>
@@ -73,7 +118,13 @@
                     </div>
                     <hr class="konto-dropdown__delelinje">
                     <a asp-controller="Account" asp-action="Profile" class="konto-dropdown__lenke">
-                        <i class="fa-solid fa-user-gear" aria-hidden="true"></i> Min profil
+                        <i class="fa-solid fa-user-gear" aria-hidden="true"></i> Min side
+                    </a>
+                    <a asp-controller="Account" asp-action="Settings" class="konto-dropdown__lenke">
+                        <i class="fa-solid fa-gear" aria-hidden="true"></i> Innstillinger
+                    </a>
+                    <a asp-controller="Accessibility" asp-action="Index" class="konto-dropdown__lenke">
+                        <i class="fa-solid fa-universal-access" aria-hidden="true"></i> Tilgjengelighet
                     </a>
                     <form asp-controller="Account" asp-action="Logout" method="post">
                         <button type="submit" class="konto-dropdown__lenke konto-dropdown__lenke--logg-ut">
@@ -85,6 +136,9 @@
                 {
                     <a asp-controller="Account" asp-action="Login" class="konto-dropdown__pill konto-dropdown__pill--primary">Logg inn</a>
                     <a asp-controller="Account" asp-action="Register" class="konto-dropdown__pill konto-dropdown__pill--secondary">Registrer deg</a>
+                    <a asp-controller="Accessibility" asp-action="Index" class="konto-dropdown__lenke">
+                        <i class="fa-solid fa-universal-access" aria-hidden="true"></i> Tilgjengelighet
+                    </a>
                 }
             </div>
         </div>
@@ -95,27 +149,68 @@
 
     <div class="mobil-meny" id="navMobilMeny">
         <div class="mobil-meny__lenker">
-            <a asp-controller="Home" asp-action="Index" class="mobil-meny__element @(navController == "Home" ? "active" : "")">
-                <span>Hjem</span>
-                <i class="fa-solid fa-chevron-right"></i>
-            </a>
-            <a asp-controller="Form" asp-action="Index" class="mobil-meny__element @(navController == "Form" ? "active" : "")">
-                <span>Skjema</span>
-                <i class="fa-solid fa-chevron-right"></i>
-            </a>
-            <a asp-controller="Resources" asp-action="Index" class="mobil-meny__element @(navController == "Resources" ? "active" : "")">
-                <span>Delinger</span>
-                <i class="fa-solid fa-chevron-right"></i>
-            </a>
-            @if (User.IsInRole(azir_sempro.Data.AppRoles.Admin) || User.IsInRole(azir_sempro.Data.AppRoles.Heimevernet))
+            @if (erPortal)
             {
-                <a asp-controller="Admin" asp-action="Index" class="mobil-meny__element @(navController == "Admin" ? "active" : "")">
-                    <span>Administrasjon</span>
+                <a asp-controller="Admin" asp-action="Index" class="mobil-meny__element @(navController == "Admin" && navAction is "Index" or "Edit" ? "active" : "")">
+                    <span>Oversikt</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+                <a asp-controller="Admin" asp-action="Match" class="mobil-meny__element @(navAction is "Match" or "MatchBehov" ? "active" : "")">
+                    <span>Kobling <span class="portal-antall" aria-label="@antallAapneBehov åpne behov">@antallAapneBehov</span></span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+                <a asp-controller="Map" asp-action="Index" asp-route-portal="1" class="mobil-meny__element @(erPortalKart ? "active" : "")">
+                    <span>Kart</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+                <a asp-controller="Admin" asp-action="Arkiv" class="mobil-meny__element @(navAction == "Arkiv" ? "active" : "")">
+                    <span>Arkiv</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+                <a asp-controller="Form" asp-action="Draw" class="mobil-meny__element">
+                    <span>Ny melding</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+                <a asp-controller="Home" asp-action="Index" class="mobil-meny__element">
+                    <span>Til nettstedet</span>
                     <i class="fa-solid fa-chevron-right"></i>
                 </a>
             }
-            <a asp-controller="Map" asp-action="Index" class="mobil-meny__element @(navController == "Map" ? "active" : "")">
-                <span>Kart</span>
+            else
+            {
+                <a asp-controller="Home" asp-action="Index" class="mobil-meny__element @(navController == "Home" ? "active" : "")">
+                    <span>Hjem</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+                <a asp-controller="Form" asp-action="Index" class="mobil-meny__element @(navController == "Form" ? "active" : "")">
+                    <span>Skjema</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+                <a asp-controller="Resources" asp-action="Index" class="mobil-meny__element @(navController == "Resources" ? "active" : "")">
+                    <span>Delinger</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+                @if (harPortalTilgang)
+                {
+                    <a asp-controller="Admin" asp-action="Index" class="mobil-meny__element">
+                        <span>Portal</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </a>
+                }
+                <a asp-controller="Map" asp-action="Index" class="mobil-meny__element @(navController == "Map" ? "active" : "")">
+                    <span>Kart</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+            }
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a asp-controller="Account" asp-action="Settings" class="mobil-meny__element @(navAction == "Settings" ? "active" : "")">
+                    <span>Innstillinger</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+            }
+            <a asp-controller="Accessibility" asp-action="Index" class="mobil-meny__element @(navController == "Accessibility" ? "active" : "")">
+                <span>Tilgjengelighet</span>
                 <i class="fa-solid fa-chevron-right"></i>
             </a>
         </div>
@@ -138,7 +233,7 @@
             </div>
             @if (User.Identity?.IsAuthenticated == true)
             {
-                <a asp-controller="Account" asp-action="Profile" class="mobil-meny__logg-inn">Min profil</a>
+                <a asp-controller="Account" asp-action="Profile" class="mobil-meny__logg-inn">Min side</a>
                 <form asp-controller="Account" asp-action="Logout" method="post">
                     <button type="submit" class="mobil-meny__logg-inn">Logg ut</button>
                 </form>
@@ -155,7 +250,7 @@
         </main>
     </div>
 
-    @if (!erFullsideForm)
+    @if (!erFullsideForm && !erPortal)
     {
         <footer class="site-footer">
             <div class="site-footer__top">
@@ -164,17 +259,47 @@
                         <img src="~/assets/icons/logoGreen.svg" alt="" class="site-footer__logo">
                         <span class="site-footer__brand-navn">Krisis</span>
                     </div>
-                    <p class="site-footer__tagline">Kobler behov og ressurser i nærmiljøet.</p>
+                    <p class="site-footer__tagline">Oversikt over behov og ressurser ved kriser.</p>
                 </div>
-                <nav class="site-footer__lenker">
+                <nav class="site-footer__kolonne" aria-labelledby="footerNavigasjon">
+                    <h2 id="footerNavigasjon">Navigasjon</h2>
                     <a asp-controller="Home" asp-action="Index">Hjem</a>
                     <a asp-controller="Form" asp-action="Index">Skjema</a>
                     <a asp-controller="Resources" asp-action="Index">Delinger</a>
                     <a asp-controller="Map" asp-action="Index">Kart</a>
                 </nav>
+                <nav class="site-footer__kolonne" aria-labelledby="footerKonto">
+                    <h2 id="footerKonto">Konto</h2>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <a asp-controller="Account" asp-action="Profile">Min side</a>
+                        <a asp-controller="Account" asp-action="Settings">Innstillinger</a>
+                        @if (harPortalTilgang)
+                        {
+                            <a asp-controller="Admin" asp-action="Index">Portal</a>
+                        }
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Login">Logg inn</a>
+                        <a asp-controller="Account" asp-action="Register">Registrer deg</a>
+                        <a asp-controller="Account" asp-action="Login" asp-route-aktor="1">Logg inn som aktør</a>
+                    }
+                    <a asp-controller="Accessibility" asp-action="Index">Tilgjengelighet</a>
+                </nav>
+                <div class="site-footer__kolonne site-footer__akutt">
+                    <h2><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Ved akutt fare</h2>
+                    <p>Krisis er ikke en nødtjeneste. Ring riktig nødnummer.</p>
+                    <div class="site-footer__numre">
+                        <a href="tel:110" class="site-footer__nummer--brann"><strong>110</strong> Brann</a>
+                        <a href="tel:112" class="site-footer__nummer--politi"><strong>112</strong> Politi</a>
+                        <a href="tel:113" class="site-footer__nummer--ambulanse"><strong>113</strong> Ambulanse</a>
+                    </div>
+                </div>
             </div>
             <div class="site-footer__bunn">
                 <span>&copy; 2026 Krisis</span>
+                <span>Semesterprosjekt, BAC-IT, UiA</span>
             </div>
         </footer>
     }

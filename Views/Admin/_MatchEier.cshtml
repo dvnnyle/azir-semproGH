@@ -1,0 +1,21 @@
+@model azir_sempro.Models.MatchMeldingViewModel
+<div class="admin-match-eier">
+    <span title="Publisert av">
+        <i class="fa-solid fa-user" aria-hidden="true"></i>
+        <span class="visually-hidden">Publisert av: </span><strong>@Model.EierNavn</strong>
+    </span>
+    @if (!string.IsNullOrEmpty(Model.EierTelefon))
+    {
+        <a href="tel:@Model.EierTelefon" title="Ring @Model.EierNavn">
+            <i class="fa-solid fa-phone" aria-hidden="true"></i>
+            <span class="visually-hidden">Telefon: </span>@Model.EierTelefon
+        </a>
+    }
+    @if (!string.IsNullOrEmpty(Model.EierEpost))
+    {
+        <a href="mailto:@Model.EierEpost" title="Send e-post til @Model.EierNavn">
+            <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+            <span class="visually-hidden">E-post: </span>@Model.EierEpost
+        </a>
+    }
+</div>

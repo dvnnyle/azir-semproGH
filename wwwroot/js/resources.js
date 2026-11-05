@@ -41,8 +41,9 @@
             const polygon = L.polygon(points, {
                 color,
                 fillColor: color,
-                fillOpacity: 0.28,
-                weight: 2
+                fillOpacity: 0.45,
+                weight: 3,
+                className: 'kart-omrade'
             }).addTo(map);
             map.fitBounds(polygon.getBounds(), { padding: [10, 10], maxZoom: 15 });
         } else if (points.length > 0) {

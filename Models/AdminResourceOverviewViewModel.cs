@@ -5,16 +5,16 @@ namespace azir_sempro.Models;
 public class AdminResourceOverviewViewModel
 {
     [StringLength(100)]
-    public string Search { get; set; } = "";
+    public string? Search { get; set; }
 
     [StringLength(100)]
-    public string Category { get; set; } = "";
+    public string? Category { get; set; }
 
     [RegularExpression("^(|ressurs|behov)$")]
-    public string Type { get; set; } = "";
+    public string? Type { get; set; }
 
     [RegularExpression("^(|ny|vurderes|tildelt|lost)$")]
-    public string Status { get; set; } = "";
+    public string? Status { get; set; }
 
     public int TotalCount { get; set; }
     public int ResourceCount { get; set; }
@@ -59,7 +59,7 @@ public class AdminSubmissionEditViewModel
     public string Adresse { get; set; } = "";
 
     [RegularExpression("^(|høy|middels|lav)$", ErrorMessage = "Velg en gyldig prioritet.")]
-    public string Prioritet { get; set; } = "";
+    public string? Prioritet { get; set; }
 
     [Range(typeof(DateTime), "1900-01-01", "2100-12-31")]
     public DateTime? Frist { get; set; }

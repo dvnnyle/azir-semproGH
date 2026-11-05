@@ -9,6 +9,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.WebUtilities;
 using azir_sempro.Data;
 using azir_sempro.Models;
+using azir_sempro.Services;
 
 namespace azir_sempro.Controllers;
 
@@ -61,6 +62,14 @@ public class AccountController : Controller
             if (Url.IsLocalUrl(model.ReturnUrl))
             {
                 return LocalRedirect(model.ReturnUrl!);
+            }
+
+            var bruker = await userManager.FindByEmailAsync(model.Email);
+            if (bruker is not null &&
+                (await userManager.IsInRoleAsync(bruker, AppRoles.Admin) ||
+                 await userManager.IsInRoleAsync(bruker, AppRoles.Heimevernet)))
+            {
+                return RedirectToAction("Index", "Admin");
             }
 
             return RedirectToAction("Index", "Home");
@@ -315,8 +324,7 @@ public class AccountController : Controller
             .ToListAsync();
 
         await using var transaction = await database.Database.BeginTransactionAsync();
-        database.Requests.RemoveRange(relatedRequests);
-        await database.SaveChangesAsync();
+        await Matching.FjernKoblingerAsync(database, relatedRequests);
         database.Submissions.Remove(submission);
         await database.SaveChangesAsync();
         await transaction.CommitAsync();
@@ -409,6 +417,20 @@ public class AccountController : Controller
         return RedirectToAction(nameof(Profile));
     }
 
+    [HttpGet("/settings")]
+    [Authorize]
+    public async Task<IActionResult> Settings()
+    {
+        var bruker = await userManager.GetUserAsync(User);
+        if (bruker is null)
+        {
+            return Challenge();
+        }
+
+        ViewBag.Roller = string.Join(", ", await userManager.GetRolesAsync(bruker));
+        return View(bruker);
+    }
+
     [HttpGet("/profile/delete-account")]
     [Authorize]
     public IActionResult DeleteAccount() => View(new DeleteAccountViewModel());
@@ -451,8 +473,7 @@ public class AccountController : Controller
         var relatedRequests = await database.Requests
             .Where(request => submissionIds.Contains(request.BehovId) || submissionIds.Contains(request.RessursId))
             .ToListAsync();
-        database.Requests.RemoveRange(relatedRequests);
-        await database.SaveChangesAsync();
+        await Matching.FjernKoblingerAsync(database, relatedRequests);
 
         database.Submissions.RemoveRange(
             await database.Submissions.Where(submission => submission.IdentityUserId == user.Id).ToListAsync());

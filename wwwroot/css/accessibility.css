@@ -9,8 +9,8 @@
 }
 
 .tilgjengelighet-gruppe-tittel {
-    color: #64748b;
-    font-size: 12px;
+    color: #cbd5e1;
+    font-size: 14px;
     font-weight: 700;
     letter-spacing: 0.06em;
     margin: 0;
@@ -20,13 +20,16 @@
 .tilgjengelighet-grid {
     display: grid;
     gap: 10px;
+    grid-auto-rows: 1fr;
     grid-template-columns: repeat(2, 1fr);
 }
 
 .tilgjengelighet-rad {
+    min-height: 92px;
+    position: relative;
     align-items: center;
     background: #0f1729;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 12px;
     cursor: pointer;
     display: flex;
@@ -40,11 +43,58 @@
         border-color: #10b981;
     }
 
+a.tilgjengelighet-rad {
+    text-decoration: none;
+}
+
+.innstillinger-detaljer {
+    background: #0f1729;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    display: grid;
+    gap: 14px 20px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 0;
+    padding: 14px 16px;
+    text-align: left;
+}
+
+.innstillinger-detaljer dt {
+    color: #cbd5e1;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.innstillinger-detaljer dt i {
+    color: #6ee7b7;
+    margin-right: 6px;
+    text-align: center;
+    width: 14px;
+}
+
+.innstillinger-detaljer dd {
+    color: #f8fafc;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 2px 0 0;
+    overflow-wrap: anywhere;
+}
+
+.tilgjengelighet-rad .tilgjengelighet-ikon--fare {
+    background: rgba(239, 68, 68, 0.14);
+    color: #fca5a5;
+}
+
+.tilgjengelighet-pil {
+    color: #cbd5e1;
+    flex-shrink: 0;
+}
+
 .tilgjengelighet-ikon {
     align-items: center;
     background: rgba(16, 185, 129, 0.12);
     border-radius: 10px;
-    color: #34d399;
+    color: #6ee7b7;
     display: flex;
     flex-shrink: 0;
     font-size: 15px;
@@ -60,17 +110,33 @@
 
 .tilgjengelighet-tekst strong {
     color: #f8fafc;
+    font-size: 14px;
+}
+
+.tilgjengelighet-forklaring {
+    color: #cbd5e1;
+    display: block;
     font-size: 13px;
+    margin-top: 3px;
 }
 
 .tilgjengelighet-tekst p {
-    color: #94a3b8;
-    font-size: 11px;
+    color: #cbd5e1;
+    font-size: 13px;
     margin: 3px 0 0;
 }
 
 .bryter-input {
-    display: none;
+    height: 1px;
+    margin: 0;
+    opacity: 0;
+    position: absolute;
+    width: 1px;
+}
+
+.bryter-input:focus-visible + .bryter {
+    outline: 3px solid #f8fafc;
+    outline-offset: 2px;
 }
 
 .bryter {
@@ -104,7 +170,25 @@
 }
 
 @media (max-width: 700px) {
-    .tilgjengelighet-grid {
+    .tilgjengelighet-grid,
+    .innstillinger-detaljer {
         grid-template-columns: 1fr;
     }
+}
+
+.portal .tilgjengelighet-rad:hover {
+    border-color: #00B1E2;
+}
+
+.portal .innstillinger-detaljer dt i {
+    color: #A5E5F7;
+}
+
+.portal .tilgjengelighet-ikon:not(.tilgjengelighet-ikon--fare) {
+    background: rgba(0, 177, 226, 0.14);
+    color: #A5E5F7;
+}
+
+.portal .bryter-input:checked + .bryter {
+    background: #00B1E2;
 }

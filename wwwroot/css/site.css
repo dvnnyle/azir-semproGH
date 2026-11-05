@@ -34,8 +34,25 @@ body {
   overflow-x: clip;
 }
 
+/* Hvit kant rundt tegnede områder, så de synes på alle bakgrunner i kartet. */
+.kart-omrade {
+  filter: drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 2px #ffffff);
+}
+
+/* isolation: Leaflets lag bruker z-index opp til 1000 og ville ellers lagt seg over toppmenyen. */
+body .leaflet-container {
+  font-family: 'Poppins', sans-serif;
+  isolation: isolate;
+}
+
+/* Tomme valideringsfelt skal ikke ta plass før det finnes feil. */
+.validation-summary-valid,
+.field-validation-valid {
+  display: none;
+}
+
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Unbounded', sans-serif;
+  font-family: 'Syne', sans-serif;
 }
 
 .nav-bar {
@@ -80,7 +97,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .brand-name {
-  font-family: 'Unbounded', sans-serif;
+  font-family: 'Syne', sans-serif;
   font-size: 22px;
   font-weight: 800;
   color: #f8fafc;
@@ -105,9 +122,9 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   background: #10b981;
   border-radius: 999px;
-  color: #f8fafc;
+  color: #021912;
   display: flex;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   gap: 8px;
   padding: 10px 16px;
@@ -118,7 +135,106 @@ h1, h2, h3, h4, h5, h6 {
 
 .nav-cta:hover {
   background: #34d399;
+  color: #021912;
+}
+
+.brand-portal {
+  color: #7DD8F2;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.portal-antall {
+  background: rgba(0, 177, 226, 0.18);
+  border-radius: 999px;
+  color: #A5E5F7;
+  font-size: 13px;
+  margin-left: 4px;
+  padding: 0 7px;
+}
+
+.nav-portal {
+  align-items: center;
+  background: rgba(0, 177, 226, 0.14);
+  border: 1px solid #00B1E2;
+  border-radius: 999px;
+  color: #A5E5F7;
+  display: flex;
+  font-size: 14px;
+  font-weight: 600;
+  gap: 8px;
+  padding: 9px 16px;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-portal:hover {
+  background: rgba(0, 177, 226, 0.26);
+  border-color: #33C1E8;
   color: #f8fafc;
+}
+
+html:has(body.portal) {
+  scrollbar-color: #00B1E2 #07111f !important;
+}
+
+.portal ::-webkit-scrollbar-thumb {
+  background: #00B1E2 !important;
+}
+
+.portal .nav-cta {
+  background: #00B1E2;
+}
+
+.portal .nav-cta:hover {
+  background: #33C1E8;
+}
+
+.portal .brand-logo {
+  filter: drop-shadow(0 0 6px rgba(0, 177, 226, 0.7));
+}
+
+.portal .nav-item.active .nav-item-label {
+  background: rgba(0, 177, 226, 0.15);
+  color: #A5E5F7;
+}
+
+.portal .nav-avatar,
+.portal .nav-hamburger {
+  border-color: rgba(0, 177, 226, 0.5);
+}
+
+.portal .nav-avatar:hover,
+.portal .nav-hamburger:hover {
+  border-color: #00B1E2;
+}
+
+.portal .konto-dropdown__bruker-ikon,
+.portal .mobil-meny__avatar {
+  background: rgba(0, 177, 226, 0.12);
+  border-color: rgba(0, 177, 226, 0.4);
+  color: #A5E5F7;
+}
+
+.portal .konto-dropdown__lenke:hover {
+  background: rgba(0, 177, 226, 0.1);
+  color: #A5E5F7;
+}
+
+.portal .mobil-meny__konto {
+  background: linear-gradient(135deg, rgba(0, 177, 226, 0.08), #0f172a 60%);
+  border-color: rgba(0, 177, 226, 0.3);
+}
+
+.portal .mobil-meny__logg-inn {
+  background: #00B1E2;
+}
+
+.portal .mobil-meny__logg-inn:hover {
+  background: #33C1E8;
 }
 
 .nav-avatar {
@@ -183,7 +299,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .konto-dropdown__pill--primary {
   background: #10b981;
-  color: #f8fafc;
+  color: #021912;
 }
 
 .konto-dropdown__pill--primary:hover {
@@ -219,13 +335,13 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 50%;
   background: rgba(16, 185, 129, 0.12);
   border: 1px solid rgba(16, 185, 129, 0.3);
-  color: #34d399;
-  font-size: 13px;
+  color: #6ee7b7;
+  font-size: 14px;
 }
 
 .konto-dropdown__epost {
-  font-size: 12px;
-  color: #94a3b8;
+  font-size: 14px;
+  color: #cbd5e1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -234,7 +350,7 @@ h1, h2, h3, h4, h5, h6 {
 .konto-dropdown__delelinje {
   margin: 0;
   border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .konto-dropdown__lenke {
@@ -258,12 +374,12 @@ h1, h2, h3, h4, h5, h6 {
 .konto-dropdown__lenke i {
   width: 16px;
   text-align: center;
-  color: #64748b;
+  color: #cbd5e1;
 }
 
 .konto-dropdown__lenke:hover {
   background: rgba(16, 185, 129, 0.1);
-  color: #34d399;
+  color: #6ee7b7;
 }
 
 .konto-dropdown__lenke--logg-ut:hover {
@@ -272,7 +388,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .konto-dropdown__lenke--logg-ut:hover i {
-  color: #ef4444;
+  color: #fca5a5;
 }
 
 .nav-avatar i {
@@ -292,7 +408,7 @@ h1, h2, h3, h4, h5, h6 {
 .nav-item-label {
   font-size: 14px;
   font-weight: 500;
-  color: #94a3b8;
+  color: #cbd5e1;
   padding: 6px 16px;
   border-radius: 999px;
   transition: background-color 0.2s ease, color 0.2s ease;
@@ -300,7 +416,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .nav-item.active .nav-item-label {
   font-weight: 700;
-  color: #34d399;
+  color: #6ee7b7;
   background: rgba(16, 185, 129, 0.15);
 }
 
@@ -351,7 +467,7 @@ html {
   width: auto;
   padding: 20px;
   background: #07111f;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
   border-bottom: 1px solid #334155;
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.33);
 }
@@ -374,14 +490,14 @@ html {
   border-radius: 10px;
   background: transparent;
   border: 1px solid transparent;
-  color: #94a3b8;
+  color: #cbd5e1;
   font-size: 15px;
   font-weight: 500;
   text-decoration: none;
 }
 
 .mobil-meny__element i {
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .mobil-meny__element.active {
@@ -394,7 +510,7 @@ html {
 .mobil-meny__delelinje {
   margin: 0;
   border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .mobil-meny__konto {
@@ -417,7 +533,7 @@ html {
   border-radius: 999px;
   background: rgba(16, 185, 129, 0.12);
   border: 1px solid rgba(16, 185, 129, 0.35);
-  color: #34d399;
+  color: #6ee7b7;
   font-size: 15px;
 }
 
@@ -434,21 +550,21 @@ html {
 }
 
 .mobil-meny__konto-tekst p:first-child {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: #f8fafc;
 }
 
 .mobil-meny__konto-tekst p:last-child {
-  font-size: 11px;
-  color: #94a3b8;
+  font-size: 13px;
+  color: #cbd5e1;
 }
 
 .mobil-meny__logg-inn {
   flex-shrink: 0;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
-  color: #05251e;
+  color: #021912;
   background: #10b981;
   padding: 8px 14px;
   border-radius: 999px;
@@ -462,6 +578,7 @@ html {
 @media (max-width: 767px) {
   .nav-links,
   .nav-cta,
+  .nav-portal,
   .nav-avatar {
     display: none;
   }
@@ -490,13 +607,11 @@ html {
 }
 
 .site-footer__top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  display: grid;
   gap: 32px;
-  max-width: 1200px;
+  grid-template-columns: minmax(200px, 1.3fr) minmax(120px, 0.7fr) minmax(120px, 0.7fr) minmax(280px, 1.5fr);
   margin: 0 auto;
+  max-width: 1200px;
   padding-bottom: 32px;
 }
 
@@ -512,7 +627,7 @@ html {
 }
 
 .site-footer__brand-navn {
-  font-family: 'Unbounded', sans-serif;
+  font-family: 'Syne', sans-serif;
   font-size: 18px;
   font-weight: 800;
   color: #f8fafc;
@@ -521,47 +636,232 @@ html {
 
 .site-footer__tagline {
   margin: 8px 0 0;
-  color: #64748b;
-  font-size: 13px;
+  color: #cbd5e1;
+  font-size: 14px;
   max-width: 280px;
 }
 
-.site-footer__lenker {
+.site-footer__kolonne {
+  align-items: flex-start;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
-.site-footer__lenker a {
-  color: #94a3b8;
-  font-size: 13px;
+.site-footer__kolonne h2 {
+  color: #f8fafc;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.site-footer__kolonne > a {
+  color: #cbd5e1;
+  font-size: 14px;
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
-.site-footer__lenker a:hover {
+.site-footer__kolonne > a:hover {
   color: #34d399;
+  text-decoration: underline;
+}
+
+.site-footer__akutt h2 i {
+  color: #fca5a5;
+  margin-right: 6px;
+}
+
+.site-footer__akutt p {
+  color: #cbd5e1;
+  font-size: 14px;
+  margin: 0 0 4px;
+}
+
+.site-footer__numre {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* .site-footer foran: ellers vinner den scopede a-regelen fra _Layout.cshtml.css over tel-lenkene. */
+.site-footer .site-footer__numre a {
+  align-items: center;
+  border-radius: 10px;
+  color: #ffffff;
+  display: flex;
+  flex: 1 1 84px;
+  flex-direction: column;
+  font-size: 13px;
+  padding: 6px 10px;
+  text-decoration: none;
+  transition: filter 0.2s ease;
+}
+
+.site-footer .site-footer__numre a:hover {
+  color: #ffffff;
+  filter: brightness(1.25);
+}
+
+.site-footer .site-footer__numre .site-footer__nummer--brann {
+  background: #991b1b;
+}
+
+.site-footer .site-footer__numre .site-footer__nummer--politi {
+  background: #1e3a8a;
+}
+
+.site-footer .site-footer__numre .site-footer__nummer--ambulanse {
+  background: #166534;
+}
+
+.site-footer__numre strong {
+  color: #f8fafc;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
 .site-footer__bunn {
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  max-width: 1200px;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  color: #cbd5e1;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 13px;
+  gap: 4px 16px;
+  justify-content: space-between;
   margin: 0 auto;
+  max-width: 1200px;
   padding: 16px 0;
-  text-align: center;
-  color: #475569;
-  font-size: 11px;
+}
+
+@media (max-width: 991px) {
+  .site-footer__top {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 767px) {
-  .site-footer__top {
-    flex-direction: column;
-    gap: 24px;
+  .site-footer {
+    padding-left: 20px;
+    padding-right: 20px;
   }
 
-  .site-footer__lenker {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 12px 20px;
+  .site-footer__brand,
+  .site-footer__akutt {
+    grid-column: 1 / -1;
+  }
+
+  .site-footer__top {
+    gap: 24px;
+  }
+}
+
+/* Valg fra /Accessibility. Klassene settes av js/tilgjengelighet.js. */
+/* Skriften er satt i px, så størrelsen må endres med zoom. Hele kart ligger utenfor fordi Leaflet feilberegner klikk under zoom. */
+html.a11y-storre-tekst body:not(:has(#map)) {
+  zoom: 1.2;
+}
+
+html.a11y-storre-tekst body:has(#map) .ressurs-split__form {
+  zoom: 1.15;
+}
+
+/* Gjelder alle elementer. Unntak: lyse knapper og ikonsirkler, som har mørk tekst, og selve kartet. */
+html.a11y-hoy-kontrast,
+html.a11y-hoy-kontrast body {
+  background: #000 !important;
+}
+
+html.a11y-hoy-kontrast body *:not(.admin-filter-submit,.hjem-knapp--primary,.hjem-knapp--behov,.hjem-knapp--ressurs,.kart-knapp,.konto-dropdown__pill--primary,.konto-knapp,.kart-popup__knapp,.mobil-meny__logg-inn,.nav-cta,.profile-add,.resource-add,.resource-detail__map-link,.resource-filter-submit,.ressurs-btn--submit,.admin-type-ikon,.hjem-status__ikon,.kart-ikon,.kart-forklaring__nal,.kart-forklaring__deg,.bryter,.admin-filter-submit *,.hjem-knapp--primary *,.hjem-knapp--behov *,.hjem-knapp--ressurs *,.kart-knapp *,.konto-dropdown__pill--primary *,.konto-knapp *,.kart-popup__knapp *,.mobil-meny__logg-inn *,.nav-cta *,.profile-add *,.resource-add *,.resource-detail__map-link *,.resource-filter-submit *,.ressurs-btn--submit *,.admin-type-ikon *,.hjem-status__ikon *,.kart-ikon *,.kart-forklaring__nal *,.kart-forklaring__deg *,.bryter *):not(.leaflet-container,.leaflet-container *) {
+  background-color: #000 !important;
+  background-image: none !important;
+  border-color: #fff !important;
+  box-shadow: none !important;
+  color: #fff !important;
+  text-shadow: none !important;
+}
+
+html.a11y-hoy-kontrast :is(.leaflet-popup-content-wrapper, .leaflet-popup-tip) {
+  background: #000 !important;
+  border: 2px solid #fff !important;
+  box-shadow: none !important;
+}
+
+html.a11y-hoy-kontrast .leaflet-popup-content *:not(.admin-filter-submit,.hjem-knapp--primary,.hjem-knapp--behov,.hjem-knapp--ressurs,.kart-knapp,.konto-dropdown__pill--primary,.konto-knapp,.kart-popup__knapp,.mobil-meny__logg-inn,.nav-cta,.profile-add,.resource-add,.resource-detail__map-link,.resource-filter-submit,.ressurs-btn--submit,.admin-type-ikon,.hjem-status__ikon,.kart-ikon,.kart-forklaring__nal,.kart-forklaring__deg,.bryter,.admin-filter-submit *,.hjem-knapp--primary *,.hjem-knapp--behov *,.hjem-knapp--ressurs *,.kart-knapp *,.konto-dropdown__pill--primary *,.konto-knapp *,.kart-popup__knapp *,.mobil-meny__logg-inn *,.nav-cta *,.profile-add *,.resource-add *,.resource-detail__map-link *,.resource-filter-submit *,.ressurs-btn--submit *,.admin-type-ikon *,.hjem-status__ikon *,.kart-ikon *,.kart-forklaring__nal *,.kart-forklaring__deg *,.bryter *),
+html.a11y-hoy-kontrast .leaflet-popup-close-button {
+  background: transparent !important;
+  color: #fff !important;
+}
+
+html.a11y-hoy-kontrast body a:not(.admin-filter-submit,.hjem-knapp--primary,.hjem-knapp--behov,.hjem-knapp--ressurs,.kart-knapp,.konto-dropdown__pill--primary,.konto-knapp,.kart-popup__knapp,.mobil-meny__logg-inn,.nav-cta,.profile-add,.resource-add,.resource-detail__map-link,.resource-filter-submit,.ressurs-btn--submit,.admin-type-ikon,.hjem-status__ikon,.kart-ikon,.kart-forklaring__nal,.kart-forklaring__deg,.bryter,.admin-filter-submit *,.hjem-knapp--primary *,.hjem-knapp--behov *,.hjem-knapp--ressurs *,.kart-knapp *,.konto-dropdown__pill--primary *,.konto-knapp *,.kart-popup__knapp *,.mobil-meny__logg-inn *,.nav-cta *,.profile-add *,.resource-add *,.resource-detail__map-link *,.resource-filter-submit *,.ressurs-btn--submit *,.admin-type-ikon *,.hjem-status__ikon *,.kart-ikon *,.kart-forklaring__nal *,.kart-forklaring__deg *,.bryter *):not(.nav-item):not(.brand):not(.mobil-meny__element):not(.admin-action):not(.profile-button):not(.tilgjengelighet-rad) {
+  color: #ffe14d !important;
+  text-decoration: underline !important;
+}
+
+html.a11y-hoy-kontrast :is(input, select, textarea, button, .nav-portal, .kart-filter label, .admin-match-fane, .kart-merke, .admin-match-merke):not(.admin-filter-submit,.hjem-knapp--primary,.hjem-knapp--behov,.hjem-knapp--ressurs,.kart-knapp,.konto-dropdown__pill--primary,.konto-knapp,.kart-popup__knapp,.mobil-meny__logg-inn,.nav-cta,.profile-add,.resource-add,.resource-detail__map-link,.resource-filter-submit,.ressurs-btn--submit,.admin-type-ikon,.hjem-status__ikon,.kart-ikon,.kart-forklaring__nal,.kart-forklaring__deg,.bryter,.admin-filter-submit *,.hjem-knapp--primary *,.hjem-knapp--behov *,.hjem-knapp--ressurs *,.kart-knapp *,.konto-dropdown__pill--primary *,.konto-knapp *,.kart-popup__knapp *,.mobil-meny__logg-inn *,.nav-cta *,.profile-add *,.resource-add *,.resource-detail__map-link *,.resource-filter-submit *,.ressurs-btn--submit *,.admin-type-ikon *,.hjem-status__ikon *,.kart-ikon *,.kart-forklaring__nal *,.kart-forklaring__deg *,.bryter *) {
+  border-style: solid !important;
+  border-width: 2px !important;
+}
+
+/* Valgt tilstand må synes uten farge. */
+html.a11y-hoy-kontrast :is(.kart-filter label:has(input:checked), .admin-match-fane.active, .nav-item.active .nav-item-label, .mobil-meny__element.active),
+html.a11y-hoy-kontrast :is(.kart-filter label:has(input:checked), .admin-match-fane.active, .mobil-meny__element.active) * {
+  background-color: #fff !important;
+  color: #000 !important;
+}
+
+html.a11y-hoy-kontrast .bryter {
+  background: #000 !important;
+  outline: 2px solid #fff;
+}
+
+html.a11y-hoy-kontrast .bryter-input:checked + .bryter {
+  background: #fff !important;
+}
+
+html.a11y-hoy-kontrast .bryter-input:checked + .bryter::before {
+  background: #000 !important;
+}
+
+html.a11y-hoy-kontrast ::placeholder {
+  color: #fff !important;
+  opacity: 1 !important;
+}
+
+html.a11y-lettlest-skrift body,
+html.a11y-lettlest-skrift body *:not(i):not([class*="fa-"]) {
+  font-family: Verdana, Arial, sans-serif !important;
+  letter-spacing: 0.01em !important;
+  word-spacing: 0.08em !important;
+}
+
+html.a11y-understrek body a:not(.admin-filter-submit,.hjem-knapp--primary,.hjem-knapp--behov,.hjem-knapp--ressurs,.kart-knapp,.konto-dropdown__pill--primary,.konto-knapp,.kart-popup__knapp,.mobil-meny__logg-inn,.nav-cta,.profile-add,.resource-add,.resource-detail__map-link,.resource-filter-submit,.ressurs-btn--submit,.admin-type-ikon,.hjem-status__ikon,.kart-ikon,.admin-filter-submit *,.hjem-knapp--primary *,.hjem-knapp--behov *,.hjem-knapp--ressurs *,.kart-knapp *,.konto-dropdown__pill--primary *,.konto-knapp *,.kart-popup__knapp *,.mobil-meny__logg-inn *,.nav-cta *,.profile-add *,.resource-add *,.resource-detail__map-link *,.resource-filter-submit *,.ressurs-btn--submit *,.admin-type-ikon *,.hjem-status__ikon *,.kart-ikon *,.leaflet-control-attribution,.leaflet-control-attribution *):not(.nav-item):not(.brand):not(.mobil-meny__element):not(.admin-action):not(.profile-button):not(.tilgjengelighet-rad) {
+  text-decoration: underline !important;
+}
+
+html.a11y-fokus :focus-visible {
+  box-shadow: 0 0 0 5px #000 !important;
+  outline: 3px solid #ffe14d !important;
+  outline-offset: 2px !important;
+}
+
+html.a11y-redusert-bevegelse *,
+html.a11y-redusert-bevegelse *::before,
+html.a11y-redusert-bevegelse *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition: none !important;
   }
 }

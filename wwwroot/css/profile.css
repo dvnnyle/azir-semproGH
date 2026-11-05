@@ -10,8 +10,8 @@
     align-items: center;
     gap: 10px;
     margin-bottom: 20px;
-    color: #94a3b8;
-    font-size: 13px;
+    color: #cbd5e1;
+    font-size: 14px;
     text-decoration: none;
 }
 
@@ -41,7 +41,7 @@
     border-radius: 50%;
     background: rgba(16, 185, 129, 0.12);
     border: 1px solid rgba(16, 185, 129, 0.35);
-    color: #34d399;
+    color: #6ee7b7;
     font-size: 20px;
 }
 
@@ -56,14 +56,14 @@
     align-items: center;
     gap: 7px;
     margin: 2px 0 0;
-    color: #94a3b8;
-    font-size: 13px;
+    color: #cbd5e1;
+    font-size: 14px;
 }
 
 .profile-kort__info p i {
     width: 13px;
-    color: #64748b;
-    font-size: 11px;
+    color: #cbd5e1;
+    font-size: 13px;
 }
 
 .profile-heading,
@@ -87,7 +87,7 @@
 .profile-heading p:last-child,
 .profile-section-heading p {
     margin: 0;
-    color: #94a3b8;
+    color: #cbd5e1;
     font-size: 14px;
 }
 
@@ -101,8 +101,8 @@
     border: 0;
     border-radius: 9px;
     background: #10b981;
-    color: #052e25;
-    font-size: 13px;
+    color: #021912;
+    font-size: 14px;
     font-weight: 700;
     text-decoration: none;
     transition: background 0.2s ease, transform 0.2s ease;
@@ -135,20 +135,20 @@
     flex-direction: column;
     gap: 3px;
     padding: 16px 18px;
-    border: 1px solid #29364a;
+    border: 1px solid #334155;
     border-radius: 12px;
     background: #1e293b;
 }
 
 .profile-summary strong {
     color: #f8fafc;
-    font-family: 'Space Mono', monospace;
+    font-family: 'Poppins', sans-serif;
     font-size: 23px;
 }
 
 .profile-summary span {
-    color: #94a3b8;
-    font-size: 12px;
+    color: #cbd5e1;
+    font-size: 14px;
 }
 
 .profile-list-section {
@@ -170,7 +170,7 @@
 }
 
 .profile-section-heading p {
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .profile-count {
@@ -181,7 +181,7 @@
     border-radius: 999px;
     background: #29364a;
     color: #cbd5e1;
-    font: 12px 'Space Mono', monospace;
+    font: 13px 'Poppins', sans-serif;
 }
 
 .profile-rows {
@@ -211,12 +211,12 @@
     place-items: center;
     border-radius: 10px;
     background: rgba(16, 185, 129, 0.18);
-    color: #34d399;
+    color: #6ee7b7;
 }
 
 .profile-row__icon--need {
     background: rgba(245, 158, 11, 0.16);
-    color: #fbbf24;
+    color: #fcd34d;
 }
 
 .profile-row__icon--draft {
@@ -232,7 +232,7 @@
     overflow: hidden;
     margin: 0 0 4px;
     color: #f1f5f9;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 14px;
     font-weight: 800;
     text-overflow: ellipsis;
@@ -242,8 +242,8 @@
 .profile-row__main p {
     overflow: hidden;
     margin: 0 0 6px;
-    color: #94a3b8;
-    font-size: 11px;
+    color: #cbd5e1;
+    font-size: 13px;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
@@ -254,7 +254,7 @@
     border-radius: 999px;
     background: rgba(16, 185, 129, 0.14);
     color: #6ee7b7;
-    font-size: 10px;
+    font-size: 13px;
 }
 
 .profile-tag--need {
@@ -270,12 +270,12 @@
 
 .profile-status {
     color: #6ee7b7;
-    font-size: 11px;
+    font-size: 13px;
 }
 
 .profile-status i {
     margin-right: 5px;
-    font-size: 7px;
+    font-size: 13px;
 }
 
 .profile-status--draft {
@@ -283,8 +283,8 @@
 }
 
 .profile-row__state small {
-    color: #64748b;
-    font-size: 10px;
+    color: #cbd5e1;
+    font-size: 13px;
 }
 
 .profile-row__actions {
@@ -301,11 +301,11 @@
     gap: 7px;
     min-height: 34px;
     padding: 7px 10px;
-    border: 1px solid #334155;
+    border: 1px solid #64748b;
     border-radius: 8px;
     background: #1e293b;
     color: #e2e8f0;
-    font-size: 11px;
+    font-size: 13px;
     text-decoration: none;
     white-space: nowrap;
 }
@@ -366,19 +366,19 @@
     place-items: center;
     border-radius: 50%;
     background: #29364a;
-    color: #34d399;
+    color: #6ee7b7;
 }
 
 .profile-empty h3 {
     margin: 0 0 6px;
     color: #f1f5f9;
-    font: 700 15px 'Manrope', sans-serif;
+    font: 700 15px 'Poppins', sans-serif;
 }
 
 .profile-empty p {
     margin: 0 0 14px;
-    color: #94a3b8;
-    font-size: 12px;
+    color: #cbd5e1;
+    font-size: 14px;
 }
 
 .profile-empty--compact p {
@@ -390,7 +390,7 @@
     align-items: center;
     gap: 16px;
     padding: 16px 18px;
-    border: 1px solid #29364a;
+    border: 1px solid #334155;
     border-radius: 12px;
     background: #1e293b;
 }
@@ -406,18 +406,18 @@
 
 .profile-tip strong {
     color: #f1f5f9;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .profile-tip p {
     margin: 3px 0 0;
-    color: #94a3b8;
-    font-size: 11px;
+    color: #cbd5e1;
+    font-size: 13px;
 }
 
 .profile-tip a {
     color: #6ee7b7;
-    font-size: 11px;
+    font-size: 13px;
     text-decoration: none;
     white-space: nowrap;
 }
@@ -428,8 +428,8 @@
 
 .profile-footnote {
     margin: 12px 0 0;
-    color: #64748b;
-    font-size: 10px;
+    color: #cbd5e1;
+    font-size: 13px;
 }
 
 .profile-edit-page {
@@ -449,7 +449,7 @@
     display: grid;
     gap: 6px;
     color: #cbd5e1;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .profile-edit-form input,
@@ -457,7 +457,7 @@
 .profile-edit-form textarea {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #475569;
+    border: 1px solid #64748b;
     border-radius: 8px;
     background: #0f172a;
     color: #f1f5f9;
@@ -469,8 +469,8 @@
 
 .profile-edit-type {
     margin: 0;
-    color: #94a3b8;
-    font-size: 12px;
+    color: #cbd5e1;
+    font-size: 14px;
 }
 
 .profile-edit-type strong {
@@ -566,8 +566,8 @@
 
 .profile-danger-zone p {
     margin: 4px 0 0;
-    color: #94a3b8;
-    font-size: 13px;
+    color: #cbd5e1;
+    font-size: 14px;
 }
 
 .profile-delete-list {
@@ -581,4 +581,48 @@
         flex-direction: column;
         align-items: flex-start;
     }
+}
+
+.portal .profile-back i,
+.portal .profile-tip > i,
+.portal .profile-empty__icon {
+    color: #7DD8F2;
+}
+
+.portal .profile-kort__avatar {
+    background: rgba(0, 177, 226, 0.12);
+    border-color: rgba(0, 177, 226, 0.4);
+    color: #A5E5F7;
+}
+
+.portal .profile-add {
+    background: #00B1E2;
+}
+
+.portal .profile-add:hover {
+    background: #33C1E8;
+}
+
+.portal .profile-notice {
+    background: rgba(0, 177, 226, 0.1);
+    border-color: rgba(0, 177, 226, 0.4);
+    color: #A5E5F7;
+}
+
+.portal .profile-button--edit {
+    border-color: rgba(0, 177, 226, 0.5);
+    color: #A5E5F7;
+}
+
+.portal .profile-button--edit:hover {
+    border-color: #00B1E2;
+    color: #f8fafc;
+}
+
+.portal .profile-tip a {
+    color: #7DD8F2;
+}
+
+.portal .profile-tip a:hover {
+    color: #A5E5F7;
 }
