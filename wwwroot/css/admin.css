@@ -23,15 +23,6 @@
     margin-bottom: 24px;
 }
 
-.admin-eyebrow {
-    color: #34d399;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    margin: 0 0 8px;
-    text-transform: uppercase;
-}
-
 .admin-heading h1 {
     color: #f8fafc;
     font-size: clamp(24px, 3vw, 32px);
@@ -258,22 +249,30 @@
     margin-top: 4px;
 }
 
-.admin-badge {
-    border-radius: 5px;
-    display: inline-block;
-    font-size: 9px;
-    font-weight: 700;
-    padding: 4px 7px;
+.admin-type-ikon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    color: #0b1420;
+    font-size: 11px;
 }
 
-.admin-badge--resource {
-    background: rgba(16, 185, 129, 0.14);
-    color: #34d399;
+.admin-type-ikon--rod {
+    background: #ef4444;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
 }
 
-.admin-badge--need {
-    background: rgba(148, 163, 184, 0.16);
-    color: #cbd5e1;
+.admin-type-ikon--gul {
+    background: #f59e0b;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+.admin-type-ikon--gronn {
+    background: #10b981;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
 }
 
 .admin-status {
@@ -363,9 +362,18 @@
 
 .admin-edit-page {
     max-width: 1040px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .admin-edit-heading {
+    margin-bottom: 20px;
+}
+
+.admin-edit-kart {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     margin-bottom: 20px;
 }
 

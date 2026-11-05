@@ -4,6 +4,10 @@ namespace azir_sempro.Models;
 
 public class AccountProfileViewModel
 {
+    public string FirstName { get; set; } = "";
+    public string LastName { get; set; } = "";
+    public string Email { get; set; } = "";
+    public string PhoneNumber { get; set; } = "";
     public List<ProfileSubmissionViewModel> Submissions { get; set; } = [];
     public List<ProfileDraftViewModel> Drafts { get; set; } = [];
 }

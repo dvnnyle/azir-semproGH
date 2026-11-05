@@ -81,11 +81,13 @@ public class ResourcesController : Controller
             .Select(s => s.IdentityUserId!)
             .Distinct()
             .ToList();
-        var brukerNavn = await database.Users
+        var brukere = await database.Users
             .AsNoTracking()
             .Where(user => identityUserIder.Contains(user.Id))
-            .Select(user => new { user.Id, user.UserName, user.Email })
-            .ToDictionaryAsync(user => user.Id, user => user.Email ?? user.UserName ?? "Ukjent");
+            .Select(user => new { user.Id, user.FirstName, user.LastName, user.PhoneNumber })
+            .ToListAsync();
+        var brukerNavn = brukere.ToDictionary(user => user.Id, user => $"{user.FirstName} {user.LastName}".Trim());
+        var brukerTelefon = brukere.ToDictionary(user => user.Id, user => user.PhoneNumber ?? "");
 
         var submissionIder = treffliste.Select(s => s.SubmissionId).ToList();
         var punkterPerSubmission = await database.Points
@@ -103,6 +105,7 @@ public class ResourcesController : Controller
         filters.PunkterPerSubmission = punkterPerSubmission;
         filters.Submissions = treffliste;
         filters.BrukerNavn = brukerNavn;
+        filters.BrukerTelefon = brukerTelefon;
 
         return View(filters);
     }

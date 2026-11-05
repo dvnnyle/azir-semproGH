@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -33,8 +34,8 @@ public class AdminController : Controller
         filters.Categories = categories.Values.OrderBy(name => name).ToList();
         var users = await database.Users
             .AsNoTracking()
-            .Select(user => new { user.Id, user.UserName, user.Email })
-            .ToDictionaryAsync(user => user.Id, user => user.Email ?? user.UserName ?? "");
+            .Select(user => new { user.Id, user.FirstName, user.LastName })
+            .ToDictionaryAsync(user => user.Id, user => $"{user.FirstName} {user.LastName}".Trim());
 
         var visibleSubmissions = allSubmissions.AsEnumerable();
         if (!string.IsNullOrWhiteSpace(filters.Search))
@@ -72,6 +73,7 @@ public class AdminController : Controller
             SubmissionId = submission.SubmissionId,
             Tittel = submission.Tittel,
             Type = submission.Type,
+            Prioritet = submission.Prioritet,
             Status = submission.Status,
             Adresse = submission.Adresse,
             CategoryName = categories.GetValueOrDefault(submission.CategoryId, "Ukjent kategori"),
@@ -93,6 +95,13 @@ public class AdminController : Controller
             return NotFound();
         }
 
+        var punkter = await database.Points
+            .AsNoTracking()
+            .Where(point => point.SubmissionId == id)
+            .OrderBy(point => point.Nr)
+            .Select(point => new { lat = point.Breddegrad, lng = point.Lengdegrad })
+            .ToListAsync();
+
         await PopulateCategoriesAsync();
         return View(new AdminSubmissionEditViewModel
         {
@@ -103,7 +112,8 @@ public class AdminController : Controller
             Adresse = submission.Adresse,
             Prioritet = submission.Prioritet ?? "",
             Frist = submission.Frist,
-            Beskrivelse = submission.Beskrivelse
+            Beskrivelse = submission.Beskrivelse,
+            PunkterJson = JsonSerializer.Serialize(punkter)
         });
     }
 

@@ -84,7 +84,29 @@
         document.getElementById('detailLocation').textContent = card.dataset.location || 'Sted ikke oppgitt';
         document.getElementById('detailSubmitted').textContent = card.dataset.submitted || '';
         document.getElementById('detailPublisher').textContent = card.dataset.publisher || 'Ikke oppgitt';
-        document.getElementById('detailDescription').textContent = card.dataset.description || '';
+        const phoneRow = document.getElementById('detailPhoneRow');
+        if (card.dataset.publisherPhone) {
+            document.getElementById('detailPhone').textContent = card.dataset.publisherPhone;
+            phoneRow.hidden = false;
+        } else {
+            phoneRow.hidden = true;
+        }
+        const descriptionBox = document.getElementById('detailDescriptionBox');
+        if (card.dataset.description) {
+            document.getElementById('detailDescription').textContent = card.dataset.description;
+            descriptionBox.hidden = false;
+        } else {
+            descriptionBox.hidden = true;
+        }
+
+        const coordinatesRow = document.getElementById('detailCoordinatesRow');
+        if (points.length > 0) {
+            const [lat, lng] = points[0];
+            document.getElementById('detailCoordinates').textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+            coordinatesRow.hidden = false;
+        } else {
+            coordinatesRow.hidden = true;
+        }
 
         const type = document.getElementById('detailType');
         type.textContent = card.dataset.type || '';

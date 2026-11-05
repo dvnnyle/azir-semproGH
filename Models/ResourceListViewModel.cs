@@ -25,4 +25,5 @@ public class ResourceListViewModel
     public Dictionary<int, string> PunkterPerSubmission { get; set; } = [];
     // IdentityUserId -> visningsnavn (e-post/brukernavn), for a vise hvem som publiserte.
     public Dictionary<int, string> BrukerNavn { get; set; } = [];
+    public Dictionary<int, string> BrukerTelefon { get; set; } = [];
 }

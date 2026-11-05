@@ -492,17 +492,28 @@
     overflow-wrap: anywhere;
 }
 
+.resource-detail__beskrivelse {
+    background: #142033;
+    border-radius: 7px;
+    margin-top: 14px;
+    padding: 9px 10px;
+}
+
+.resource-detail__beskrivelse-heading {
+    display: block;
+    color: #64748b;
+    font-size: 9px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
 .resource-detail__description {
     color: #cbd5e1;
     font-size: 11px;
     line-height: 1.6;
-    margin-top: 14px;
+    margin: 0;
     overflow-wrap: anywhere;
     white-space: pre-wrap;
-}
-
-.resource-detail__description:empty {
-    display: none;
 }
 
 .resource-detail__actions {

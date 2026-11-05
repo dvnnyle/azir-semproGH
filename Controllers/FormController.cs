@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using azir_sempro.Data;
@@ -13,11 +14,13 @@ namespace azir_sempro.Controllers;
 public class FormController : Controller
 {
     private readonly AppDbContext database;
+    private readonly UserManager<ApplicationUser> userManager;
     private static readonly JsonSerializerOptions CaseInsensitiv = new() { PropertyNameCaseInsensitive = true };
 
-    public FormController(AppDbContext database)
+    public FormController(AppDbContext database, UserManager<ApplicationUser> userManager)
     {
         this.database = database;
+        this.userManager = userManager;
     }
 
     private int GetUserId() => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)
@@ -111,6 +114,11 @@ public class FormController : Controller
 
         var kategori = await database.Categories.FindAsync(utkast.CategoryId);
         ViewBag.KategoriNavn = kategori?.Navn ?? "";
+
+        var bruker = await userManager.GetUserAsync(User);
+        ViewBag.PublisererNavn = bruker is not null ? $"{bruker.FirstName} {bruker.LastName}".Trim() : "";
+        ViewBag.PublisererTelefon = bruker?.PhoneNumber ?? "";
+
         return View(utkast);
     }
 

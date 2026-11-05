@@ -29,6 +29,7 @@ public class AdminSubmissionRowViewModel
     public int SubmissionId { get; set; }
     public string Tittel { get; set; } = "";
     public string Type { get; set; } = "";
+    public string? Prioritet { get; set; }
     public string Status { get; set; } = "";
     public string Adresse { get; set; } = "";
     public string CategoryName { get; set; } = "";
@@ -64,4 +65,6 @@ public class AdminSubmissionEditViewModel
     public DateTime? Frist { get; set; }
 
     public string? Beskrivelse { get; set; }
+
+    public string PunkterJson { get; set; } = "[]";
 }

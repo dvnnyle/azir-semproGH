@@ -2,7 +2,7 @@
     const farger = { rod: '#ef4444', gul: '#f59e0b', gronn: '#10b981' };
     const fliser = 'https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png';
 
-    const kart = L.map('map', { zoomControl: false }).setView([58.1467, 7.9956], 11);
+    const kart = L.map('map', { zoomControl: false }).setView([58.1467, 7.9956], 13.4);
     L.control.zoom({ position: 'topright' }).addTo(kart);
     L.tileLayer(fliser, { maxZoom: 18 }).addTo(kart);
 
@@ -22,6 +22,7 @@
                 <h3>${esc(el.dataset.title)}</h3>
                 <p><i class="fa-solid ${ikon}"></i> ${esc(el.dataset.type)} - ${esc(el.dataset.category)}</p>
                 <span class="kart-popup__status">${esc(el.dataset.status)}</span>
+                <p><i class="fa-solid fa-user"></i> ${esc(el.dataset.publisher)}</p>
                 <a href="/Resources?apne=${el.dataset.id}" class="kart-popup__knapp">Gå til innsending</a>
             </div>`;
 
@@ -55,7 +56,7 @@
     const visVisning = () => {
         kart.invalidateSize();
         if (alleBounds.length > 0) {
-            kart.fitBounds(L.latLngBounds(alleBounds), { padding: [80, 80], maxZoom: 11 });
+            kart.fitBounds(L.latLngBounds(alleBounds), { padding: [80, 80], maxZoom: 13.4 });
         }
     };
 
@@ -74,7 +75,6 @@
                     .bindPopup(`<div class="kart-popup"><h3>${s.navn}</h3><p>${s.adresse}</p></div>`)
                     .addTo(kart);
                 nodetatLag.push(nodetatMerke);
-                alleBounds.push([s.lat, s.lng]);
             });
         })
         .catch(() => {})

@@ -9,6 +9,11 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__DefaultConnection: "Server=db;Port=3306;Database=krisisdb;User=krisisapp;Password=${DB_APP_PASSWORD:?Set DB_APP_PASSWORD in your environment};"
+    volumes:
+      # Data Protection-nøklene som krypterer login-cookien. Uten dette volumet
+      # genereres nye nøkler hver gang containeren bygges på nytt, og alle
+      # innloggede brukere logges ut.
+      - dataprotection-keys:/root/.aspnet/DataProtection-Keys
     depends_on:
       db:
       
@@ -52,3 +57,4 @@ services:
 
 volumes:
   mysql-data:
+  dataprotection-keys:

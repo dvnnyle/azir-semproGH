@@ -14,7 +14,6 @@
 <section class="admin-page">
     <header class="admin-heading">
         <div>
-            <p class="admin-eyebrow">Krisis · administrasjon</p>
             <h1>Ressurser</h1>
             <p>Alle innsendte meldinger fra brukere og organisasjoner.</p>
         </div>
@@ -79,7 +78,7 @@
                     <th scope="col">Tittel</th>
                     <th scope="col">Type</th>
                     <th scope="col">Status</th>
-                    <th scope="col">Eier</th>
+                    <th scope="col">Publisert av</th>
                     <th scope="col">Meldt inn</th>
                     <th scope="col"><span class="visually-hidden">Handlinger</span></th>
                 </tr>
@@ -92,9 +91,18 @@
                             <span class="admin-title">@submission.Tittel</span>
                             <span class="admin-subtitle">@submission.CategoryName · @submission.Adresse</span>
                         </td>
+                        @{
+                            var erBehov = submission.Type == "behov";
+                            var fargeKlasse = !erBehov ? "gronn" : submission.Prioritet switch
+                            {
+                                "høy" => "rod",
+                                "middels" => "gul",
+                                _ => "gronn"
+                            };
+                        }
                         <td data-label="Type">
-                            <span class="admin-badge @(submission.Type == "behov" ? "admin-badge--need" : "admin-badge--resource")">
-                                @(submission.Type == "behov" ? "Behov" : "Ressurs")
+                            <span class="admin-type-ikon admin-type-ikon--@fargeKlasse">
+                                <i class="fa-solid @(erBehov ? "fa-triangle-exclamation" : "fa-hand-holding-heart")" aria-hidden="true"></i>
                             </span>
                         </td>
                         <td data-label="Status">
@@ -102,9 +110,13 @@
                                 <span aria-hidden="true"></span>@statusLabels.GetValueOrDefault(submission.Status, submission.Status)
                             </span>
                         </td>
-                        <td data-label="Eier">@submission.OwnerName</td>
+                        <td data-label="Publisert av">@submission.OwnerName</td>
                         <td data-label="Meldt inn" class="admin-date">@submission.Tidspunkt.ToString("dd. MMM yyyy")</td>
                         <td data-label="Handlinger" class="admin-actions">
+                            <a asp-controller="Resources" asp-action="Index" asp-route-apne="@submission.SubmissionId"
+                               class="admin-action" aria-label="Åpne @submission.Tittel" title="Åpne">
+                                <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+                            </a>
                             <a asp-controller="Admin" asp-action="Edit" asp-route-id="@submission.SubmissionId"
                                class="admin-action" aria-label="Rediger @submission.Tittel" title="Rediger">
                                 <i class="fa-solid fa-pen" aria-hidden="true"></i>

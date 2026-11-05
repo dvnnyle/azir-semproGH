@@ -163,6 +163,7 @@
   flex-direction: column;
   gap: 20px;
   width: 530px;
+  max-width: 100%;
   flex-shrink: 0;
 }
 
@@ -230,23 +231,29 @@
   border-radius: 14px;
 }
 
-.hjem-status__prikk {
-  width: 10px;
-  height: 10px;
+.hjem-status__ikon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
+  color: #0b1420;
+  font-size: 11px;
 }
 
-.hjem-status__rad--rod .hjem-status__prikk {
+.hjem-status__rad--rod .hjem-status__ikon {
   background: #ef4444;
   box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
 }
 
-.hjem-status__rad--gul .hjem-status__prikk {
+.hjem-status__rad--gul .hjem-status__ikon {
   background: #f59e0b;
   box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
 }
 
-.hjem-status__rad--gronn .hjem-status__prikk {
+.hjem-status__rad--gronn .hjem-status__ikon {
   background: #10b981;
   box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
 }
@@ -511,6 +518,14 @@
     align-items: flex-start;
   }
 
+  .hjem-hero {
+    min-height: auto;
+  }
+
+  .hjem-hero__intro {
+    flex: none;
+  }
+
   .hjem-hero__visual,
   .hjem-kart-seksjon__intro,
   .hjem-faq__intro {
@@ -525,6 +540,15 @@
     flex-direction: column;
     align-items: flex-start;
   }
+
+  .hjem-kart-seksjon {
+    min-height: auto;
+  }
+
+  .hjem-kartkort {
+    flex: none;
+    width: 100%;
+  }
 }
 
 @media (max-width: 860px) {
@@ -537,5 +561,55 @@
 
   .hjem-steg-rad {
     grid-template-columns: 1fr;
+  }
+
+  .hjem-sentrert--rad {
+    gap: 40px;
+  }
+
+  .hjem-invitasjon {
+    gap: 24px;
+    padding: 28px;
+  }
+
+  .hjem-kartkort img {
+    height: 320px;
+  }
+
+  .hjem-kart-seksjon {
+    padding: 56px 0;
+  }
+
+  .hjem-status__halo {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .hjem-hero {
+    padding-top: 48px;
+    padding-bottom: 48px;
+    gap: 40px;
+  }
+
+  .hjem-knapper {
+    flex-wrap: wrap;
+  }
+
+  .hjem-knapp {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  .hjem-status {
+    padding: 6px;
+  }
+
+  .hjem-faq {
+    padding-top: 80px;
+  }
+
+  .hjem-avslutning {
+    padding-top: 40px;
   }
 }

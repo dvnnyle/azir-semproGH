@@ -247,6 +247,8 @@ public class AccountController : Controller
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)
             ?? throw new InvalidOperationException("An authenticated user must have an Identity user ID."));
+        var currentUser = await userManager.GetUserAsync(User)
+            ?? throw new InvalidOperationException("An authenticated user must exist.");
         var categories = await database.Categories
             .AsNoTracking()
             .ToDictionaryAsync(category => category.CategoryId, category => category.Navn);
@@ -263,6 +265,10 @@ public class AccountController : Controller
 
         return View(new AccountProfileViewModel
         {
+            FirstName = currentUser.FirstName,
+            LastName = currentUser.LastName,
+            Email = currentUser.Email ?? "",
+            PhoneNumber = currentUser.PhoneNumber ?? "",
             Submissions = submissions.Select(submission => new ProfileSubmissionViewModel
             {
                 SubmissionId = submission.SubmissionId,
@@ -316,6 +322,27 @@ public class AccountController : Controller
         await transaction.CommitAsync();
 
         TempData["ProfileMessage"] = "Meldingen er slettet.";
+        return RedirectToAction(nameof(Profile));
+    }
+
+    // Lar en bruker slette sitt eget upubliserte utkast.
+    [HttpPost("/profile/delete-draft/{id:int}")]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteDraft(int id)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var draft = await database.ResourceDrafts.FirstOrDefaultAsync(item =>
+            item.ResourceDraftId == id && item.IdentityUserId == userId);
+        if (draft is null)
+        {
+            return NotFound();
+        }
+
+        database.ResourceDrafts.Remove(draft);
+        await database.SaveChangesAsync();
+
+        TempData["ProfileMessage"] = "Utkastet er slettet.";
         return RedirectToAction(nameof(Profile));
     }
 

@@ -165,9 +165,9 @@
         if (nyModus === 'omrade') {
             map.pm.enableDraw('Polygon', {
                 snappable: false,
-                templineStyle: { color: '#dc2626' },
-                hintlineStyle: { color: '#dc2626' },
-                pathOptions: { color: '#dc2626', fillColor: '#dc2626' }
+                templineStyle: { color: '#10b981' },
+                hintlineStyle: { color: '#10b981' },
+                pathOptions: { color: '#10b981', fillColor: '#10b981' }
             });
         } else if (nyModus === 'pin') {
             map.pm.enableDraw('Marker', { markerStyle: { icon: nalIkon } });
@@ -254,9 +254,9 @@
             tileLayer().addTo(snapshotKart);
         }
         if (snapshotPolygon) snapshotKart.removeLayer(snapshotPolygon);
-        /* Geoman sin egen standardfarge (blatt) - samme som pa selve tegnekartet,
-           siden Leaflet-lag ikke kan deles mellom to kart, ma den lages pa nytt her. */
-        snapshotPolygon = erOmrade ? L.polygon(punkter.map(p => [p.lat, p.lng]), { color: '#3388ff', fillColor: '#3388ff', fillOpacity: 0.2 }).addTo(snapshotKart) : null;
+        /* Samme grønnfarge som resten av skjema-flyten (steg 2-4), siden
+           Leaflet-lag ikke kan deles mellom to kart, ma den lages pa nytt her. */
+        snapshotPolygon = erOmrade ? L.polygon(punkter.map(p => [p.lat, p.lng]), { color: '#10b981', fillColor: '#10b981', fillOpacity: 0.2 }).addTo(snapshotKart) : null;
         if (snapshotMarkor) snapshotKart.removeLayer(snapshotMarkor);
         snapshotMarkor = erOmrade ? null : L.marker(senter, { icon: nalIkon }).addTo(snapshotKart);
         setTimeout(() => {

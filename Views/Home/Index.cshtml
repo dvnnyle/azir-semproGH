@@ -28,8 +28,8 @@
         <img src="~/assets/home/halo.png" alt="" class="hjem-status__halo">
         <aside class="hjem-status">
             <div class="hjem-status__header">
-                <span class="hjem-status__tittel">Nylige ressurser</span>
-                <a asp-controller="Resources" asp-action="Index" class="hjem-status__lenke">Gå til ressurser</a>
+                <span class="hjem-status__tittel">Nylige delinger</span>
+                <a asp-controller="Resources" asp-action="Index" class="hjem-status__lenke">Gå til delinger</a>
             </div>
             @if (!Model.Any())
             {
@@ -62,7 +62,9 @@
                     : minutterSiden < 1440 ? $"{minutterSiden / 60} t"
                     : $"{minutterSiden / 1440} d";
                 <div class="hjem-status__rad hjem-status__rad--@fargeKlasse">
-                    <span class="hjem-status__prikk"></span>
+                    <span class="hjem-status__ikon">
+                        <i class="fa-solid @(erBehov ? "fa-triangle-exclamation" : "fa-hand-holding-heart")" aria-hidden="true"></i>
+                    </span>
                     <div class="hjem-status__info">
                         <span class="hjem-status__navn">@innsending.Tittel</span>
                         <span class="hjem-status__merke">@merke</span>

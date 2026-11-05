@@ -3,6 +3,8 @@
     ViewData["Title"] = "Rediger melding";
     var categories = ViewBag.Categories as List<azir_sempro.Models.Category> ?? [];
 }
+<link rel="stylesheet" href="~/lib/leaflet/dist/leaflet.min.css">
+<link rel="stylesheet" href="~/css/form.css" asp-append-version="true">
 <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true">
 
 <section class="admin-page admin-edit-page">
@@ -11,11 +13,18 @@
     </a>
     <header class="admin-heading admin-edit-heading">
         <div>
-            <p class="admin-eyebrow">Krisis · administrasjon</p>
-            <h1>Rediger melding</h1>
+            <h1>Rediger</h1>
             <p>Oppdater ressursen eller behovet. Kartområdet beholdes uendret.</p>
         </div>
     </header>
+
+    <div class="admin-edit-kart">
+        <div class="mini-kart" id="adminLokasjonKart"></div>
+        <div class="koordinat-boks">
+            <div><span>Lat</span><strong id="adminKoordinatLat">-</strong></div>
+            <div><span>Lng</span><strong id="adminKoordinatLng">-</strong></div>
+        </div>
+    </div>
 
     <form asp-controller="Admin" asp-action="Edit" asp-route-id="@ViewContext.RouteData.Values["id"]" method="post" class="admin-edit-form">
         <div asp-validation-summary="ModelOnly" class="admin-validation" role="alert"></div>
@@ -89,4 +98,15 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/lib/leaflet/dist/leaflet.min.js"></script>
+    <script src="~/js/ressurs-kart.js" asp-append-version="true"></script>
+    <script nonce="@(Context.Items["CspNonce"])">
+        const { senter } = tegnRessursOmradeKart('adminLokasjonKart', '@Html.Raw(Model.PunkterJson)', {
+            mapOptions: { zoomControl: false },
+            padding: [16, 16],
+            farge: '#10b981'
+        });
+        document.getElementById('adminKoordinatLat').textContent = senter.lat.toFixed(6);
+        document.getElementById('adminKoordinatLng').textContent = senter.lng.toFixed(6);
+    </script>
 }

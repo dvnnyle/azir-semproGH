@@ -34,11 +34,16 @@
         border-color: #10b981;
     }
 
-.kart-prikk {
-    border-radius: 50%;
+.kart-ikon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
-    height: 10px;
-    width: 10px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    color: #0b1420;
+    font-size: 11px;
 }
 
 .kart-listeelement strong {
