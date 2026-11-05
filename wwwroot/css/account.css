@@ -164,3 +164,15 @@
     color: #34d399;
 }
 
+/* Feilmeldinger fra skjemavalidering (login, registrering, glemt passord).
+   Uten dette vises de nesten usynlig, mørkt på mørk bakgrunn. */
+.validation-summary-errors,
+.field-validation-error {
+    color: #fca5a5;
+    font-size: 13px;
+}
+
+.validation-summary-errors ul {
+    margin: 0;
+    padding-left: 18px;
+}

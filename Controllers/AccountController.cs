@@ -4,7 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
+using Microsoft.AspNetCore.WebUtilities;
 using azir_sempro.Data;
 using azir_sempro.Models;
 
@@ -15,15 +17,18 @@ public class AccountController : Controller
     private readonly AppDbContext database;
     private readonly UserManager<ApplicationUser> userManager;
     private readonly SignInManager<ApplicationUser> signInManager;
+    private readonly IEmailSender<ApplicationUser> emailSender;
 
     public AccountController(
         AppDbContext database,
         UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager)
+        SignInManager<ApplicationUser> signInManager,
+        IEmailSender<ApplicationUser> emailSender)
     {
         this.database = database;
         this.userManager = userManager;
         this.signInManager = signInManager;
+        this.emailSender = emailSender;
     }
 
     [HttpGet("/login")]
@@ -141,6 +146,96 @@ public class AccountController : Controller
     {
         await signInManager.SignOutAsync();
         return RedirectToAction("Index", "Home");
+    }
+
+    [HttpGet("/forgot-password")]
+    public IActionResult ForgotPassword() => View(new ForgotPasswordViewModel());
+
+    // Lager en engangslenke for å sette nytt passord. Svaret er alltid det samme,
+    // uansett om e-posten finnes, slik at ingen kan bruke skjemaet til å finne ut
+    // hvilke e-poster som er registrert.
+    [HttpPost("/forgot-password")]
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("login")]
+    public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var user = await userManager.FindByEmailAsync(model.Email.Trim());
+        if (user?.Email is not null)
+        {
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+            var code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+            var link = Url.Action(nameof(ResetPassword), "Account",
+                new { email = user.Email, code }, Request.Scheme)!;
+            await emailSender.SendPasswordResetLinkAsync(user, user.Email, link);
+        }
+
+        ViewData["Sent"] = true;
+        return View(new ForgotPasswordViewModel());
+    }
+
+    [HttpGet("/reset-password")]
+    public IActionResult ResetPassword(string? email, string? code)
+    {
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(code))
+        {
+            return RedirectToAction(nameof(ForgotPassword));
+        }
+
+        return View(new ResetPasswordViewModel { Email = email, Code = code });
+    }
+
+    [HttpPost("/reset-password")]
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("login")]
+    public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var user = await userManager.FindByEmailAsync(model.Email);
+        if (user is null)
+        {
+            // Avslør ikke at e-posten ikke finnes.
+            ViewData["Done"] = true;
+            return View(model);
+        }
+
+        string token;
+        try
+        {
+            token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(model.Code));
+        }
+        catch (FormatException)
+        {
+            ModelState.AddModelError("", "Lenken er ugyldig eller utløpt. Be om en ny.");
+            return View(model);
+        }
+
+        var result = await userManager.ResetPasswordAsync(user, token, model.Password);
+        if (!result.Succeeded)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Code == "InvalidToken"
+                    ? "Lenken er ugyldig eller utløpt. Be om en ny."
+                    : error.Description);
+            }
+            return View(model);
+        }
+
+        // En bruker som var låst ute etter for mange feil forsøk, kan logge inn igjen.
+        await userManager.SetLockoutEndDateAsync(user, null);
+        await userManager.ResetAccessFailedCountAsync(user);
+
+        ViewData["Done"] = true;
+        return View(model);
     }
 
     [HttpGet("/access-denied")]
