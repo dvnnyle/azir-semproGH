@@ -53,6 +53,9 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
+// Sender lenke for "glemt passord". Byttes ut med en ekte e-posttjeneste ved behov.
+builder.Services.AddTransient<IEmailSender<ApplicationUser>, azir_sempro.Services.DevEmailSender>();
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/login";
