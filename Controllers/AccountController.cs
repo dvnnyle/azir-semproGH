@@ -287,6 +287,74 @@ public class AccountController : Controller
         return RedirectToAction(nameof(Profile));
     }
 
+    [HttpGet("/profile/delete-account")]
+    [Authorize]
+    public IActionResult DeleteAccount() => View(new DeleteAccountViewModel());
+
+    // Sletter kontoen til innlogget bruker etter at passordet er bekreftet.
+    // Brukerens meldinger, utkast og forespørsler som peker på meldingene slettes også,
+    // slik at det ikke blir liggende ressurser og behov uten eier.
+    [HttpPost("/profile/delete-account")]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("login")]
+    public async Task<IActionResult> DeleteAccount(DeleteAccountViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var user = await userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            await signInManager.SignOutAsync();
+            return RedirectToAction(nameof(Login));
+        }
+
+        if (!await userManager.CheckPasswordAsync(user, model.Password))
+        {
+            ModelState.AddModelError(nameof(model.Password), "Feil passord.");
+            return View(model);
+        }
+
+        var submissionIds = await database.Submissions
+            .Where(submission => submission.IdentityUserId == user.Id)
+            .Select(submission => submission.SubmissionId)
+            .ToListAsync();
+
+        // Alt skjer i én transaksjon: feiler noe, blir ingenting slettet.
+        await using var transaction = await database.Database.BeginTransactionAsync();
+
+        var relatedRequests = await database.Requests
+            .Where(request => submissionIds.Contains(request.BehovId) || submissionIds.Contains(request.RessursId))
+            .ToListAsync();
+        database.Requests.RemoveRange(relatedRequests);
+        await database.SaveChangesAsync();
+
+        database.Submissions.RemoveRange(
+            await database.Submissions.Where(submission => submission.IdentityUserId == user.Id).ToListAsync());
+        database.ResourceDrafts.RemoveRange(
+            await database.ResourceDrafts.Where(draft => draft.IdentityUserId == user.Id).ToListAsync());
+        await database.SaveChangesAsync();
+
+        // Roller og innloggingsdata slettes av databasen (ON DELETE CASCADE i identity.sql).
+        var result = await userManager.DeleteAsync(user);
+        if (!result.Succeeded)
+        {
+            await transaction.RollbackAsync();
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+            return View(model);
+        }
+
+        await transaction.CommitAsync();
+        await signInManager.SignOutAsync();
+        return RedirectToAction("Index", "Home");
+    }
+
     private async Task<Submission?> GetOwnedSubmissionAsync(int id)
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

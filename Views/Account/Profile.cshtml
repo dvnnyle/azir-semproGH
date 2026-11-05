@@ -151,6 +151,16 @@
         <a asp-controller="Resources" asp-action="Index">Hjelp til å dele <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
     </aside>
     <p class="profile-footnote">Krisis viser meldinger du har registrert. Tilgjengelighet er ikke verifisert.</p>
+
+    <aside class="profile-danger-zone">
+        <div>
+            <strong>Slett konto</strong>
+            <p>Sletter kontoen din og alle meldinger og utkast du har registrert.</p>
+        </div>
+        <a asp-controller="Account" asp-action="DeleteAccount" class="profile-button profile-button--delete">
+            <i class="fa-solid fa-user-xmark" aria-hidden="true"></i> Slett konto
+        </a>
+    </aside>
 </section>
 
 @section Scripts {
