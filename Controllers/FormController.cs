@@ -31,9 +31,10 @@ public class FormController : Controller
     // Steg 1: tegn omrade eller slipp en nal pa kartet
     public async Task<IActionResult> Draw(int? draftId)
     {
+        // Leses direkte: en type-parameter ville lagt ufiltrert verdi i ModelState og skjemaets skjulte felt.
         var model = draftId.HasValue
             ? await HentUtkastAsync(draftId.Value)
-            : new FormViewModel();
+            : new FormViewModel { Type = Request.Query["type"] == "behov" ? "behov" : "ressurs" };
         return model is null ? NotFound() : View(model);
     }
 

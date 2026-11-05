@@ -13,7 +13,7 @@
     background: rgba(15, 23, 42, 0.88);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 12px;
     bottom: 20px;
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
@@ -38,7 +38,7 @@
 .ressurs-split__back {
     align-items: center;
     background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 10px;
     color: #f8fafc;
     display: flex;
@@ -51,7 +51,7 @@
 
 .ressurs-split__header h1 {
     color: #f8fafc;
-    font-family: 'Unbounded', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-size: 24px;
     font-weight: 800;
     margin: 0;
@@ -78,9 +78,9 @@
 }
 
 .ressurs-steg-nummer {
-    color: #64748b;
-    font-family: 'Manrope', sans-serif;
-    font-size: 11px;
+    color: #cbd5e1;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
     font-weight: 800;
     margin: 0;
     text-transform: uppercase;
@@ -88,7 +88,7 @@
 
 .ressurs-steg-tittel {
     color: #f8fafc;
-    font-family: 'Unbounded', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-size: 18px;
     font-weight: 700;
     margin: 0;
@@ -114,7 +114,7 @@
 .ressurs-tegneverktoy #fullforKnapp:disabled {
     background: rgba(234, 179, 8, 0.2);
     border: 1px solid rgba(234, 179, 8, 0.4);
-    color: #eab308;
+    color: #fcd34d;
 }
 
 .bar-knapp {
@@ -125,7 +125,7 @@
     color: #a3a7af;
     cursor: pointer;
     display: inline-flex;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     height: 40px;
     justify-content: center;
@@ -138,20 +138,20 @@
 
 .bar-knapp.active {
     border-color: #10b981;
-    color: #10b981;
+    color: #34d399;
 }
 
 #minPosisjonKnapp {
-    color: #ef4444;
+    color: #fca5a5;
 }
 
 #minPosisjonKnapp:hover {
-    color: #f87171;
+    color: #fca5a5;
 }
 
 .mini-kart {
     background: #0f1729;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 10px;
     height: 160px;
     overflow: hidden;
@@ -166,11 +166,11 @@
 
 .mini-kart-plassholder {
     align-items: center;
-    color: #94a3b8;
+    color: #cbd5e1;
     display: flex;
     flex-direction: column;
-    font-family: 'Manrope', sans-serif;
-    font-size: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
     gap: 6px;
     height: 100%;
     inset: 0;
@@ -180,7 +180,7 @@
 }
 
 .mini-kart-plassholder i {
-    color: #10b981;
+    color: #34d399;
     font-size: 18px;
 }
 
@@ -192,7 +192,7 @@
 
 .ressurs-felt p {
     color: #f8fafc;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 14px;
     line-height: 1.5;
     margin: 0;
@@ -200,10 +200,10 @@
 
 .ressurs-kvittering-merke {
     align-items: center;
-    color: #10b981;
+    color: #34d399;
     display: flex;
-    font-family: 'Manrope', sans-serif;
-    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
     font-weight: 700;
     gap: 8px;
     margin: 0;
@@ -211,7 +211,7 @@
 
 .ressurs-kvittering-tekst {
     color: #f8fafc;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 14px;
     line-height: 1.6;
     margin: 0;
@@ -219,14 +219,14 @@
 
 .ressurs-kvittering-ikon {
     align-self: center;
-    color: #10b981;
+    color: #34d399;
     font-size: 72px;
 }
 
 .ressurs-felt label {
-    color: #64748b;
-    font-family: 'Manrope', sans-serif;
-    font-size: 11px;
+    color: #cbd5e1;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
     font-weight: 800;
     text-transform: uppercase;
 }
@@ -239,9 +239,9 @@
 .type-knapp {
     align-items: center;
     background: #0f1729;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid #64748b;
     border-radius: 10px;
-    color: #94a3b8;
+    color: #cbd5e1;
     cursor: pointer;
     display: flex;
     flex: 1;
@@ -256,31 +256,31 @@
 }
 
 .type-knapp span {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
 }
 
 .type-knapp--ressurs.active {
     background: rgba(16, 185, 129, 0.12);
     border-color: #10b981;
-    color: #10b981;
+    color: #6ee7b7;
 }
 
 .type-knapp--behov.active {
     background: rgba(245, 158, 11, 0.12);
     border-color: #f59e0b;
-    color: #f59e0b;
+    color: #fbbf24;
 }
 
 .ressurs-felt input,
 .ressurs-felt select,
 .ressurs-felt textarea {
     background: #0f1729;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid #64748b;
     border-radius: 10px;
     box-sizing: border-box;
     color: #f8fafc;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 14px;
     padding: 0 14px;
     width: 100%;
@@ -293,7 +293,7 @@
 
 .ressurs-felt input::placeholder,
 .ressurs-felt textarea::placeholder {
-    color: #94a3b8;
+    color: #cbd5e1;
 }
 
 .ressurs-felt textarea {
@@ -318,7 +318,7 @@
     cursor: pointer;
     display: flex;
     flex: 1;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 14px;
     font-weight: 700;
     height: 48px;
@@ -329,21 +329,21 @@
 .ressurs-btn--liten {
     align-self: flex-start;
     flex: none;
-    font-size: 13px;
+    font-size: 14px;
     height: 36px;
     padding: 0 16px;
 }
 
 .ressurs-btn--cancel {
     background: #0f1729;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: #94a3b8;
+    border: 1px solid #64748b;
+    color: #cbd5e1;
 }
 
 .ressurs-btn--submit {
     background: #22b87a;
     border: 0;
-    color: #f8fafc;
+    color: #021912;
 }
 
 .ressurs-btn:disabled {
@@ -381,7 +381,7 @@
     align-items: center;
     justify-content: center;
     background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 8px;
     color: #f8fafc;
     cursor: pointer;
@@ -413,7 +413,7 @@
 
 .koordinat-boks {
     background: #0f1729;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 10px;
     display: flex;
     gap: 24px;
@@ -426,17 +426,17 @@
 }
 
 .koordinat-boks span {
-    color: rgba(255, 255, 255, 0.55);
-    font-family: 'Manrope', sans-serif;
-    font-size: 10px;
+    color: #cbd5e1;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
     font-weight: 700;
     text-transform: uppercase;
 }
 
 .koordinat-boks strong {
     color: #f8fafc;
-    font-family: 'Space Mono', monospace;
-    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
 }
 
 .publiserer-kort {
@@ -445,7 +445,7 @@
     gap: 12px;
     padding: 12px 14px;
     background: #0f1729;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 10px;
 }
 
@@ -459,18 +459,18 @@
     border-radius: 50%;
     background: rgba(16, 185, 129, 0.12);
     border: 1px solid rgba(16, 185, 129, 0.3);
-    color: #34d399;
+    color: #6ee7b7;
     font-size: 14px;
 }
 
 .publiserer-kort__info strong {
     display: block;
     color: #f8fafc;
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .publiserer-kort__info p {
     margin: 2px 0 0;
-    color: #94a3b8;
-    font-size: 12px;
+    color: #cbd5e1;
+    font-size: 14px;
 }

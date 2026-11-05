@@ -1,6 +1,6 @@
 @model azir_sempro.Models.AdminResourceOverviewViewModel
 @{
-    ViewData["Title"] = "Administrasjon";
+    ViewData["Title"] = "Oversikt";
     var statusLabels = new Dictionary<string, string>
     {
         ["ny"] = "Ny",
@@ -14,8 +14,8 @@
 <section class="admin-page">
     <header class="admin-heading">
         <div>
-            <h1>Ressurser</h1>
-            <p>Alle innsendte meldinger fra brukere og organisasjoner.</p>
+            <h1>Oversikt</h1>
+            <p>Alle behov og ressurser fra brukere og organisasjoner.</p>
         </div>
         <div class="admin-stats" aria-label="Oversikt over meldinger">
             <span><strong>@Model.TotalCount</strong> totalt</span>
@@ -89,20 +89,29 @@
                     <tr>
                         <td data-label="Tittel">
                             <span class="admin-title">@submission.Tittel</span>
-                            <span class="admin-subtitle">@submission.CategoryName · @submission.Adresse</span>
+                            <span class="admin-subtitle" title="Kategori">
+                                <i class="fa-solid fa-tag" aria-hidden="true"></i><span class="visually-hidden">Kategori: </span>@submission.CategoryName
+                            </span>
+                            <span class="admin-subtitle" title="Adresse">
+                                <i class="fa-solid fa-location-dot" aria-hidden="true"></i><span class="visually-hidden">Adresse: </span>@submission.Adresse
+                            </span>
                         </td>
                         @{
                             var erBehov = submission.Type == "behov";
-                            var fargeKlasse = !erBehov ? "gronn" : submission.Prioritet switch
+                            var prioritet = submission.Prioritet switch
                             {
-                                "høy" => "rod",
-                                "middels" => "gul",
-                                _ => "gronn"
+                                "høy" => "Høy",
+                                "middels" => "Middels",
+                                "lav" => "Lav",
+                                _ => null
                             };
                         }
                         <td data-label="Type">
-                            <span class="admin-type-ikon admin-type-ikon--@fargeKlasse">
-                                <i class="fa-solid @(erBehov ? "fa-triangle-exclamation" : "fa-hand-holding-heart")" aria-hidden="true"></i>
+                            <span class="admin-type">
+                                <span class="admin-type-ikon admin-type-ikon--@(erBehov ? "behov" : "ressurs")">
+                                    <i class="fa-solid @(erBehov ? "fa-triangle-exclamation" : "fa-hand-holding-heart")" aria-hidden="true"></i>
+                                </span>
+                                @(erBehov ? (prioritet is null ? "Behov" : $"Behov · {prioritet}") : "Ressurs")
                             </span>
                         </td>
                         <td data-label="Status">

@@ -20,7 +20,7 @@ function tegnRessursOmradeKart(elementId, punkterJsonStr, options) {
 
     const farge = options.farge || '#10b981';
     if (erOmrade) {
-        L.polygon(punkter, { color: farge, fillColor: farge, fillOpacity: 0.35 }).addTo(map);
+        L.polygon(punkter, { color: farge, fillColor: farge, fillOpacity: 0.45, weight: 4, className: 'kart-omrade' }).addTo(map);
     } else {
         L.marker(senter, { icon: nalIkon }).addTo(map);
     }
@@ -29,7 +29,8 @@ function tegnRessursOmradeKart(elementId, punkterJsonStr, options) {
     const padding = options.padding || [40, 40];
     setTimeout(() => {
         map.invalidateSize();
-        const fitBounds = erOmrade ? bounds : bounds.pad(2);
+        const fitBounds = erOmrade ? L.latLngBounds(punkter) : bounds.pad(2);
+        (options.visOgsa || []).forEach(punkt => fitBounds.extend(punkt));
         // Pa mobil (se @media (max-width:480px) i form.css) dekker skjemaet som
         // bottom sheet nedre ~50% av skjermen - fitBounds vet ikke om det, sa uten
         // ekstra bunn-padding blir punktet sentrert for hele skjermhoyden og havner

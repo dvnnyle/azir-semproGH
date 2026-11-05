@@ -1,6 +1,6 @@
 @model azir_sempro.Models.AccountProfileViewModel
 @{
-    ViewData["Title"] = "Min profil";
+    ViewData["Title"] = "Min side";
     var resourceCount = Model.Submissions.Count(item => item.Type == "ressurs");
     var needCount = Model.Submissions.Count(item => item.Type == "behov");
 }
@@ -19,8 +19,8 @@
 
     <header class="profile-heading">
         <div>
-            <h1>Mine delte ressurser og behov</h1>
-            <p>Her finner du det du deler med nærmiljøet, og utkastene dine som ikke er publisert ennå.</p>
+            <h1>Mine ressurser og behov</h1>
+            <p>Her finner du det du har registrert, og utkast som ikke er publisert ennå.</p>
         </div>
         <a asp-controller="Form" asp-action="Draw" class="profile-add">
             <i class="fa-solid fa-plus" aria-hidden="true"></i> Ny
@@ -33,7 +33,7 @@
     }
 
     <div class="profile-summary" aria-label="Oversikt over dine meldinger">
-        <div><strong>@Model.Submissions.Count</strong><span>Mine delinger</span></div>
+        <div><strong>@Model.Submissions.Count</strong><span>Mine meldinger</span></div>
         <div><strong>@resourceCount</strong><span>Ressurser</span></div>
         <div><strong>@needCount</strong><span>Behov</span></div>
         <div><strong>@Model.Drafts.Count</strong><span>Utkast</span></div>
@@ -52,8 +52,8 @@
         {
             <div class="profile-empty">
                 <span class="profile-empty__icon"><i class="fa-solid fa-box-open" aria-hidden="true"></i></span>
-                <h3>Du har ikke delt noe ennå</h3>
-                <p>Legg ut en ressurs du kan tilby, eller meld et behov du trenger hjelp med.</p>
+                <h3>Du har ikke registrert noe ennå</h3>
+                <p>Registrer en ressurs du kan tilby, eller meld et behov.</p>
                 <a asp-controller="Form" asp-action="Draw" class="profile-add">Ny</a>
             </div>
         }
@@ -158,9 +158,9 @@
         <i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i>
         <div>
             <strong>Hold ressursene dine oppdatert</strong>
-            <p>Endre tilgjengelighet under «Rediger» når noe er utlånt eller ikke kan deles. Avtal alltid henting direkte.</p>
+            <p>Oppdater meldingen under «Rediger» når en ressurs ikke lenger er tilgjengelig.</p>
         </div>
-        <a asp-controller="Resources" asp-action="Index">Hjelp til å dele <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+        <a asp-controller="Resources" asp-action="Index">Gå til delinger <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
     </aside>
     <p class="profile-footnote">Krisis viser meldinger du har registrert. Tilgjengelighet er ikke verifisert.</p>
 

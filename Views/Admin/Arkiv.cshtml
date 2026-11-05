@@ -1,0 +1,94 @@
+@model azir_sempro.Models.AdminMatchArkivViewModel
+@{
+    ViewData["Title"] = "Arkiv";
+    var returnUrl = $"{Context.Request.Path}{Context.Request.QueryString}";
+    var faner = new[]
+    {
+        (Filter: "alle", Navn: "Alle", Antall: Model.AntallTildelt + Model.AntallLost),
+        (Filter: "tildelt", Navn: "Tildelt", Antall: Model.AntallTildelt),
+        (Filter: "lost", Navn: "Løst", Antall: Model.AntallLost)
+    };
+}
+<link rel="stylesheet" href="~/css/admin.css" asp-append-version="true">
+
+<section class="admin-page admin-page--tett">
+    <header class="admin-heading">
+        <div>
+            <h1>Arkiv</h1>
+            <p>Behov og ressurser som er koblet sammen.</p>
+        </div>
+    </header>
+
+    @if (TempData["AdminMessage"] is string message)
+    {
+        <div class="admin-notice" role="status">@message</div>
+    }
+
+    <nav class="admin-match-faner" aria-label="Filtrer på status">
+        @foreach (var fane in faner)
+        {
+            <a asp-controller="Admin" asp-action="Arkiv" asp-route-status="@(fane.Filter == "alle" ? null : fane.Filter)"
+               class="admin-match-fane @(Model.Filter == fane.Filter ? "active" : "")"
+               aria-current="@(Model.Filter == fane.Filter ? "page" : null)">
+                @fane.Navn <strong>@fane.Antall</strong>
+            </a>
+        }
+    </nav>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th scope="col">Behov</th>
+                    <th scope="col">Ressurs</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Koblet</th>
+                    <th scope="col"><span class="visually-hidden">Handlinger</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var kobling in Model.Koblinger)
+                {
+                    <tr>
+                        <td data-label="Behov">
+                            <span class="admin-title">
+                                <a asp-controller="Admin" asp-action="Edit" asp-route-id="@kobling.Behov.SubmissionId" asp-route-returnUrl="@returnUrl">@kobling.Behov.Tittel</a>
+                            </span>
+                            <span class="admin-subtitle">@kobling.Behov.EierNavn@(string.IsNullOrEmpty(kobling.Behov.EierTelefon) ? "" : $" · {kobling.Behov.EierTelefon}")</span>
+                        </td>
+                        <td data-label="Ressurs">
+                            <span class="admin-title">
+                                <a asp-controller="Admin" asp-action="Edit" asp-route-id="@kobling.Ressurs.SubmissionId" asp-route-returnUrl="@returnUrl">@kobling.Ressurs.Tittel</a>
+                            </span>
+                            <span class="admin-subtitle">@kobling.Ressurs.EierNavn@(string.IsNullOrEmpty(kobling.Ressurs.EierTelefon) ? "" : $" · {kobling.Ressurs.EierTelefon}")</span>
+                        </td>
+                        <td data-label="Status">
+                            <span class="admin-status admin-status--@(kobling.ErLost ? "lost" : "tildelt")">
+                                <span aria-hidden="true"></span>@(kobling.ErLost ? "Løst" : "Tildelt")
+                            </span>
+                        </td>
+                        <td data-label="Koblet" class="admin-date">@kobling.Tidspunkt.ToString("dd. MMM yyyy")</td>
+                        <td data-label="Handlinger" class="admin-actions">
+                            @if (!kobling.ErLost)
+                            {
+                                <form asp-controller="Admin" asp-action="MarkerLost" asp-route-id="@kobling.RequestId" method="post">
+                                    <button type="submit" class="admin-filter-submit">Marker som løst</button>
+                                </form>
+                                <form asp-controller="Admin" asp-action="FjernKobling" asp-route-id="@kobling.RequestId" method="post">
+                                    <button type="submit" class="admin-action admin-action--delete"
+                                            aria-label="Fjern kobling mellom @kobling.Behov.Tittel og @kobling.Ressurs.Tittel" title="Fjern kobling">
+                                        <i class="fa-solid fa-link-slash" aria-hidden="true"></i>
+                                    </button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (Model.Koblinger.Count == 0)
+        {
+            <div class="admin-empty">Ingen koblinger her ennå.</div>
+        }
+    </div>
+</section>

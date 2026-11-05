@@ -17,6 +17,94 @@
     display: flex;
     flex-direction: column;
     gap: 24px;
+    position: relative;
+}
+
+.konto-info,
+.konto-dialog__lukk {
+    align-items: center;
+    background: transparent;
+    border: 1px solid #64748b;
+    border-radius: 50%;
+    color: #f1f5f9;
+    cursor: pointer;
+    display: flex;
+    font-size: 16px;
+    height: 36px;
+    justify-content: center;
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    width: 36px;
+}
+
+.konto-info:hover,
+.konto-dialog__lukk:hover {
+    border-color: #6ee7b7;
+    color: #6ee7b7;
+}
+
+.konto-info {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: #10b981;
+    color: #6ee7b7;
+    font-size: 14px;
+    transition: background 0.2s ease;
+}
+
+.konto-info:hover {
+    background: rgba(16, 185, 129, 0.24);
+}
+
+.konto-dialog {
+    background: #1e293b;
+    border: 2px solid #334155;
+    border-radius: 16px;
+    color: #f1f5f9;
+    max-width: 460px;
+    padding: 24px;
+    width: calc(100% - 32px);
+}
+
+.konto-dialog::backdrop {
+    background: rgba(2, 6, 23, 0.75);
+}
+
+.konto-dialog h2 {
+    color: #f8fafc;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 44px 16px 0;
+}
+
+.konto-dialog__valg {
+    background: rgba(11, 15, 25, 0.7);
+    border: 1px solid #64748b;
+    border-radius: 12px;
+    padding: 14px;
+}
+
+.konto-dialog__valg + .konto-dialog__valg {
+    margin-top: 10px;
+}
+
+.konto-dialog__valg h3 {
+    color: #f8fafc;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0 0 6px;
+}
+
+.konto-dialog__valg h3 i {
+    color: #6ee7b7;
+    margin-right: 6px;
+}
+
+.konto-dialog__valg p {
+    color: #cbd5e1;
+    font-size: 14px;
+    margin: 0;
 }
 
 .konto-header {
@@ -37,7 +125,7 @@
     border: 2px solid #10b981;
     border-radius: 50%;
     flex-shrink: 0;
-    color: #10b981;
+    color: #6ee7b7;
     font-size: 32px;
 }
 
@@ -49,7 +137,7 @@
 }
 
 .tittel-blokk h1 {
-    font-family: 'Unbounded', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-size: 26px;
     font-weight: 700;
     color: #f8fafc;
@@ -57,7 +145,7 @@
 
 .tittel-blokk p {
     font-size: 14px;
-    color: #94a3b8;
+    color: #cbd5e1;
     line-height: 1.5;
 }
 
@@ -76,16 +164,16 @@
 }
 
 .konto-label {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
-    color: #94a3b8;
+    color: #cbd5e1;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .konto-input {
     background: rgba(11, 15, 25, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid #64748b;
     border-radius: 12px;
     padding: 14px 16px;
     font-size: 14px;
@@ -95,7 +183,7 @@
 }
 
 .konto-input::placeholder {
-    color: #94a3b8;
+    color: #cbd5e1;
 }
 
 .konto-input:focus {
@@ -107,11 +195,13 @@
 
 .glemt-passord-row {
     display: flex;
+    font-size: 14px;
     justify-content: flex-end;
+    margin-top: -4px;
 }
 
 .glemt-passord-row a {
-    color: #10b981;
+    color: #34d399;
     text-decoration: none;
     font-size: 14px;
 }
@@ -127,10 +217,10 @@
     border-radius: 12px;
     padding: 16px;
     height: 52px;
-    font-family: 'Unbounded', sans-serif;
-    font-size: 13px;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
     font-weight: 700;
-    color: #f8fafc;
+    color: #021912;
     text-transform: uppercase;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -151,11 +241,11 @@
 .bytte-row {
     text-align: center;
     font-size: 14px;
-    color: #94a3b8;
+    color: #cbd5e1;
 }
 
 .bytte-row a {
-    color: #10b981;
+    color: #34d399;
     text-decoration: underline;
     cursor: pointer;
 }
@@ -169,10 +259,84 @@
 .validation-summary-errors,
 .field-validation-error {
     color: #fca5a5;
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .validation-summary-errors ul {
     margin: 0;
     padding-left: 18px;
+}
+
+.portal .avatar-sirkel,
+.kort--aktor .avatar-sirkel {
+    background: rgba(0, 177, 226, 0.1);
+    border-color: #00B1E2;
+    color: #A5E5F7;
+}
+
+.portal .konto-input:focus,
+.kort--aktor .konto-input:focus {
+    border-color: #00B1E2;
+    box-shadow: 0 0 0 3px rgba(0, 177, 226, 0.2);
+}
+
+.portal .glemt-passord-row a,
+.portal .bytte-row a,
+.kort--aktor .glemt-passord-row a {
+    color: #7DD8F2;
+}
+
+.portal .konto-knapp,
+.kort--aktor .konto-knapp {
+    background: #00B1E2;
+}
+
+.portal .konto-knapp:hover,
+.kort--aktor .konto-knapp:hover {
+    background: #33C1E8;
+    box-shadow: 0 6px 12px rgba(0, 177, 226, 0.3);
+}
+
+.konto-bytt-rolle {
+    align-items: center;
+    border: 2px solid #10b981;
+    border-radius: 12px;
+    color: #f8fafc;
+    display: flex;
+    font-size: 14px;
+    font-weight: 600;
+    gap: 8px;
+    justify-content: center;
+    min-height: 48px;
+    padding: 8px 14px;
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.2s ease;
+}
+
+.konto-bytt-rolle:hover {
+    background: rgba(16, 185, 129, 0.14);
+    color: #f8fafc;
+}
+
+.konto-bytt-rolle--aktor {
+    border-color: #00B1E2;
+}
+
+.konto-bytt-rolle--aktor:hover {
+    background: rgba(0, 177, 226, 0.14);
+}
+
+.portal .konto-info,
+.kort--aktor .konto-info {
+    background: rgba(0, 177, 226, 0.1);
+    border-color: #00B1E2;
+    color: #A5E5F7;
+}
+
+.portal .konto-info:hover,
+.kort--aktor .konto-info:hover {
+    background: rgba(0, 177, 226, 0.24);
+    border-color: #00B1E2;
+    color: #A5E5F7;
 }

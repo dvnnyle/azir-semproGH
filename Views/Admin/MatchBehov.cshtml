@@ -1,0 +1,104 @@
+@model azir_sempro.Models.AdminMatchBehovViewModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Finn ressurs";
+}
+<link rel="stylesheet" href="~/lib/leaflet/dist/leaflet.min.css">
+<link rel="stylesheet" href="~/css/form.css" asp-append-version="true">
+<link rel="stylesheet" href="~/css/admin.css" asp-append-version="true">
+
+<section class="admin-page admin-page--tett">
+    <div class="admin-heading admin-match-tilbake">
+        <a asp-controller="Admin" asp-action="Match" class="admin-back">
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Tilbake til kobling
+        </a>
+    </div>
+    <header class="admin-heading">
+        <div>
+            <h1>Finn ressurs</h1>
+            <p>Koble behovet til en ledig ressurs.</p>
+        </div>
+    </header>
+
+    @if (TempData["AdminMessage"] is string message)
+    {
+        <div class="admin-notice" role="status">@message</div>
+    }
+
+    <div class="admin-match-kort-liste">
+        <article class="admin-match-kort admin-match-kort--kart">
+            <div>
+                <partial name="_MatchMelding" model="Model.Behov" />
+                <div class="admin-match-bunn">
+                    <partial name="_MatchEier" model="Model.Behov" />
+                </div>
+            </div>
+            <div class="admin-match-kart">
+                @if (Model.Behov.Lat is null)
+                {
+                    <p class="admin-match-meta">Behovet mangler kartposisjon.</p>
+                }
+                else
+                {
+                    <div class="mini-kart" id="matchKart"></div>
+                    <p class="admin-match-meta">Nål eller område: behovet. Grønne prikker: ledige ressurser.</p>
+                }
+            </div>
+        </article>
+
+        <h2 class="admin-match-tittel">Ledige ressurser (@Model.Kandidater.Count)</h2>
+
+        @foreach (var kandidat in Model.Kandidater)
+        {
+            <article class="admin-match-kort">
+                <partial name="_MatchMelding" model="kandidat.Ressurs" />
+                <div class="admin-match-bunn">
+                    <partial name="_MatchEier" model="kandidat.Ressurs" />
+                    <div class="admin-match-handling">
+                        <p class="admin-match-meta @(kandidat.Treff == "Beste treff" ? "admin-match-meta--beste" : "")">
+                            @kandidat.Treff@(kandidat.AvstandKm is double km ? $" · {km:0.0} km" : "")
+                        </p>
+                        <form asp-controller="Admin" asp-action="Koble" asp-route-id="@Model.Behov.SubmissionId" method="post">
+                            <input type="hidden" name="ressursId" value="@kandidat.Ressurs.SubmissionId">
+                            <button type="submit" class="admin-filter-submit" aria-label="Koble @kandidat.Ressurs.Tittel til @Model.Behov.Tittel">Koble</button>
+                        </form>
+                    </div>
+                </div>
+            </article>
+        }
+        @if (Model.Kandidater.Count == 0)
+        {
+            <div class="admin-table-wrap admin-empty">Ingen ledige ressurser.</div>
+        }
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/admin.js" asp-append-version="true"></script>
+    @if (Model.Behov.Lat is not null)
+    {
+        <script src="~/lib/leaflet/dist/leaflet.min.js"></script>
+        <script src="~/js/ressurs-kart.js" asp-append-version="true"></script>
+        <script nonce="@(Context.Items["CspNonce"])">
+            const ressurser = @Html.Raw(JsonSerializer.Serialize(Model.Kandidater
+                .Where(kandidat => kandidat.Ressurs.Lat is not null)
+                .Select(kandidat => new { tittel = kandidat.Ressurs.Tittel, lat = kandidat.Ressurs.Lat, lng = kandidat.Ressurs.Lng })));
+
+            const { map } = tegnRessursOmradeKart('matchKart', @Html.Raw(JsonSerializer.Serialize(Model.BehovPunkterJson)), {
+                mapOptions: { dragging: !L.Browser.mobile },
+                padding: [20, 20],
+                farge: '#ef4444',
+                visOgsa: ressurser.map(ressurs => [ressurs.lat, ressurs.lng])
+            });
+
+            ressurser.forEach(ressurs => {
+                // Tittelen er brukerdata: et DOM-element hindrer at Leaflet tolker den som HTML.
+                const tittel = document.createElement('span');
+                tittel.textContent = ressurs.tittel;
+                L.circleMarker([ressurs.lat, ressurs.lng], { radius: 7, color: '#052e25', fillColor: '#10b981', fillOpacity: 1, weight: 1 })
+                    .bindTooltip(tittel)
+                    .addTo(map);
+            });
+        </script>
+    }
+}

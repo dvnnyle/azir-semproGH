@@ -1,5 +1,14 @@
 @{
     ViewData["Title"] = "Tilgjengelighet";
+    var valg = new[]
+    {
+        (Id: "hoy-kontrast", Ikon: "fa-circle-half-stroke", Tittel: "Høy kontrast", Tekst: "Hvit tekst på svart bakgrunn og tydelige kanter"),
+        (Id: "storre-tekst", Ikon: "fa-text-height", Tittel: "Større tekst", Tekst: "Gjør tekst og knapper større"),
+        (Id: "lettlest-skrift", Ikon: "fa-font", Tittel: "Lettlest skrift", Tekst: "Enkel skrifttype med mer luft mellom ordene"),
+        (Id: "understrek", Ikon: "fa-underline", Tittel: "Understrek lenker", Tekst: "Lenker kjennes igjen uten å se forskjell på farger"),
+        (Id: "fokus", Ikon: "fa-expand", Tittel: "Tydelig fokusmarkering", Tekst: "Ser hvor du er ved tastaturnavigasjon"),
+        (Id: "redusert-bevegelse", Ikon: "fa-person-walking", Tittel: "Redusert bevegelse", Tekst: "Skrur av animasjoner og overganger")
+    };
 }
 <link rel="stylesheet" href="~/css/account.css" asp-append-version="true">
 <link rel="stylesheet" href="~/css/accessibility.css" asp-append-version="true">
@@ -7,121 +16,29 @@
 <div class="page-fill konto-wrap">
     <div class="kort tilgjengelighet-kort">
         <div class="konto-header">
-            <div class="avatar-sirkel"><i class="fa-solid fa-universal-access"></i></div>
+            <div class="avatar-sirkel"><i class="fa-solid fa-universal-access" aria-hidden="true"></i></div>
             <div class="tittel-blokk">
                 <h1>Tilgjengelighet</h1>
-                <p>Tilpass hvordan Krisis vises for deg</p>
+                <p>Tilpass hvordan Krisis vises for deg. Valgene lagres i denne nettleseren.</p>
             </div>
         </div>
 
         <div class="tilgjengelighet-seksjon">
-        <h2 class="tilgjengelighet-gruppe-tittel">Visning</h2>
-        <div class="tilgjengelighet-grid">
-            <label class="tilgjengelighet-rad">
-                <span class="tilgjengelighet-ikon"><i class="fa-solid fa-circle-half-stroke"></i></span>
-                <div class="tilgjengelighet-tekst">
-                    <strong>Høy kontrast</strong>
-                    <p>Tydeligere farger og kanter</p>
-                </div>
-                <input type="checkbox" class="bryter-input">
-                <span class="bryter"></span>
-            </label>
-
-            <label class="tilgjengelighet-rad">
-                <span class="tilgjengelighet-ikon"><i class="fa-solid fa-moon"></i></span>
-                <div class="tilgjengelighet-tekst">
-                    <strong>Mørk modus</strong>
-                    <p>Bytter til et mørkere fargetema</p>
-                </div>
-                <input type="checkbox" class="bryter-input" checked>
-                <span class="bryter"></span>
-            </label>
-
-            <label class="tilgjengelighet-rad">
-                <span class="tilgjengelighet-ikon"><i class="fa-solid fa-text-height"></i></span>
-                <div class="tilgjengelighet-tekst">
-                    <strong>Større tekst</strong>
-                    <p>Øker skriftstørrelsen på siden</p>
-                </div>
-                <input type="checkbox" class="bryter-input">
-                <span class="bryter"></span>
-            </label>
-
-            <label class="tilgjengelighet-rad">
-                <span class="tilgjengelighet-ikon"><i class="fa-solid fa-font"></i></span>
-                <div class="tilgjengelighet-tekst">
-                    <strong>Dysleksivennlig skrift</strong>
-                    <p>Lettere skrifttype å lese</p>
-                </div>
-                <input type="checkbox" class="bryter-input">
-                <span class="bryter"></span>
-            </label>
-
-            <label class="tilgjengelighet-rad">
-                <span class="tilgjengelighet-ikon"><i class="fa-solid fa-person-walking"></i></span>
-                <div class="tilgjengelighet-tekst">
-                    <strong>Redusert bevegelse</strong>
-                    <p>Skrur av animasjoner og overganger</p>
-                </div>
-                <input type="checkbox" class="bryter-input">
-                <span class="bryter"></span>
-            </label>
-
-            <label class="tilgjengelighet-rad">
-                <span class="tilgjengelighet-ikon"><i class="fa-solid fa-expand"></i></span>
-                <div class="tilgjengelighet-tekst">
-                    <strong>Tydelig fokusmarkering</strong>
-                    <p>Ser hvor du er ved tastaturnavigasjon</p>
-                </div>
-                <input type="checkbox" class="bryter-input">
-                <span class="bryter"></span>
-            </label>
-        </div>
-        </div>
-
-        <div class="tilgjengelighet-seksjon">
-        <h2 class="tilgjengelighet-gruppe-tittel">Funksjoner</h2>
-        <div class="tilgjengelighet-grid">
-            <label class="tilgjengelighet-rad">
-                <span class="tilgjengelighet-ikon"><i class="fa-solid fa-assistive-listening-systems"></i></span>
-                <div class="tilgjengelighet-tekst">
-                    <strong>Skjermleser-modus</strong>
-                    <p>Optimaliserer innhold for skjermlesere</p>
-                </div>
-                <input type="checkbox" class="bryter-input">
-                <span class="bryter"></span>
-            </label>
-
-            <label class="tilgjengelighet-rad">
-                <span class="tilgjengelighet-ikon"><i class="fa-solid fa-layer-group"></i></span>
-                <div class="tilgjengelighet-tekst">
-                    <strong>Forenklet grensesnitt</strong>
-                    <p>Skjuler mindre viktige elementer</p>
-                </div>
-                <input type="checkbox" class="bryter-input">
-                <span class="bryter"></span>
-            </label>
-
-            <label class="tilgjengelighet-rad">
-                <span class="tilgjengelighet-ikon"><i class="fa-solid fa-volume-high"></i></span>
-                <div class="tilgjengelighet-tekst">
-                    <strong>Lydvarsler</strong>
-                    <p>Spiller av en lyd ved nye meldinger</p>
-                </div>
-                <input type="checkbox" class="bryter-input">
-                <span class="bryter"></span>
-            </label>
-
-            <label class="tilgjengelighet-rad">
-                <span class="tilgjengelighet-ikon"><i class="fa-solid fa-language"></i></span>
-                <div class="tilgjengelighet-tekst">
-                    <strong>Automatisk oversettelse</strong>
-                    <p>Oversetter innhold til foretrukket språk</p>
-                </div>
-                <input type="checkbox" class="bryter-input">
-                <span class="bryter"></span>
-            </label>
-        </div>
+            <h2 class="tilgjengelighet-gruppe-tittel">Visning</h2>
+            <div class="tilgjengelighet-grid">
+                @foreach (var v in valg)
+                {
+                    <label class="tilgjengelighet-rad">
+                        <span class="tilgjengelighet-ikon"><i class="fa-solid @v.Ikon" aria-hidden="true"></i></span>
+                        <span class="tilgjengelighet-tekst">
+                            <strong>@v.Tittel</strong>
+                            <span class="tilgjengelighet-forklaring">@v.Tekst</span>
+                        </span>
+                        <input type="checkbox" role="switch" class="bryter-input" data-a11y="@v.Id">
+                        <span class="bryter" aria-hidden="true"></span>
+                    </label>
+                }
+            </div>
         </div>
     </div>
 </div>

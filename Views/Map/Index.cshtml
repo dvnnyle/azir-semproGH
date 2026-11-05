@@ -12,9 +12,18 @@
         <hr class="ressurs-split__divider">
 
         <div class="kart-filter">
-            <label><input type="checkbox" data-filter="ressurs" checked> Ressurser</label>
-            <label><input type="checkbox" data-filter="behov" checked> Behov</label>
-            <label><input type="checkbox" data-filter="nodetat" checked> Nødetater</label>
+            <label>
+                <input type="checkbox" data-filter="ressurs" checked>
+                <i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i> Ressurser
+            </label>
+            <label>
+                <input type="checkbox" data-filter="behov" checked>
+                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Behov
+            </label>
+            <label>
+                <input type="checkbox" data-filter="nodetat" checked>
+                <i class="fa-solid fa-truck-medical" aria-hidden="true"></i> Nødetater
+            </label>
         </div>
 
             @foreach (var s in Model.Submissions)
@@ -26,12 +35,6 @@
                     "middels" => "gul",
                     _ => "gronn"
                 };
-                var hex = fargeNavn switch
-                {
-                    "rod" => "#ef4444",
-                    "gul" => "#f59e0b",
-                    _ => "#10b981"
-                };
                 var kategori = Model.KategoriNavn.GetValueOrDefault(s.CategoryId, "");
                 var status = s.Status switch
                 {
@@ -39,6 +42,13 @@
                     "tildelt" => "Tildelt",
                     "lost" => "Løst",
                     _ => "Ny"
+                };
+                var prioritet = !erBehov ? "" : s.Prioritet switch
+                {
+                    "høy" => "Høy",
+                    "middels" => "Middels",
+                    "lav" => "Lav",
+                    _ => ""
                 };
                 <div class="kart-listeelement"
                      data-points="@Model.PunkterPerSubmission.GetValueOrDefault(s.SubmissionId, "[]")"
@@ -48,23 +58,54 @@
                      data-erbehov="@(erBehov ? "1" : "0")"
                      data-category="@kategori"
                      data-status="@status"
+                     data-address="@s.Adresse"
+                     data-priority="@prioritet"
                      data-publisher="@(s.IdentityUserId.HasValue ? Model.BrukerNavn.GetValueOrDefault(s.IdentityUserId.Value, "Ukjent bruker") : "Ikke oppgitt")"
                      data-id="@s.SubmissionId">
-                    <span class="kart-ikon" style="background:@hex">
+                    <span class="kart-ikon" style="background:@(erBehov ? "#f59e0b" : "#10b981")">
                         <i class="fa-solid @(erBehov ? "fa-triangle-exclamation" : "fa-hand-holding-heart")" aria-hidden="true"></i>
                     </span>
-                    <div>
+                    <div class="kart-element-tekst">
                         <strong>@s.Tittel</strong>
                         <div class="kart-kategori">@kategori</div>
+                        <div class="kart-merker">
+                            <span class="kart-merke"><span class="visually-hidden">Status: </span>@status</span>
+                            @if (prioritet != "")
+                            {
+                                <span class="kart-merke kart-merke--@fargeNavn"><span class="visually-hidden">Prioritet: </span>@prioritet</span>
+                            }
+                        </div>
                     </div>
                 </div>
             }
+
+        <button type="button" class="kart-last-flere" id="kartLastFlere" hidden>Last inn flere</button>
 
         <a asp-controller="Resources" asp-action="Index" class="kart-knapp">GÅ TIL RESSURSLISTE</a>
     </div>
 
     <div class="ressurs-split__map-wrap">
         <div id="map"></div>
+        <details class="kart-forklaring">
+            <summary>
+                Tegnforklaring
+                <i class="fa-solid fa-chevron-up kart-forklaring__pil" aria-hidden="true"></i>
+            </summary>
+            <ul class="kart-forklaring__liste">
+                <li><i class="fa-solid fa-location-dot kart-forklaring__nal kart-forklaring__nal--rod" aria-hidden="true"></i> Behov, høy prioritet</li>
+                <li><i class="fa-solid fa-location-dot kart-forklaring__nal kart-forklaring__nal--gul" aria-hidden="true"></i> Behov, middels prioritet</li>
+                <li><i class="fa-solid fa-location-dot kart-forklaring__nal kart-forklaring__nal--gronn" aria-hidden="true"></i> Ressurs, eller behov med lav prioritet</li>
+                <li><i class="fa-solid fa-draw-polygon kart-forklaring__omrade" aria-hidden="true"></i> Tegnet område</li>
+                <li><span class="kart-forklaring__deg" aria-hidden="true"></span> Din posisjon</li>
+            </ul>
+            <h3>Nødetater</h3>
+            <ul class="kart-forklaring__nodetater">
+                <li><i class="fa-solid fa-hospital kart-forklaring__nal kart-forklaring__nal--helse" aria-hidden="true"></i> Sykehus</li>
+                <li><i class="fa-solid fa-truck-medical kart-forklaring__nal kart-forklaring__nal--helse" aria-hidden="true"></i> Ambulanse</li>
+                <li><i class="fa-solid fa-building-shield kart-forklaring__nal kart-forklaring__nal--politi" aria-hidden="true"></i> Politi</li>
+                <li><i class="fa-solid fa-fire-extinguisher kart-forklaring__nal kart-forklaring__nal--brann" aria-hidden="true"></i> Brann</li>
+            </ul>
+        </details>
     </div>
 </div>
 

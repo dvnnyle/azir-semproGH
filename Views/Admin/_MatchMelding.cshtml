@@ -1,0 +1,72 @@
+@model azir_sempro.Models.MatchMeldingViewModel
+@{
+    var erBehov = Model.Type == "behov";
+    var statusTekst = Model.Status switch
+    {
+        "ny" => "Ny",
+        "vurderes" => "Vurderes",
+        "tildelt" => "Tildelt",
+        "lost" => "Løst",
+        _ => Model.Status
+    };
+    var returnUrl = $"{Context.Request.Path}{Context.Request.QueryString}";
+    var fulleKoordinater = ViewContext.RouteData.Values["action"]?.ToString() == "MatchBehov";
+    var koordinater = fulleKoordinater ? $"{Model.LatTekst}, {Model.LngTekst}" : $"{Model.LatKort}, {Model.LngKort}";
+}
+<div class="admin-match-melding">
+    <div class="admin-match-melding-topp">
+        <div class="admin-match-overskrift">
+            <span class="admin-type-ikon admin-type-ikon--@(erBehov ? "behov" : "ressurs")">
+                <i class="fa-solid @(erBehov ? "fa-triangle-exclamation" : "fa-hand-holding-heart")" aria-hidden="true"></i>
+            </span>
+            <h3>@Model.Tittel</h3>
+            @if (erBehov)
+            {
+                <span class="admin-match-merke admin-match-merke--@Model.PrioritetKlasse">
+                    <span class="visually-hidden">Prioritet: </span>@Model.PrioritetTekst
+                </span>
+            }
+            <span class="admin-status admin-status--@Model.Status"><span aria-hidden="true"></span>@statusTekst</span>
+        </div>
+        <div class="admin-actions">
+            <a asp-controller="Resources" asp-action="Index" asp-route-apne="@Model.SubmissionId"
+               class="admin-action" aria-label="Åpne @Model.Tittel" title="Åpne">
+                <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+            </a>
+            <a asp-controller="Admin" asp-action="Edit" asp-route-id="@Model.SubmissionId" asp-route-returnUrl="@returnUrl"
+               class="admin-action" aria-label="Rediger @Model.Tittel" title="Rediger">
+                <i class="fa-solid fa-pen" aria-hidden="true"></i>
+            </a>
+            <form asp-controller="Admin" asp-action="Delete" asp-route-id="@Model.SubmissionId" method="post"
+                  data-confirm-delete="Er du sikker på at du vil slette denne meldingen?">
+                <input type="hidden" name="returnUrl" value="@returnUrl">
+                <button type="submit" class="admin-action admin-action--delete"
+                        aria-label="Slett @Model.Tittel" title="Slett">
+                    <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+    <p class="admin-match-beskrivelse">@(Model.Beskrivelse ?? "Ingen beskrivelse.")</p>
+    <ul class="admin-match-fakta">
+        <li title="Kategori">
+            <i class="fa-solid fa-tag" aria-hidden="true"></i>
+            <span class="visually-hidden">Kategori: </span>@Model.KategoriNavn
+        </li>
+        @if (Model.Frist is not null)
+        {
+            <li title="Frist">
+                <i class="fa-solid fa-hourglass-half" aria-hidden="true"></i>
+                Frist @Model.Frist.Value.ToString("dd. MMM yyyy")
+            </li>
+        }
+        <li title="Meldt inn">
+            <i class="fa-regular fa-clock" aria-hidden="true"></i>
+            <span class="visually-hidden">Meldt inn: </span>@Model.Tidspunkt.ToString("dd. MMM yyyy HH:mm")
+        </li>
+        <li class="admin-match-fakta-bred" title="Adresse og koordinater">
+            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+            <span class="visually-hidden">Adresse: </span>@Model.Adresse@(Model.LatTekst is null ? "" : $" · {koordinater}")
+        </li>
+    </ul>
+</div>

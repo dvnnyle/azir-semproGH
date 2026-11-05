@@ -1,0 +1,48 @@
+@model azir_sempro.Models.AdminMatchViewModel
+@{
+    ViewData["Title"] = "Kobling";
+}
+<link rel="stylesheet" href="~/css/admin.css" asp-append-version="true">
+
+<section class="admin-page admin-page--tett">
+    <header class="admin-heading">
+        <div>
+            <h1>Kobling</h1>
+            <p>Åpne behov. Velg et behov for å finne en ressurs.</p>
+        </div>
+        <div class="admin-stats" aria-label="Oversikt over behov">
+            <span><strong>@Model.Behov.Count</strong> åpne</span>
+            <span><strong>@Model.AntallTildelt</strong> tildelt</span>
+            <span><strong>@Model.AntallLost</strong> løst</span>
+        </div>
+    </header>
+
+    @if (TempData["AdminMessage"] is string message)
+    {
+        <div class="admin-notice" role="status">@message</div>
+    }
+
+    <div class="admin-match-kort-liste">
+        @foreach (var rad in Model.Behov)
+        {
+            <article class="admin-match-kort">
+                <partial name="_MatchMelding" model="rad.Melding" />
+                <div class="admin-match-bunn">
+                    <partial name="_MatchEier" model="rad.Melding" />
+                    <div class="admin-match-handling">
+                        <p class="admin-match-meta">@(rad.ForslagTittel is null ? "Ingen forslag" : $"Forslag: {rad.ForslagTittel}")</p>
+                        <a asp-controller="Admin" asp-action="MatchBehov" asp-route-id="@rad.Melding.SubmissionId" class="admin-filter-submit">Finn ressurs</a>
+                    </div>
+                </div>
+            </article>
+        }
+        @if (Model.Behov.Count == 0)
+        {
+            <div class="admin-table-wrap admin-empty">Ingen åpne behov.</div>
+        }
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/admin.js" asp-append-version="true"></script>
+}

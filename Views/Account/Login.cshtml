@@ -1,20 +1,24 @@
 @model LoginViewModel
 @{
-    ViewData["Title"] = "Logg inn";
+    var erAktor = Context.Request.Query.ContainsKey("aktor");
+    ViewData["Title"] = erAktor ? "Logg inn som aktør" : "Logg inn";
 }
 <link rel="stylesheet" href="~/css/account.css" asp-append-version="true">
 
 <div class="page-fill konto-wrap">
-    <div class="kort">
+    <div class="kort @(erAktor ? "kort--aktor" : "")">
+        <button type="button" class="konto-info" id="loginInfoKnapp" aria-haspopup="dialog" aria-label="Slik logger du inn" title="Slik logger du inn">
+            <i class="fa-solid fa-info" aria-hidden="true"></i>
+        </button>
         <div class="konto-header">
-            <div class="avatar-sirkel"><i class="fa-solid fa-user"></i></div>
+            <div class="avatar-sirkel"><i class="fa-solid @(erAktor ? "fa-building-shield" : "fa-user")" aria-hidden="true"></i></div>
             <div class="tittel-blokk">
-                <h1>Logg inn</h1>
-                <p>Logg inn for a fa tilgang til kontoen din</p>
+                <h1>@(erAktor ? "Logg inn som aktør" : "Logg inn")</h1>
+                <p>@(erAktor ? "For kommune, politi, brann, helse, Sivilforsvaret og Forsvaret" : "Logg inn for å få tilgang til kontoen din")</p>
             </div>
         </div>
 
-        <form class="inputs-stack" method="post" asp-controller="Account" asp-action="Login">
+        <form class="inputs-stack" method="post" asp-controller="Account" asp-action="Login" asp-route-aktor="@(erAktor ? "1" : null)">
             <div asp-validation-summary="All"></div>
             <input type="hidden" asp-for="ReturnUrl">
             <div class="felt-gruppe">
@@ -27,17 +31,56 @@
                 <label class="konto-label" asp-for="Password">Passord</label>
                 <input type="password" asp-for="Password" class="konto-input" placeholder="Min. 8 tegn" minlength="8" required>
                 <span asp-validation-for="Password"></span>
-            </div>
-
-            <div class="glemt-passord-row">
-                <a asp-controller="Account" asp-action="ForgotPassword">Glemt passord?</a>
+                <div class="glemt-passord-row">
+                    <a asp-controller="Account" asp-action="ForgotPassword">Glemt passord?</a>
+                </div>
             </div>
 
             <button type="submit" class="konto-knapp">Logg inn</button>
         </form>
 
-        <div class="bytte-row">
-            Har du ikke en konto? <a asp-controller="Account" asp-action="Register">Registrer deg</a>
-        </div>
+        @if (!erAktor)
+        {
+            <div class="bytte-row">
+                Har du ikke en konto? <a asp-controller="Account" asp-action="Register">Registrer deg</a>
+            </div>
+        }
+        else
+        {
+            <div class="bytte-row">Har du ikke bruker? Ta kontakt med din avdeling.</div>
+        }
+
+        <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl" asp-route-aktor="@(erAktor ? null : "1")"
+           class="konto-bytt-rolle @(erAktor ? "" : "konto-bytt-rolle--aktor")">
+            <i class="fa-solid @(erAktor ? "fa-user" : "fa-building-shield")" aria-hidden="true"></i>
+            @(erAktor ? "Logg inn som privatperson" : "Logg inn som aktør")
+        </a>
     </div>
+
+    <dialog class="konto-dialog" id="loginInfo" aria-labelledby="loginInfoTittel">
+        <form method="dialog">
+            <button type="submit" class="konto-dialog__lukk" aria-label="Lukk" title="Lukk">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+        </form>
+        <h2 id="loginInfoTittel">Slik logger du inn</h2>
+        <section class="konto-dialog__valg">
+            <h3><i class="fa-solid fa-user" aria-hidden="true"></i> Privatpersoner, bedrifter og frivillige</h3>
+            <p>Har du ressurser du kan tilby? Registrer deg med e-post og passord, og logg inn her.</p>
+        </section>
+        <section class="konto-dialog__valg">
+            <h3><i class="fa-solid fa-building-shield" aria-hidden="true"></i> Offentlige aktører</h3>
+            <p>Kommune, politi, brann, helse, Sivilforsvaret og Forsvaret logger inn med konto fra administrator. Disse kontoene kan ikke registreres her. Etter innlogging kommer du rett til portalen.</p>
+        </section>
+    </dialog>
 </div>
+
+@section Scripts {
+    <script nonce="@(Context.Items["CspNonce"])">
+        const loginInfo = document.getElementById('loginInfo');
+        document.getElementById('loginInfoKnapp').addEventListener('click', () => loginInfo.showModal());
+        loginInfo.addEventListener('click', e => {
+            if (e.target === loginInfo) loginInfo.close();
+        });
+    </script>
+}

@@ -3,7 +3,7 @@
 .hjem-kart-seksjon,
 .hjem-faq,
 .hjem-avslutning {
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 .hjem-tittel-m {
@@ -51,6 +51,7 @@
 
 .hjem-knapper {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   align-items: center;
 }
@@ -71,22 +72,38 @@
 
 .hjem-knapp--primary {
   background: #10b981;
-  color: #05251e;
+  color: #021912;
 }
 
 .hjem-knapp--primary:hover {
   background: #34d399;
 }
 
-.hjem-knapp--secondary {
-  background: transparent;
-  border: 1px solid #334155;
-  color: #f8fafc;
+.hjem-knapp--behov,
+.hjem-knapp--ressurs {
+  color: #021912;
+  font-size: 16px;
+  gap: 10px;
+  height: 60px;
+  padding: 0 28px;
 }
 
-.hjem-knapp--secondary:hover {
-  border-color: #10b981;
-  color: #34d399;
+.hjem-knapp--behov {
+  background: #f59e0b;
+}
+
+.hjem-knapp--behov:hover {
+  background: #fbbf24;
+  color: #021912;
+}
+
+.hjem-knapp--ressurs {
+  background: #10b981;
+}
+
+.hjem-knapp--ressurs:hover {
+  background: #34d399;
+  color: #021912;
 }
 
 /* ---------- Hero ---------- */
@@ -146,16 +163,15 @@
   color: #55d9b0;
 }
 
+.hjem-aksent--behov {
+  color: #fbbf24;
+}
+
 .hjem-hero__tekst {
   font-size: 19px;
   line-height: 1.65;
   color: #a6b5ca;
   max-width: 560px;
-}
-
-.hjem-hero__notis {
-  font-size: 13px;
-  color: #8394ab;
 }
 
 .hjem-hero__visual {
@@ -167,7 +183,7 @@
   flex-shrink: 0;
 }
 
-/* Ressursliste: speiler de ekte prioritetsfargene fra kartet (rod/gul/gronn). */
+/* Ressursliste: gul er behov, grønn er ressurs. */
 .hjem-status__halo {
   position: absolute;
   top: 50%;
@@ -204,13 +220,13 @@
 }
 
 .hjem-status__tittel {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 800;
   color: #f1f5f9;
 }
 
 .hjem-status__lenke {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   color: #55d9b0;
   text-decoration: none;
@@ -239,22 +255,15 @@
   height: 28px;
   border-radius: 50%;
   color: #0b1420;
-  font-size: 11px;
-}
-
-.hjem-status__rad--rod .hjem-status__ikon {
-  background: #ef4444;
-  box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+  font-size: 13px;
 }
 
 .hjem-status__rad--gul .hjem-status__ikon {
   background: #f59e0b;
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
 }
 
 .hjem-status__rad--gronn .hjem-status__ikon {
   background: #10b981;
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
 }
 
 .hjem-status__info {
@@ -274,12 +283,8 @@
 }
 
 .hjem-status__merke {
-  font-size: 12px;
-  color: #7d8da1;
-}
-
-.hjem-status__rad--rod .hjem-status__merke {
-  color: #f87171;
+  font-size: 14px;
+  color: #cbd5e1;
 }
 
 .hjem-status__rad--gul .hjem-status__merke {
@@ -291,9 +296,9 @@
 }
 
 .hjem-status__tid {
-  font-family: 'Space Mono', monospace;
-  font-size: 12px;
-  color: #556172;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: #cbd5e1;
 }
 
 /* ---------- Slik fungerer Krisis ---------- */
@@ -497,7 +502,7 @@
 .hjem-invitasjon__logginn {
   display: flex;
   gap: 6px;
-  font-size: 12px;
+  font-size: 14px;
   color: #a6b5ca;
 }
 
