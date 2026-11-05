@@ -118,6 +118,41 @@ using (var scope = app.Services.CreateScope())
             throw new InvalidOperationException($"Could not create the '{roleName}' role: {errors}");
         }
     }
+
+    // Ferdige testbrukere for lokal utvikling - kun i dev, ikke i produksjon.
+    if (app.Environment.IsDevelopment())
+    {
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var testbrukere = new[]
+        {
+            (Epost: "admin@krisis.no", Passord: "!Krisis123", Rolle: AppRoles.Admin, Fornavn: "Admin", Etternavn: "Krisis"),
+            (Epost: "bruker@heimevernet.no", Passord: "!Heimervernet123", Rolle: AppRoles.Heimevernet, Fornavn: "HV", Etternavn: "Bruker")
+        };
+
+        foreach (var (epost, passord, rolle, fornavn, etternavn) in testbrukere)
+        {
+            if (await userManager.FindByEmailAsync(epost) is not null)
+            {
+                continue;
+            }
+
+            var bruker = new ApplicationUser
+            {
+                UserName = epost,
+                Email = epost,
+                EmailConfirmed = true,
+                FirstName = fornavn,
+                LastName = etternavn,
+                PhoneNumber = "00000000"
+            };
+
+            var brukerResultat = await userManager.CreateAsync(bruker, passord);
+            if (brukerResultat.Succeeded)
+            {
+                await userManager.AddToRoleAsync(bruker, rolle);
+            }
+        }
+    }
 }
 
 // Configure the HTTP request pipeline.

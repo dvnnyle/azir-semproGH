@@ -86,6 +86,14 @@
                 <p>@(string.IsNullOrWhiteSpace(Model.Beskrivelse) ? "Ingen beskrivelse lagt til." : Model.Beskrivelse)</p>
             </div>
 
+            <div class="publiserer-kort">
+                <span class="publiserer-kort__avatar"><i class="fa-solid fa-user" aria-hidden="true"></i></span>
+                <div class="publiserer-kort__info">
+                    <strong>@ViewBag.PublisererNavn</strong>
+                    <p>@(string.IsNullOrWhiteSpace(ViewBag.PublisererTelefon) ? "Ingen telefon registrert" : ViewBag.PublisererTelefon)</p>
+                </div>
+            </div>
+
             <div class="ressurs-split__actions">
                 <a asp-controller="Form" asp-action="Beskrivelse" asp-route-draftId="@Model.DraftId" class="ressurs-btn ressurs-btn--cancel">Tilbake</a>
                 <button type="submit" class="ressurs-btn ressurs-btn--submit">Bekreft og send inn</button>

@@ -122,6 +122,9 @@
                 var publisertAv = submission.IdentityUserId.HasValue
                     ? Model.BrukerNavn.GetValueOrDefault(submission.IdentityUserId.Value, "Ukjent bruker")
                     : "Ikke oppgitt";
+                var publisertTelefon = submission.IdentityUserId.HasValue
+                    ? Model.BrukerTelefon.GetValueOrDefault(submission.IdentityUserId.Value, "")
+                    : "";
                 var punkterJson = Model.PunkterPerSubmission.GetValueOrDefault(submission.SubmissionId, "[]");
                 var kategoriNavn = Model.KategoriNavn.GetValueOrDefault(submission.CategoryId, "");
                 var statusLabel = submission.Status switch
@@ -152,6 +155,7 @@
                             data-description="@submission.Beskrivelse"
                             data-submitted="@submission.Tidspunkt.ToString("dd.MM.yyyy 'kl.' HH:mm")"
                             data-publisher="@publisertAv"
+                            data-publisher-phone="@publisertTelefon"
                             data-points="@punkterJson"
                             data-color="@fargeKode"
                             aria-label="Vis detaljer for @submission.Tittel">
@@ -200,10 +204,15 @@
             <dl class="resource-detail__facts">
                 <div><dt>Kategori</dt><dd id="detailCategory"></dd></div>
                 <div><dt>Lokasjon</dt><dd id="detailLocation"></dd></div>
-                <div><dt>Meldt inn</dt><dd id="detailSubmitted"></dd></div>
+                <div id="detailCoordinatesRow" hidden><dt>Koordinater</dt><dd id="detailCoordinates"></dd></div>
                 <div><dt>Publisert av</dt><dd id="detailPublisher"></dd></div>
+                <div id="detailPhoneRow" hidden><dt>Telefon</dt><dd id="detailPhone"></dd></div>
+                <div><dt>Meldt inn</dt><dd id="detailSubmitted"></dd></div>
             </dl>
-            <div class="resource-detail__description" id="detailDescription"></div>
+            <div class="resource-detail__beskrivelse" id="detailDescriptionBox" hidden>
+                <span class="resource-detail__beskrivelse-heading">Beskrivelse</span>
+                <p id="detailDescription"></p>
+            </div>
             <div class="resource-detail__actions">
                 <button type="button" class="resource-detail__dismiss" data-detail-close>Lukk</button>
                 <a class="resource-detail__map-link" id="detailMapLink" href="#" target="_blank" rel="noopener noreferrer">

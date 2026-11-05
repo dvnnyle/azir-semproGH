@@ -48,8 +48,11 @@
                      data-erbehov="@(erBehov ? "1" : "0")"
                      data-category="@kategori"
                      data-status="@status"
+                     data-publisher="@(s.IdentityUserId.HasValue ? Model.BrukerNavn.GetValueOrDefault(s.IdentityUserId.Value, "Ukjent bruker") : "Ikke oppgitt")"
                      data-id="@s.SubmissionId">
-                    <span class="kart-prikk" style="background:@hex"></span>
+                    <span class="kart-ikon" style="background:@hex">
+                        <i class="fa-solid @(erBehov ? "fa-triangle-exclamation" : "fa-hand-holding-heart")" aria-hidden="true"></i>
+                    </span>
                     <div>
                         <strong>@s.Tittel</strong>
                         <div class="kart-kategori">@kategori</div>

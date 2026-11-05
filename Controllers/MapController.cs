@@ -29,11 +29,21 @@ public class MapController : Controller
                 g => JsonSerializer.Serialize(g.Select(p => new { lat = p.Breddegrad, lng = p.Lengdegrad }))
             );
 
+        var identityUserIder = submissions
+            .Where(s => s.IdentityUserId != null)
+            .Select(s => s.IdentityUserId!.Value)
+            .Distinct()
+            .ToList();
+        var brukerNavn = await database.Users.AsNoTracking()
+            .Where(user => identityUserIder.Contains(user.Id))
+            .ToDictionaryAsync(user => user.Id, user => $"{user.FirstName} {user.LastName}".Trim());
+
         return View(new ResourceListViewModel
         {
             Submissions = submissions,
             KategoriNavn = kategorier.ToDictionary(c => c.CategoryId, c => c.Navn),
-            PunkterPerSubmission = punkter
+            PunkterPerSubmission = punkter,
+            BrukerNavn = brukerNavn
         });
     }
 }

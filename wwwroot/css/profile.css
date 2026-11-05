@@ -20,8 +20,50 @@
     color: #34d399;
 }
 
-.profile-back span {
-    color: #475569;
+.profile-kort {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding: 18px 20px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 16px;
+}
+
+.profile-kort__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    color: #34d399;
+    font-size: 20px;
+}
+
+.profile-kort__info strong {
+    display: block;
+    color: #f8fafc;
+    font-size: 16px;
+}
+
+.profile-kort__info p {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 2px 0 0;
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.profile-kort__info p i {
+    width: 13px;
+    color: #64748b;
+    font-size: 11px;
 }
 
 .profile-heading,

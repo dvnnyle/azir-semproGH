@@ -438,3 +438,39 @@
     font-family: 'Space Mono', monospace;
     font-size: 13px;
 }
+
+.publiserer-kort {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: #0f1729;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+}
+
+.publiserer-kort__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #34d399;
+    font-size: 14px;
+}
+
+.publiserer-kort__info strong {
+    display: block;
+    color: #f8fafc;
+    font-size: 13px;
+}
+
+.publiserer-kort__info p {
+    margin: 2px 0 0;
+    color: #94a3b8;
+    font-size: 12px;
+}

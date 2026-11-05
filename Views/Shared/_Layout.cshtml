@@ -1,8 +1,15 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity
+@using azir_sempro.Models
+@inject UserManager<ApplicationUser> UserManager
+@{
     var navController = ViewContext.RouteData.Values["controller"]?.ToString();
     var navAction = ViewContext.RouteData.Values["action"]?.ToString();
     var erFullsideForm = (navController == "Form" && (navAction == "Draw" || navAction == "Beskrivelse"))
                      || navController == "Map";
+    var navnBruker = User.Identity?.IsAuthenticated == true
+        ? await UserManager.GetUserAsync(User)
+        : null;
+    var visningsnavn = navnBruker is not null ? $"{navnBruker.FirstName} {navnBruker.LastName}".Trim() : "";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -37,7 +44,7 @@
                 <div class="active-indicator"></div>
             </a>
             <a asp-controller="Resources" asp-action="Index" class="nav-item @(navController == "Resources" ? "active" : "")">
-                <div class="nav-item-label">Ressurser</div>
+                <div class="nav-item-label">Delinger</div>
                 <div class="active-indicator"></div>
             </a>
             @if (User.IsInRole(azir_sempro.Data.AppRoles.Admin) || User.IsInRole(azir_sempro.Data.AppRoles.Heimevernet))
@@ -60,10 +67,18 @@
             <div class="konto-dropdown" id="navAccountDropdown">
                 @if (User.Identity?.IsAuthenticated == true)
                 {
-                    <span class="konto-dropdown__pill">@User.Identity.Name</span>
-                    <a asp-controller="Account" asp-action="Profile" class="konto-dropdown__pill konto-dropdown__pill--secondary">Min profil</a>
+                    <div class="konto-dropdown__bruker">
+                        <span class="konto-dropdown__bruker-ikon"><i class="fa-solid fa-user" aria-hidden="true"></i></span>
+                        <span class="konto-dropdown__epost">@visningsnavn</span>
+                    </div>
+                    <hr class="konto-dropdown__delelinje">
+                    <a asp-controller="Account" asp-action="Profile" class="konto-dropdown__lenke">
+                        <i class="fa-solid fa-user-gear" aria-hidden="true"></i> Min profil
+                    </a>
                     <form asp-controller="Account" asp-action="Logout" method="post">
-                        <button type="submit" class="konto-dropdown__pill konto-dropdown__pill--secondary">Logg ut</button>
+                        <button type="submit" class="konto-dropdown__lenke konto-dropdown__lenke--logg-ut">
+                            <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Logg ut
+                        </button>
                     </form>
                 }
                 else
@@ -89,7 +104,7 @@
                 <i class="fa-solid fa-chevron-right"></i>
             </a>
             <a asp-controller="Resources" asp-action="Index" class="mobil-meny__element @(navController == "Resources" ? "active" : "")">
-                <span>Ressurser</span>
+                <span>Delinger</span>
                 <i class="fa-solid fa-chevron-right"></i>
             </a>
             @if (User.IsInRole(azir_sempro.Data.AppRoles.Admin) || User.IsInRole(azir_sempro.Data.AppRoles.Heimevernet))
@@ -112,7 +127,7 @@
             <div class="mobil-meny__konto-tekst">
                 @if (User.Identity?.IsAuthenticated == true)
                 {
-                    <p>@User.Identity.Name</p>
+                    <p>@visningsnavn</p>
                     <p>Innlogget</p>
                 }
                 else
@@ -154,7 +169,7 @@
                 <nav class="site-footer__lenker">
                     <a asp-controller="Home" asp-action="Index">Hjem</a>
                     <a asp-controller="Form" asp-action="Index">Skjema</a>
-                    <a asp-controller="Resources" asp-action="Index">Ressurser</a>
+                    <a asp-controller="Resources" asp-action="Index">Delinger</a>
                     <a asp-controller="Map" asp-action="Index">Kart</a>
                 </nav>
             </div>

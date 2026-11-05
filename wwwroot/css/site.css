@@ -30,6 +30,8 @@ html {
 body {
   font-family: 'Poppins', sans-serif;
   background: #0f172a;
+  /* clip, ikke hidden: hidden gjor body til scroll-container og stopper sticky nav. */
+  overflow-x: clip;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -198,6 +200,79 @@ h1, h2, h3, h4, h5, h6 {
 .konto-dropdown__pill--secondary:hover {
   border-color: #10b981;
   color: #34d399;
+}
+
+.konto-dropdown__bruker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 2px;
+}
+
+.konto-dropdown__bruker-ikon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #34d399;
+  font-size: 13px;
+}
+
+.konto-dropdown__epost {
+  font-size: 12px;
+  color: #94a3b8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.konto-dropdown__delelinje {
+  margin: 0;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.konto-dropdown__lenke {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 10px;
+  border-radius: 10px;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: #f1f5f9;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.konto-dropdown__lenke i {
+  width: 16px;
+  text-align: center;
+  color: #64748b;
+}
+
+.konto-dropdown__lenke:hover {
+  background: rgba(16, 185, 129, 0.1);
+  color: #34d399;
+}
+
+.konto-dropdown__lenke--logg-ut:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+}
+
+.konto-dropdown__lenke--logg-ut:hover i {
+  color: #ef4444;
 }
 
 .nav-avatar i {
@@ -482,5 +557,11 @@ html {
   .site-footer__top {
     flex-direction: column;
     gap: 24px;
+  }
+
+  .site-footer__lenker {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px 20px;
   }
 }
