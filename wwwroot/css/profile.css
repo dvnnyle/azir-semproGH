@@ -506,3 +506,37 @@
         margin-left: 35px;
     }
 }
+
+.profile-danger-zone {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 24px;
+    padding: 16px 18px;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 12px;
+}
+
+.profile-danger-zone strong {
+    color: #fecaca;
+}
+
+.profile-danger-zone p {
+    margin: 4px 0 0;
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.profile-delete-list {
+    margin: 0;
+    padding-left: 18px;
+    color: #cbd5e1;
+}
+
+@media (max-width: 600px) {
+    .profile-danger-zone {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

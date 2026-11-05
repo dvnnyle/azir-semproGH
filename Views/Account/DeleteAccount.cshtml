@@ -1,0 +1,41 @@
+@model azir_sempro.Models.DeleteAccountViewModel
+@{
+    ViewData["Title"] = "Slett konto";
+}
+<link rel="stylesheet" href="~/css/profile.css" asp-append-version="true">
+
+<section class="profile-page profile-edit-page">
+    <a asp-controller="Account" asp-action="Profile" class="profile-back">
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Tilbake til profilen
+    </a>
+    <header class="profile-heading">
+        <div>
+            <h1>Slett konto</h1>
+            <p>Dette kan ikke angres. Kontoen din og alt du har registrert slettes permanent:</p>
+        </div>
+    </header>
+
+    <form asp-controller="Account" asp-action="DeleteAccount" method="post" class="profile-edit-form">
+        <div asp-validation-summary="ModelOnly" class="profile-validation" role="alert"></div>
+        <ul class="profile-delete-list">
+            <li>Brukerkontoen og innloggingen din</li>
+            <li>Alle ressurser og behov du har sendt inn</li>
+            <li>Alle utkast du har lagret</li>
+        </ul>
+        <label>
+            <span>Bekreft med passordet ditt</span>
+            <input asp-for="Password" type="password" autocomplete="current-password">
+            <span asp-validation-for="Password"></span>
+        </label>
+        <div class="profile-edit-actions">
+            <a asp-controller="Account" asp-action="Profile" class="profile-button">Avbryt</a>
+            <button type="submit" class="profile-button profile-button--delete">
+                <i class="fa-solid fa-trash" aria-hidden="true"></i> Slett kontoen min
+            </button>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
