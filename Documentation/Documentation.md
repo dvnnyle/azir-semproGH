@@ -92,6 +92,13 @@ Kjøres med `dotnet test azir-sempro.Tests`.
 |---|---|---|
 | `AccountViewModelTests` | Registreringsskjemaet godtar gyldig data og avviser ugyldig e-post, kort passord og tomt fornavn | 4 av 4 bestått |
 | `FormViewModelTests` | Standardverdiene i skjemamodellen | 3 av 3 bestått |
+| `InputValidationTests` | Avviser ugyldig telefonnummer, for lange tekster, ukjent type og status, og datoer utenfor tillatt område | 8 av 8 bestått |
+| `MatchingTests` | Avstand mellom to steder, rangering av ressurser og forslag: samme kategori først, nærmeste ressurs, høy prioritet først, og en ressurs foreslås bare én gang | 5 av 5 bestått |
+| `FormXssTests` | Kartdata (JSON) kan ikke lukke et `<script>`-element | 1 av 1 bestått |
+| `AdminTilgangTests` | Admin-sidene krever rollene `Admin` og `Heimevernet`, ikke `Privatperson` | 1 av 1 bestått |
+| `SubmitDatabaseTests` | En ressurs lagres med status `ny` og ett punkt per hjørne, og et behov uten prioritet lagres ikke. Bruker en midlertidig SQLite-database i minnet | 2 av 2 bestått |
+
+Totalt: 24 av 24 tester bestått.
 
 ### Manuelle tester
 

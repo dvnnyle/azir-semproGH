@@ -10,6 +10,11 @@ Krisis er en ressurs- og behovsportal for kriseberedskap. Offentlige aktører ka
 
 <!-- Hvert medlem legger inn navnet sitt her. -->
 - Danny Nguyen Le
+- Joseph Trung Minh Pham
+- Nikolai Muldsvor
+- Hasan Burhan Erdogan
+- Erik Hodneland Kildehaug
+- Rahmanudin Manan
 
 ## Kjør med Docker
 
