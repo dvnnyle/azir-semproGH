@@ -340,3 +340,24 @@
     border-color: #00B1E2;
     color: #A5E5F7;
 }
+
+/* Bekreftelse etter "Send lenke" på glemt passord. Uten egen farge ble
+   teksten mørk på mørk bakgrunn og nesten usynlig. */
+.konto-status {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin: 0;
+    padding: 14px 16px;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    border-radius: 12px;
+    background: rgba(16, 185, 129, 0.1);
+    color: #d1fae5;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.konto-status i {
+    margin-top: 3px;
+    color: #6ee7b7;
+}
