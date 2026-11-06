@@ -75,7 +75,11 @@ public class AccountController : Controller
             return RedirectToAction("Index", "Home");
         }
 
-        ModelState.AddModelError("", "Feil e-post/passord eller kontoen er midlertidig låst.");
+        // Egen melding når kontoen er låst etter for mange feil forsøk (Lockout i Program.cs:
+        // 5 forsøk, 15 minutter), så brukeren skjønner hvorfor riktig passord heller ikke virker.
+        ModelState.AddModelError("", result.IsLockedOut
+            ? "For mange mislykkede forsøk. Kontoen er låst i 15 minutter. Du kan også bruke «Glemt passord?»."
+            : "Feil e-post eller passord.");
         return View(model);
     }
 
