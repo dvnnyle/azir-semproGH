@@ -16,6 +16,10 @@ public class FormViewModel
     // Menneskelesbar adresse brukeren skriver inn selv (f.eks. "Elvegata 12, 4610 Kristiansand").
     [StringLength(255)]
     public string Adresse { get; set; } = "";
+    // Hentes fra Kartverket pa steg 1 og brukes til utskrift per region i portalen.
+    // Tom hvis oppslaget feiler eller punktet er utenfor Norge.
+    [StringLength(100)]
+    public string? Kommune { get; set; }
     // "høy", "middels" eller "lav" - bare for behov. Ressurs er alltid gronn pa
     // kartet (utledes fra Type), trenger ikke velges.
     [RegularExpression("^(lav|middels|høy)$")]

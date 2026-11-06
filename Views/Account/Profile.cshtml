@@ -32,6 +32,21 @@
         <p class="profile-notice" role="status">@message</p>
     }
 
+    @{
+        var antallKoblet = Model.Submissions.Count(item => item.Status == "tildelt");
+        var erPortalBruker = User.IsInRole(azir_sempro.Data.AppRoles.Admin) || User.IsInRole(azir_sempro.Data.AppRoles.Heimevernet);
+    }
+    @if (antallKoblet > 0 && !erPortalBruker)
+    {
+        <div class="profile-kobling" role="status">
+            <span class="profile-kobling__ikon"><i class="fa-solid fa-link" aria-hidden="true"></i></span>
+            <div>
+                <strong>@(antallKoblet == 1 ? "Din melding er koblet" : $"{antallKoblet} av meldingene dine er koblet")</strong>
+                <p>Kriseledelsen tar kontakt med deg. Du finner detaljene i listen under.</p>
+            </div>
+        </div>
+    }
+
     <div class="profile-summary" aria-label="Oversikt over dine meldinger">
         <div><strong>@Model.Submissions.Count</strong><span>Mine meldinger</span></div>
         <div><strong>@resourceCount</strong><span>Ressurser</span></div>
@@ -77,6 +92,10 @@
                         <div class="profile-row__main">
                             <h3>@item.Tittel</h3>
                             <p>@item.CategoryName · @item.Adresse</p>
+                            @if (!string.IsNullOrEmpty(item.KobletTil))
+                            {
+                                <p class="profile-row__kobling"><i class="fa-solid fa-link" aria-hidden="true"></i> Koblet til: @item.KobletTil</p>
+                            }
                             <span class="profile-tag @(isNeed ? "profile-tag--need" : "")">@(isNeed ? "Behov" : "Ressurs")</span>
                         </div>
                         <div class="profile-row__state">

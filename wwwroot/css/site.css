@@ -155,6 +155,27 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0 7px;
 }
 
+.kobling-antall {
+  background: #10b981;
+  border-radius: 999px;
+  color: #021912;
+  font-size: 13px;
+  font-weight: 700;
+  margin-left: 4px;
+  padding: 0 7px;
+}
+
+.nav-avatar:has(.kobling-antall) {
+  position: relative;
+}
+
+.nav-avatar .kobling-antall {
+  margin: 0;
+  position: absolute;
+  right: -6px;
+  top: -6px;
+}
+
 .nav-portal {
   align-items: center;
   background: rgba(0, 177, 226, 0.14);

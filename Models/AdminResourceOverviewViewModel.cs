@@ -16,11 +16,15 @@ public class AdminResourceOverviewViewModel
     [RegularExpression("^(|ny|vurderes|tildelt|lost)$")]
     public string? Status { get; set; }
 
+    [StringLength(100)]
+    public string? Kommune { get; set; }
+
     public int TotalCount { get; set; }
     public int ResourceCount { get; set; }
     public int NeedCount { get; set; }
     public int NewCount { get; set; }
     public List<string> Categories { get; set; } = [];
+    public List<string> Kommuner { get; set; } = [];
     public List<AdminSubmissionRowViewModel> Submissions { get; set; } = [];
 }
 
@@ -32,8 +36,12 @@ public class AdminSubmissionRowViewModel
     public string? Prioritet { get; set; }
     public string Status { get; set; } = "";
     public string Adresse { get; set; } = "";
+    public string? Kommune { get; set; }
     public string CategoryName { get; set; } = "";
     public string OwnerName { get; set; } = "";
+    public string? OwnerPhone { get; set; }
+    public string? Beskrivelse { get; set; }
+    public DateTime? Frist { get; set; }
     public DateTime Tidspunkt { get; set; }
 }
 
@@ -57,6 +65,9 @@ public class AdminSubmissionEditViewModel
     [Required(ErrorMessage = "Skriv inn en adresse.")]
     [StringLength(255)]
     public string Adresse { get; set; } = "";
+
+    [StringLength(100)]
+    public string? Kommune { get; set; }
 
     [RegularExpression("^(|høy|middels|lav)$", ErrorMessage = "Velg en gyldig prioritet.")]
     public string? Prioritet { get; set; }

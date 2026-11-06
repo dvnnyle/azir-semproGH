@@ -21,6 +21,8 @@ public class ProfileSubmissionViewModel
     public string Adresse { get; set; } = "";
     public string CategoryName { get; set; } = "";
     public DateTime Tidspunkt { get; set; }
+    // Tittelen på det meldingen er koblet til. Tom hvis den ikke er koblet.
+    public string KobletTil { get; set; } = "";
 }
 
 public class ProfileDraftViewModel

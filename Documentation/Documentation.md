@@ -15,21 +15,21 @@ Bytt ut plassholderne med tilfeldige passord, helst 64 heksadesimale tegn genere
 - Stoppe appen: `docker compose down`
 - Nullstille databasen: `docker compose down -v`, deretter `docker compose up --build`
 
-Init-skriptene og brukerrettighetene kjøres bare når MariaDB-volumet opprettes første gang. For en eksisterende database må databaseansvarlig ta sikkerhetskopi, opprette/oppdatere `krisisapp` med passordet i `DB_APP_PASSWORD`, gi den bare SELECT/INSERT/UPDATE/DELETE på `krisisdb`, og kjøre `Data/sql/submission-identity-owner.sql` og `Data/sql/resource-drafts.sql`. Ikke slett volumet for å få nye sikkerhetsendringer; det sletter alle data.
+Init-skriptene og brukerrettighetene kjøres bare når MariaDB-volumet opprettes første gang. For en eksisterende database må databaseansvarlig ta sikkerhetskopi, opprette/oppdatere `krisisapp` med passordet i `DB_APP_PASSWORD`, gi den bare SELECT/INSERT/UPDATE/DELETE på `krisisdb`, og kjøre `Data/sql/identity.sql`, `Data/sql/submission-identity-owner.sql`, `Data/sql/resource-drafts.sql` og `Data/sql/submission-kommune.sql` i den rekkefølgen. Ikke slett volumet for å få nye sikkerhetsendringer; det sletter alle data.
 
 ## Systemarkitektur
 
 Appen er bygget med ASP.NET Core MVC. Viewene (HTML, CSS, JS) sender forespørsler til controllerne, og controllerne bruker modellene til å lese og lagre data i databasen.
 
-![Systemarkitektur](../wwwroot/assets/readme_assets/sysarkv2.png)
+![Systemarkitektur](../wwwroot/assets/readme_assets/sysarkv3.png)
 
-- `FormController`: skjemaet for å tilby en ressurs, i tre steg: tegne på kartet, fylle ut detaljer og oppsummering. Ved innsending lagres alt i databasen, og brukeren får en kvittering.
+- `FormController`: skjemaet for å tilby en ressurs, i tre steg: tegne på kartet, fylle ut detaljer og oppsummering. Ved innsending lagres alt i databasen, og brukeren får en kvittering. Kommunen hentes automatisk fra Kartverket for midtpunktet av det som er tegnet, og feltet er tomt hvis oppslaget feiler eller punktet er utenfor Norge.
 - `ResourcesController`: viser alle innsendinger fra databasen.
-- `AdminController`: gir Admin- og Heimevernet-brukere oversikt over og administrasjon av alle innsendinger, og matching av behov med ressurser på `/Admin/Kobling`. Siden lister åpne behov med detaljer, og "Finn ressurs" åpner `/Admin/Kobling/{id}` med et kart over behovet og de ledige ressursene. Koordinatene vises på hvert kort, og for tegnede områder er de midtpunktet. Forslaget for et behov er nærmeste ledige ressurs i samme kategori, der høyest prioritet velger først. Koblingen gjøres alltid manuelt, og brukeren kan velge en annen ledig ressurs enn forslaget. Koblinger lagres i `Requests`, og begge meldingene får status `tildelt`. `/Admin/Kobling/arkiv` viser alle koblinger med behov, ressurs og status, og filtrerer på tildelt og løst. Der setter "Marker som løst" behovet og ressursene som er koblet til det, til `lost`. Siden viser lagrede felt for begge parter, med navn, e-post og telefon til den som publiserte. Admin og Heimevernet kan se denne kontaktinformasjonen. Admin-sidene er en portal med samme toppmeny som resten av appen, men egne menypunkter, og Admin og Heimevernet sendes dit etter innlogging.
-- `AccountController`: registrering, innlogging og utlogging via ASP.NET Core Identity, samt profiloversikt og redigering av egne meldinger. Passord lagres med Identity sin passordhasher.
+- `AdminController`: gir Admin- og Heimevernet-brukere oversikt over og administrasjon av alle innsendinger, og matching av behov med ressurser på `/Admin/Kobling`. Siden lister åpne behov med detaljer, og "Finn ressurs" åpner `/Admin/Kobling/{id}` med et kart over behovet og de ledige ressursene. Koordinatene vises på hvert kort, og for tegnede områder er de midtpunktet. Forslaget for et behov er nærmeste ledige ressurs i samme kategori, der høyest prioritet velger først. Koblingen gjøres alltid manuelt, og brukeren kan velge en annen ledig ressurs enn forslaget. Koblinger lagres i `Requests`, og begge meldingene får status `tildelt`. `/Admin/Kobling/arkiv` viser alle koblinger med behov, ressurs og status, og filtrerer på tildelt og løst. Der setter "Marker som løst" behovet og ressursene som er koblet til det, til `lost`. Siden viser lagrede felt for begge parter, med navn, e-post og telefon til den som publiserte. Admin og Heimevernet kan se denne kontaktinformasjonen. Admin-sidene er en portal med samme toppmeny som resten av appen, men egne menypunkter, og Admin og Heimevernet sendes dit etter innlogging. Oversikten på `/Admin` kan filtreres på kommune og type, og "Skriv ut" gir en ressursliste for valgt kommune. Admin kan rette kommunen på en melding under Rediger.
+- `AccountController`: registrering, innlogging og utlogging via ASP.NET Core Identity, samt profiloversikt og redigering av egne meldinger. Når en melding blir koblet, ser privatbrukeren et merke i menyen og en beskjed på Min side med tittelen på det meldingen er koblet til. Kontaktinformasjon til den andre parten vises ikke. Merket forsvinner når meldingen er markert som løst. Passord lagres med Identity sin passordhasher.
 - `ErrorController`: feilside.
 
-**Database:** MySQL 8.4. Identity lagrer kontoer og roller i `AspNetUsers`/`AspNetRoles`; innsendinger og kartdata bruker de eksisterende `Submissions`/`Points`-tabellene.
+**Database:** MariaDB 11. Identity lagrer kontoer og roller i `AspNetUsers`/`AspNetRoles`; innsendinger og kartdata bruker de eksisterende `Submissions`/`Points`-tabellene.
 
 ### Tilgangskontroll
 
@@ -53,8 +53,6 @@ WHERE u.NormalizedEmail = UPPER('admin@example.com')
       WHERE ur.UserId = u.Id AND ur.RoleId = r.Id
   );
 ```
-
-Docker init scripts run only when the database volume is first created. For an existing database, take a backup, create/update the dedicated database account and its limited grants, then run `Data/sql/identity.sql`, `Data/sql/submission-identity-owner.sql`, and `Data/sql/resource-drafts.sql` in that order. Never drop a data volume to apply schema changes. Do not use the old `AddIdentity` migration; it attempts to create an outdated `Submissions` table. Email confirmation is not enabled yet; registration still allows sign-in without proving control of the email address.
 
 ### Validering av inndata
 
@@ -80,7 +78,7 @@ Kestrels `Server`-header er deaktivert, og `Server`/`X-Powered-By` fjernes fra a
 
 ### Videre sikkerhetstiltak
 
-Innlogging begrenses til 10 forsøk per IP per minutt og registrering til 5 per IP per time. Videresendte klient-IP-er brukes kun når forespørselen kommer fra loopback eller en eksplisitt konfigurert proxy. Begrensningene lagres i minnet per app-prosess; ved flere app-instanser må også proxyen eller en delt rate limiter håndheve grenser. `MySqlConnector` er pinnet til den første versjonen som fikser GHSA-473q-m89c-ghf8 (2.6.1). Email-bekreftelse er bevisst utsatt til en e-postleverandør er konfigurert.
+Innlogging begrenses til 10 forsøk per IP per minutt og registrering til 5 per IP per time. Videresendte klient-IP-er brukes kun når forespørselen kommer fra loopback eller en eksplisitt konfigurert proxy. Begrensningene lagres i minnet per app-prosess; ved flere app-instanser må også proxyen eller en delt rate limiter håndheve grenser. `MySqlConnector` er pinnet til den første versjonen som fikser GHSA-473q-m89c-ghf8 (2.6.1). E-postbekreftelse er bevisst utsatt til en e-postleverandør er konfigurert, så en ny bruker kan logge inn uten å bekrefte e-postadressen.
 
 **Kart:** Leaflet og Leaflet-Geoman brukes til å tegne område eller nål. Det som tegnes lagres som punkter (JSON) og vises igjen på kvitteringssiden.
 
@@ -109,3 +107,4 @@ Kjøres med `dotnet test azir-sempro.Tests`.
 
 - https://geoman.io/docs/leaflet/modes/draw-mode
 - https://kartkatalog.geonorge.no/?organization=Kartverket&type=dataset&theme=Basis+geodata&theme=Befolkning&theme=Friluftsliv&theme=Natur&theme=Samferdsel&theme=Samfunnssikkerhet&theme=Annen&theme=Kyst+og+fiskeri&offset=51&append=true
+ 

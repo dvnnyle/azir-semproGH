@@ -29,6 +29,14 @@ public class InputValidationTests
     }
 
     [Fact]
+    public void Form_RejectsOverlongKommune()
+    {
+        var model = new FormViewModel { Kommune = new string('a', 101) };
+
+        Assert.Contains(Validate(model), error => error.MemberNames.Contains(nameof(model.Kommune)));
+    }
+
+    [Fact]
     public void Form_RejectsOverlongTitle()
     {
         var model = new FormViewModel { Tittel = new string('a', 256) };

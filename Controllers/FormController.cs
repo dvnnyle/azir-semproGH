@@ -155,6 +155,7 @@ public class FormController : Controller
             CategoryId = model.CategoryId,
             Type = model.Type,
             Adresse = model.Adresse,
+            Kommune = string.IsNullOrWhiteSpace(model.Kommune) ? null : model.Kommune.Trim(),
             // Prioritet gir bare mening for behov - ressurs er alltid gronn pa
             // kartet, utledes fra Type, trenger ikke lagres.
             Prioritet = model.Type == "behov" ? model.Prioritet : null,

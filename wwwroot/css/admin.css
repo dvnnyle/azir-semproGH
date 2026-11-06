@@ -345,6 +345,46 @@
     color: #fca5a5;
 }
 
+.admin-tom {
+    align-items: center;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    padding: 56px 24px;
+    text-align: center;
+}
+
+.admin-tom-ikon {
+    align-items: center;
+    background: rgba(0, 177, 226, 0.15);
+    border-radius: 50%;
+    color: #7dd8f2;
+    display: flex;
+    font-size: 24px;
+    height: 56px;
+    justify-content: center;
+    margin-bottom: 16px;
+    width: 56px;
+}
+
+.admin-tom h2 {
+    color: #f8fafc;
+    font-size: 20px;
+    margin: 0 0 6px;
+}
+
+.admin-tom p {
+    color: #cbd5e1;
+    font-size: 15px;
+    margin: 0;
+}
+
+.admin-tom .admin-filter-submit {
+    margin-top: 20px;
+}
+
 .admin-empty {
     border-top: 1px solid rgba(148, 163, 184, 0.3);
     color: #cbd5e1;
@@ -843,6 +883,149 @@
 
     .admin-edit-wide {
         grid-column: auto;
+    }
+}
+
+.admin-rapport {
+    display: none;
+}
+
+/* Rapporten: bare den skrives ut, svart tekst på hvitt A4-papir. */
+@media print {
+    @page {
+        margin: 45px;
+        size: A4;
+
+        @bottom-right {
+            content: "Side " counter(page) " av " counter(pages);
+            font-size: 12px;
+        }
+    }
+
+    html,
+    body {
+        background: #fff !important;
+    }
+
+    .nav-bar,
+    .site-footer,
+    .admin-page > :not(.admin-rapport) {
+        display: none !important;
+    }
+
+    /* Bootstrap gjør .container smal på A4-bredde, så rapporten får hele siden. */
+    .container {
+        max-width: none !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    .admin-page {
+        color: #111;
+        margin: 0;
+        min-height: 0;
+        padding: 0;
+    }
+
+    .admin-rapport {
+        color: #111;
+        display: block;
+        font-size: 13px;
+        line-height: 1.35;
+    }
+
+    .admin-rapport-topp {
+        border-bottom: 2px solid #111;
+        display: flex;
+        font-size: 12px;
+        justify-content: space-between;
+        padding-bottom: 6px;
+    }
+
+    .admin-rapport-merke {
+        font-family: 'Syne', sans-serif;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .admin-rapport h2 {
+        color: #111;
+        font-family: 'Syne', sans-serif;
+        font-size: 23px;
+        font-weight: 800;
+        margin: 10px 0 0;
+    }
+
+    .admin-rapport-meta {
+        color: #475569;
+        font-size: 13px;
+        margin: 0 0 10px;
+    }
+
+    .admin-rapport-meta strong {
+        color: #111;
+    }
+
+    .admin-rapport table {
+        border-collapse: collapse;
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    .admin-rapport-kol-melding { width: 40%; }
+    .admin-rapport-kol-sted { width: 22%; }
+    .admin-rapport-kol-status { width: 9%; }
+    .admin-rapport-kol-kontakt { width: 16%; }
+    .admin-rapport-kol-dato { width: 13%; }
+
+    .admin-rapport th {
+        border-bottom: 1.5px solid #111;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 3px 8px 3px 0;
+        text-align: left;
+    }
+
+    .admin-rapport td {
+        border-bottom: 1px solid #cbd5e1;
+        overflow-wrap: break-word;
+        padding: 4px 8px 4px 0;
+        vertical-align: top;
+    }
+
+    .admin-rapport .admin-rapport-gruppe th {
+        border-bottom: 1px solid #111;
+        font-size: 14px;
+        padding: 10px 0 3px;
+    }
+
+    .admin-rapport-gruppe {
+        break-after: avoid;
+    }
+
+    .admin-rapport-dato {
+        white-space: nowrap;
+    }
+
+    .admin-rapport tr {
+        break-inside: avoid;
+    }
+
+    .admin-rapport-liten {
+        color: #475569;
+        display: block;
+        font-size: 12px;
+    }
+
+    /* Lang beskrivelse kuttes, så én melding ikke tar en hel side. */
+    .admin-rapport-tekst {
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        display: -webkit-box;
+        font-size: 12px;
+        margin-top: 2px;
+        overflow: hidden;
     }
 }
 

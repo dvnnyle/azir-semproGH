@@ -27,6 +27,7 @@
             <div asp-validation-summary="All"></div>
             <input type="hidden" asp-for="DraftId">
             <input type="hidden" asp-for="Adresse">
+            <input type="hidden" asp-for="Kommune">
             <input type="hidden" asp-for="PunkterJson" id="punkterJsonInput">
             <input type="hidden" asp-for="Tittel">
             <input type="hidden" asp-for="CategoryId">
@@ -54,6 +55,10 @@
             <div class="ressurs-felt">
                 <label>Adresse</label>
                 <p>@Model.Adresse</p>
+            </div>
+            <div class="ressurs-felt">
+                <label>Kommune</label>
+                <p>@(string.IsNullOrWhiteSpace(Model.Kommune) ? "Ikke funnet" : Model.Kommune)</p>
             </div>
             <div class="ressurs-felt">
                 <label>Kategori</label>

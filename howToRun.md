@@ -10,16 +10,15 @@ STEP by STEP - D
    - cd azir-semproGH
 
 2. Sjekk at det funker i Docker - trenger IKKE .NET SDK installert, Docker ordner alt selv inni containeren
-   - docker build -t azir-sempro .
-   - docker run -p 8080:8080 azir-sempro
+   - Følg "Kjør med Docker" i README.md
    - http://localhost:8080
-   - Stopp containeren (Ctrl+C) når du har bekreftet at det funker
+   - Stopp med docker compose down når du har bekreftet at det funker
 
 3. Per nå sjekk at du har
     - .NET 10 SDK lokalt 
 
 4. Kjør appen lokalt for å utvikle
-   - dotnet watch run
+   - Følg "Lokal utvikling" i README.md
    - http://localhost:5253
    - La denne stå på mens du jobber - den oppdaterer seg selv når du lagrer
    - http://10.0.0.8:5253 - IP NETWORK

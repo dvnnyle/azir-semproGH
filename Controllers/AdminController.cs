@@ -33,10 +33,18 @@ public class AdminController : Controller
             .AsNoTracking()
             .ToDictionaryAsync(category => category.CategoryId, category => category.Navn);
         filters.Categories = categories.Values.OrderBy(name => name).ToList();
-        var users = await database.Users
+        filters.Kommuner = allSubmissions
+            .Select(submission => submission.Kommune)
+            .OfType<string>()
+            .Distinct()
+            .OrderBy(kommune => kommune)
+            .ToList();
+        var brukerListe = await database.Users
             .AsNoTracking()
-            .Select(user => new { user.Id, user.FirstName, user.LastName })
-            .ToDictionaryAsync(user => user.Id, user => $"{user.FirstName} {user.LastName}".Trim());
+            .Select(user => new { user.Id, user.FirstName, user.LastName, user.PhoneNumber })
+            .ToListAsync();
+        var users = brukerListe.ToDictionary(user => user.Id, user => $"{user.FirstName} {user.LastName}".Trim());
+        var telefoner = brukerListe.ToDictionary(user => user.Id, user => user.PhoneNumber);
 
         var visibleSubmissions = allSubmissions.AsEnumerable();
         if (!string.IsNullOrWhiteSpace(filters.Search))
@@ -48,6 +56,11 @@ public class AdminController : Controller
                 submission.Adresse.Contains(sok, StringComparison.OrdinalIgnoreCase) ||
                 (submission.Beskrivelse?.Contains(sok, StringComparison.OrdinalIgnoreCase) ?? false) ||
                 OwnerName(submission, users).Contains(sok, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (!string.IsNullOrWhiteSpace(filters.Kommune))
+        {
+            visibleSubmissions = visibleSubmissions.Where(submission => submission.Kommune == filters.Kommune);
         }
 
         if (!string.IsNullOrWhiteSpace(filters.Type))
@@ -78,6 +91,10 @@ public class AdminController : Controller
             Prioritet = submission.Prioritet,
             Status = submission.Status,
             Adresse = submission.Adresse,
+            Kommune = submission.Kommune,
+            Beskrivelse = submission.Beskrivelse,
+            Frist = submission.Frist,
+            OwnerPhone = submission.IdentityUserId is int eierId ? telefoner.GetValueOrDefault(eierId) : null,
             CategoryName = categories.GetValueOrDefault(submission.CategoryId, "Ukjent kategori"),
             OwnerName = OwnerName(submission, users),
             Tidspunkt = submission.Tidspunkt
@@ -106,6 +123,7 @@ public class AdminController : Controller
             Status = submission.Status,
             CategoryId = submission.CategoryId,
             Adresse = submission.Adresse,
+            Kommune = submission.Kommune,
             Prioritet = submission.Prioritet ?? "",
             Frist = submission.Frist,
             Beskrivelse = submission.Beskrivelse,
@@ -156,6 +174,7 @@ public class AdminController : Controller
         submission.Status = model.Status;
         submission.CategoryId = model.CategoryId;
         submission.Adresse = model.Adresse.Trim();
+        submission.Kommune = string.IsNullOrWhiteSpace(model.Kommune) ? null : model.Kommune.Trim();
         submission.Prioritet = model.Type == "behov" ? model.Prioritet : null;
         submission.Frist = model.Frist;
         submission.Beskrivelse = string.IsNullOrWhiteSpace(model.Beskrivelse) ? null : model.Beskrivelse.Trim();

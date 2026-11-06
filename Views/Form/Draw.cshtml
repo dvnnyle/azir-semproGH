@@ -69,6 +69,11 @@
                 <input asp-for="Adresse" placeholder="Fylles ut nar du fullforer tegningen" required>
             </div>
 
+            <div class="ressurs-felt">
+                <label asp-for="Kommune">Kommune</label>
+                <input asp-for="Kommune" id="kommuneInput" placeholder="Fylles ut nar du fullforer tegningen" readonly>
+            </div>
+
             <div class="ressurs-split__actions">
                 <button type="submit" class="ressurs-btn ressurs-btn--submit" id="nesteKnapp" disabled>Neste</button>
             </div>
@@ -122,6 +127,7 @@
     const lokasjonPlassholder = document.getElementById('lokasjonPlassholder');
     const punkterJsonInput = document.getElementById('punkterJsonInput');
     const adresseInput = document.querySelector('[name="Adresse"]');
+    const kommuneInput = document.getElementById('kommuneInput');
     const modusKnapper = [omradeButton, pinButton, handButton];
 
     /* Type (ressurs/behov) avgjores helt i starten av flyten na, sa resten av
@@ -156,6 +162,7 @@
         koordinatLat.textContent = '-';
         koordinatLng.textContent = '-';
         adresseInput.value = '';
+        kommuneInput.value = '';
     }
 
     /* Bytter aktivt verktoy: "omrade"/"pin" slar pa riktig Geoman-tegnemodus,
@@ -265,7 +272,15 @@
             snapshotKart.fitBounds(erOmrade ? bounds : bounds.pad(2), { padding: [16, 16], maxZoom: 17, animate: false });
         }, 50);
 
-        nesteKnapp.disabled = false;
+        // Kommunen brukes til utskrift per region i portalen. Neste venter pa svaret,
+        // men skjemaet virker ogsa hvis oppslaget feiler eller punktet er utenfor Norge.
+        kommuneInput.value = '';
+        nesteKnapp.disabled = true;
+        fetch(`https://api.kartverket.no/kommuneinfo/v1/punkt?nord=${senter.lat}&ost=${senter.lng}&koordsys=4258`, { signal: AbortSignal.timeout(5000) })
+            .then(svar => svar.ok ? svar.json() : null)
+            .then(data => { kommuneInput.value = data?.kommunenavn ?? ''; })
+            .catch(() => {})
+            .finally(() => { nesteKnapp.disabled = !gjeldendeLag; });
 
         // Slar opp adresse for senteret av det som nettopp ble tegnet,
         // i stedet for a be om ny posisjonstilgang fra nettleseren.

@@ -68,7 +68,11 @@
         }
         @if (Model.Kandidater.Count == 0)
         {
-            <div class="admin-table-wrap admin-empty">Ingen ledige ressurser.</div>
+            <div class="admin-tom">
+                <span class="admin-tom-ikon"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></span>
+                <h2>Ingen ledige ressurser</h2>
+                <p>Nye ressurser vises her når de blir meldt inn.</p>
+            </div>
         }
     </div>
 </section>
