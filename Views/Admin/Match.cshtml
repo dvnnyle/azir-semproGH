@@ -38,7 +38,15 @@
         }
         @if (Model.Behov.Count == 0)
         {
-            <div class="admin-table-wrap admin-empty">Ingen åpne behov.</div>
+            <div class="admin-tom">
+                <span class="admin-tom-ikon"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></span>
+                <h2>Ingen åpne behov</h2>
+                <p>Nye behov vises her når de blir meldt inn.</p>
+                @if (Model.AntallTildelt + Model.AntallLost > 0)
+                {
+                    <a asp-controller="Admin" asp-action="Arkiv" class="admin-filter-submit">Se koblinger i arkivet</a>
+                }
+            </div>
         }
     </div>
 </section>

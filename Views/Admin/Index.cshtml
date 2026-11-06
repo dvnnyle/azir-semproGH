@@ -37,6 +37,16 @@
             <input type="search" name="Search" value="@Model.Search" placeholder="Søk etter tittel, sted eller eier">
         </label>
         <label class="admin-filter">
+            <span>Kommune</span>
+            <select name="Kommune">
+                <option value="">Alle kommuner</option>
+                @foreach (var kommune in Model.Kommuner)
+                {
+                    <option value="@kommune" selected="@(Model.Kommune == kommune)">@kommune</option>
+                }
+            </select>
+        </label>
+        <label class="admin-filter">
             <span>Kategori</span>
             <select name="Category">
                 <option value="">Alle kategorier</option>
@@ -65,7 +75,9 @@
             </select>
         </label>
         <button type="submit" class="admin-filter-submit">Filtrer</button>
-        @if (!string.IsNullOrWhiteSpace(Model.Search) || !string.IsNullOrWhiteSpace(Model.Category) || !string.IsNullOrWhiteSpace(Model.Type) || !string.IsNullOrWhiteSpace(Model.Status))
+        @* Sender filteret med, slik at utskriften alltid følger det som er valgt. Se admin.js. *@
+        <button type="submit" name="skrivut" value="1" class="admin-filter-submit">Skriv ut</button>
+        @if (!string.IsNullOrWhiteSpace(Model.Search) || !string.IsNullOrWhiteSpace(Model.Kommune) ||!string.IsNullOrWhiteSpace(Model.Category) || !string.IsNullOrWhiteSpace(Model.Type) || !string.IsNullOrWhiteSpace(Model.Status))
         {
             <a class="admin-filter-clear" asp-controller="Admin" asp-action="Index">Nullstill</a>
         }
@@ -92,6 +104,12 @@
                             <span class="admin-subtitle" title="Kategori">
                                 <i class="fa-solid fa-tag" aria-hidden="true"></i><span class="visually-hidden">Kategori: </span>@submission.CategoryName
                             </span>
+                            @if (!string.IsNullOrWhiteSpace(submission.Kommune))
+                            {
+                                <span class="admin-subtitle" title="Kommune">
+                                    <i class="fa-solid fa-map" aria-hidden="true"></i><span class="visually-hidden">Kommune: </span>@submission.Kommune
+                                </span>
+                            }
                             <span class="admin-subtitle" title="Adresse">
                                 <i class="fa-solid fa-location-dot" aria-hidden="true"></i><span class="visually-hidden">Adresse: </span>@submission.Adresse
                             </span>
@@ -151,6 +169,116 @@
             <p class="admin-table-count">Viser @Model.Submissions.Count av @Model.TotalCount meldinger</p>
         }
     </div>
+
+    @* Rapporten vises bare på papir. Skjermsiden over skjules ved utskrift, se admin.css. *@
+    @{
+        var rapportNavn = Model.Type switch
+        {
+            "ressurs" => "Ressursliste",
+            "behov" => "Behovsliste",
+            _ => "Ressurser og behov"
+        };
+        var alleKommuner = string.IsNullOrWhiteSpace(Model.Kommune);
+        var antallTekst = Model.Submissions.Count == 1 ? "1 melding" : $"{Model.Submissions.Count} meldinger";
+    }
+    <section class="admin-rapport">
+        <div class="admin-rapport-topp">
+            <span class="admin-rapport-merke">Krisis</span>
+            <span>Utskrevet @DateTime.Now.ToString("dd.MM.yyyy 'kl.' HH:mm")</span>
+        </div>
+        <h2>@rapportNavn</h2>
+        <p class="admin-rapport-meta">
+            <strong>@(alleKommuner ? "Alle kommuner" : $"{Model.Kommune} kommune")</strong> · @antallTekst
+            @if (!string.IsNullOrWhiteSpace(Model.Category))
+            {
+                <text> · Kategori: @Model.Category</text>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.Status))
+            {
+                <text> · Status: @statusLabels.GetValueOrDefault(Model.Status, Model.Status)</text>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.Search))
+            {
+                <text> · Søk: @Model.Search</text>
+            }
+        </p>
+
+        @if (Model.Submissions.Count == 0)
+        {
+            <p>Ingen meldinger samsvarer med valgt filter.</p>
+        }
+        else
+        {
+            <table>
+                <colgroup>
+                    <col class="admin-rapport-kol-melding">
+                    <col class="admin-rapport-kol-sted">
+                    <col class="admin-rapport-kol-status">
+                    <col class="admin-rapport-kol-kontakt">
+                    <col class="admin-rapport-kol-dato">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col">Melding</th>
+                        <th scope="col">Sted</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Kontakt</th>
+                        <th scope="col">Dato</th>
+                    </tr>
+                </thead>
+                @foreach (var gruppe in Model.Submissions.GroupBy(submission => submission.CategoryName).OrderBy(gruppe => gruppe.Key))
+                {
+                    <tbody>
+                        <tr class="admin-rapport-gruppe">
+                            <th colspan="5" scope="colgroup">@gruppe.Key (@gruppe.Count())</th>
+                        </tr>
+                        @foreach (var submission in gruppe)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@submission.Tittel</strong>
+                                    @if (submission.Type == "behov")
+                                    {
+                                        <span class="admin-rapport-liten">Behov@(submission.Prioritet is null ? "" : $", {submission.Prioritet} prioritet")</span>
+                                    }
+                                    else if (string.IsNullOrWhiteSpace(Model.Type))
+                                    {
+                                        <span class="admin-rapport-liten">Ressurs</span>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(submission.Beskrivelse))
+                                    {
+                                        <span class="admin-rapport-tekst">@submission.Beskrivelse</span>
+                                    }
+                                </td>
+                                <td>
+                                    @submission.Adresse
+                                    @if (alleKommuner && !string.IsNullOrWhiteSpace(submission.Kommune))
+                                    {
+                                        <span class="admin-rapport-liten">@submission.Kommune kommune</span>
+                                    }
+                                </td>
+                                <td>@statusLabels.GetValueOrDefault(submission.Status, submission.Status)</td>
+                                <td>
+                                    @submission.OwnerName
+                                    @if (!string.IsNullOrWhiteSpace(submission.OwnerPhone))
+                                    {
+                                        <span class="admin-rapport-liten">@submission.OwnerPhone</span>
+                                    }
+                                </td>
+                                <td class="admin-rapport-dato">
+                                    @submission.Tidspunkt.ToString("dd.MM.yyyy")
+                                    @if (submission.Frist.HasValue)
+                                    {
+                                        <span class="admin-rapport-liten">Frist @submission.Frist.Value.ToString("dd.MM.yyyy")</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                }
+            </table>
+        }
+    </section>
 </section>
 
 @section Scripts {

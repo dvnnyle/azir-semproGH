@@ -12,6 +12,7 @@ public class Submission
     public string Tittel { get; set; } = "";
     public string Type { get; set; } = "ressurs";
     public string Adresse { get; set; } = "";
+    public string? Kommune { get; set; }
     // "høy", "middels" eller "lav" - bare meningsfullt for behov. Ressurs-farge
     // pa kartet er alltid gronn, utledes fra Type, trenger ikke lagres.
     public string? Prioritet { get; set; }

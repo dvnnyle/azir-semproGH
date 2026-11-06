@@ -114,6 +114,48 @@
     transform: translateY(-1px);
 }
 
+.profile-kobling {
+    align-items: center;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    border-radius: 10px;
+    display: flex;
+    gap: 14px;
+    margin: 0 0 18px;
+    padding: 14px 16px;
+}
+
+.profile-kobling__ikon {
+    align-items: center;
+    background: #10b981;
+    border-radius: 50%;
+    color: #021912;
+    display: flex;
+    flex-shrink: 0;
+    font-size: 16px;
+    height: 36px;
+    justify-content: center;
+    width: 36px;
+}
+
+.profile-kobling strong {
+    color: #fff;
+    display: block;
+    font-size: 15px;
+}
+
+.profile-kobling p {
+    color: #d1fae5;
+    font-size: 14px;
+    margin: 2px 0 0;
+}
+
+.profile-row__main .profile-row__kobling {
+    color: #e2e8f0;
+    font-weight: 600;
+    margin-top: 4px;
+}
+
 .profile-notice {
     margin: 0 0 18px;
     padding: 12px 16px;

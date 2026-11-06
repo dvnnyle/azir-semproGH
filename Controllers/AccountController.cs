@@ -272,6 +272,18 @@ public class AccountController : Controller
             .OrderByDescending(draft => draft.UpdatedAt)
             .ToListAsync();
 
+        // Viser hva meldingene er koblet til. Bare tittelen vises, ikke kontaktinfo til den andre parten.
+        var mineIder = submissions.Select(submission => submission.SubmissionId).ToList();
+        var koblinger = await database.Requests
+            .AsNoTracking()
+            .Where(request => mineIder.Contains(request.BehovId) || mineIder.Contains(request.RessursId))
+            .ToListAsync();
+        var koblingIder = koblinger.SelectMany(request => new[] { request.BehovId, request.RessursId }).Distinct().ToList();
+        var titler = await database.Submissions
+            .AsNoTracking()
+            .Where(submission => koblingIder.Contains(submission.SubmissionId))
+            .ToDictionaryAsync(submission => submission.SubmissionId, submission => submission.Tittel);
+
         return View(new AccountProfileViewModel
         {
             FirstName = currentUser.FirstName,
@@ -286,7 +298,12 @@ public class AccountController : Controller
                 Status = submission.Status,
                 Adresse = submission.Adresse,
                 CategoryName = categories.GetValueOrDefault(submission.CategoryId, "Ukjent kategori"),
-                Tidspunkt = submission.Tidspunkt
+                Tidspunkt = submission.Tidspunkt,
+                KobletTil = string.Join(", ", koblinger
+                    .Where(request => request.BehovId == submission.SubmissionId || request.RessursId == submission.SubmissionId)
+                    .Select(request => request.BehovId == submission.SubmissionId ? request.RessursId : request.BehovId)
+                    .Select(id => titler.GetValueOrDefault(id))
+                    .OfType<string>())
             }).ToList(),
             Drafts = drafts.Select(draft =>
             {
@@ -512,4 +529,4 @@ public class AccountController : Controller
             .OrderBy(category => category.Navn)
             .ToListAsync();
     }
-}
+}

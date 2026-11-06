@@ -17,6 +17,11 @@
     var erPortalKonto = harPortalTilgang && navController is "Account" or "Accessibility";
     var erPortal = navController == "Admin" || erPortalKart || erPortalKonto;
     var logoUrl = Url.Content(erPortal ? "~/assets/icons/logoBluePortal.svg" : "~/assets/icons/logoGreen.svg");
+    // Privatbrukere får et merke i menyen når noe de har meldt inn er koblet.
+    var antallMineKoblinger = navnBruker is not null && !harPortalTilgang
+        ? await Database.Submissions.CountAsync(submission =>
+            submission.IdentityUserId == navnBruker.Id && submission.Status == "tildelt")
+        : 0;
     var antallAapneBehov = erPortal
         ? await Database.Submissions.CountAsync(submission =>
             submission.Type == "behov" &&
@@ -107,6 +112,10 @@
                 }
             }
             <button type="button" class="nav-avatar" id="navAccountToggle" aria-expanded="false">
+                @if (antallMineKoblinger > 0)
+                {
+                    <span class="kobling-antall" aria-label="@antallMineKoblinger koblede meldinger">@antallMineKoblinger</span>
+                }
                 <i class="fa-solid fa-user"></i>
             </button>
             <div class="konto-dropdown" id="navAccountDropdown">
@@ -119,6 +128,10 @@
                     <hr class="konto-dropdown__delelinje">
                     <a asp-controller="Account" asp-action="Profile" class="konto-dropdown__lenke">
                         <i class="fa-solid fa-user-gear" aria-hidden="true"></i> Min side
+                        @if (antallMineKoblinger > 0)
+                        {
+                            <span class="kobling-antall" aria-label="@antallMineKoblinger koblede meldinger">@antallMineKoblinger</span>
+                        }
                     </a>
                     <a asp-controller="Account" asp-action="Settings" class="konto-dropdown__lenke">
                         <i class="fa-solid fa-gear" aria-hidden="true"></i> Innstillinger
@@ -233,7 +246,13 @@
             </div>
             @if (User.Identity?.IsAuthenticated == true)
             {
-                <a asp-controller="Account" asp-action="Profile" class="mobil-meny__logg-inn">Min side</a>
+                <a asp-controller="Account" asp-action="Profile" class="mobil-meny__logg-inn">
+                    Min side
+                    @if (antallMineKoblinger > 0)
+                    {
+                        <span class="kobling-antall" aria-label="@antallMineKoblinger koblede meldinger">@antallMineKoblinger</span>
+                    }
+                </a>
                 <form asp-controller="Account" asp-action="Logout" method="post">
                     <button type="submit" class="mobil-meny__logg-inn">Logg ut</button>
                 </form>

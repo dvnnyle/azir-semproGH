@@ -198,7 +198,7 @@ app.Use(async (context, next) =>
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; " +
         "font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; " +
         "img-src 'self' data: blob: https://cache.kartverket.no; " +
-        "connect-src 'self' https://ws.geonorge.no https://cache.kartverket.no";
+        "connect-src 'self' https://ws.geonorge.no https://cache.kartverket.no https://api.kartverket.no";
     context.Response.Headers["X-Content-Type-Options"] = "nosniff";
     context.Response.Headers["X-Frame-Options"] = "DENY";
     context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
