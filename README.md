@@ -143,6 +143,33 @@ Forslag fra KI må alltid testes i nettleseren, ettersom de ikke alltid fungerer
 
 Noen medlemmer kan oppleve at de går tom for credits og må vente på cooldown. I tillegg kan ikke KI alltid løse det du spør om, og svarene kan se riktige ut selv om de er feil. KI kan også gjøre mange endringer på kort tid, så det blir mer kode å gå gjennom. Handlinger som kan slette data må vi godkjenne selv. Passord og personopplysninger skal heller ikke legges inn i prompts, ettersom teksten sendes til en ekstern tjeneste.
 
+### Rahmanudin Manan
+
+Jeg jobbet med innlogging og konto: logg inn/ut, profil, sletting av egne meldinger, sletting av konto, glemt passord og melding når kontoen er låst.
+
+| Fase | Verktøy | Bruk |
+|---|---|---|
+| Ide og analyse | Claude | Forslag til formater for brukerhistorier i innlevering 1 |
+| Koding | GitHub Copilot | Oppsett av ASP.NET Identity, innlogging med SignInManager, autentisering og autorisasjon, og kobling mellom Identity og databasen vi hadde fra før |
+| Feilsøking | GitHub Copilot og Claude | Docker og MySQL, feilen «SignInManager blir ikke funnet», migrasjoner, fremmednøkler og en lokal MariaDB som brukte samme port som Docker |
+| Git | GitHub Copilot og Claude | Branch, commit, merge og merge-konflikter mot main |
+| Koding | Claude | Sletting av egne meldinger, sletting av konto, glemt passord og egen melding ved låst konto |
+| Testing og dokumentasjon | Claude | Sjekk av mobilvisning, testtabell og hjelp med denne teksten |
+
+**Eksempler på prompts (språkvasket)**
+
+- "Jeg får 'Unable to resolve service for type SignInManager'. Hvorfor, og hvordan fikser jeg det?"
+- "Migrasjonen stopper fordi tabellen Submissions allerede finnes. Hva gjør jeg?"
+- "Hvordan kan brukeren slette bare sine egne meldinger, og ikke andres?"
+- "Jeg får merge-konflikter mot main. Hva skal jeg beholde i hver fil?"
+- "Se om nettsiden trenger finpuss på mobil, og gi meg forslag jeg kan velge mellom."
+
+**Hvordan jeg brukte KI**
+
+I starten brukte jeg Copilot, men byttet etter hvert til Claude fordi jeg fikk bedre hjelp med feilsøking og forklaringer. Jeg tok én ting om gangen og testet alt selv i nettleseren og databasen før jeg committet. Når noe ikke virket, sendte jeg feilmeldingen eller loggen tilbake og prøvde igjen. Det var ikke alltid KI hadde rett første gang, så jeg måtte følge med og forstå hva som faktisk skjedde.
+
+Det første jeg laget av innlogging lå på branchen `feature/login`. Den ble ikke merget, fordi main fikk sin egen innlogging samtidig. Jeg bygde heller videre på main og laget kontofunksjonene som manglet.
+
 ## Lenker
 
 - [GitHub](https://github.com/dvnnyle/azir-semproGH)
