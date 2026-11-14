@@ -668,3 +668,13 @@
 .portal .profile-tip a:hover {
     color: #A5E5F7;
 }
+
+/* Mobil: passordfeltet på «Slett konto» og feltene på «Rediger melding»
+   må ha minst 16px tekst, ellers zoomer iPhone (Safari) inn når man trykker i dem. */
+@media (max-width: 767px) {
+    .profile-edit-form input,
+    .profile-edit-form select,
+    .profile-edit-form textarea {
+        font-size: 16px;
+    }
+}
