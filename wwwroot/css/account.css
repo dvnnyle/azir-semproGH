@@ -361,3 +361,30 @@
     margin-top: 3px;
     color: #6ee7b7;
 }
+
+/* Mobil: login, registrering, glemt passord og nytt passord.
+   - Feltene må ha minst 16px tekst, ellers zoomer iPhone (Safari) inn når man trykker i dem.
+   - Mindre luft rundt kortet, så feltene får plass på smale telefoner. */
+@media (max-width: 767px) {
+    .konto-input {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .konto-wrap {
+        padding: 12px;
+    }
+
+    .kort {
+        padding: 24px 18px;
+        border-radius: 16px;
+        gap: 20px;
+    }
+
+    .avatar-sirkel {
+        width: 72px;
+        height: 72px;
+        font-size: 26px;
+    }
+}
