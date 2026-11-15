@@ -8,6 +8,9 @@ services:
       - "127.0.0.1:8080:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
+      # Cloudflare-tunnel på expo: hver besøkende får sin egen IP i rate-limiten
+      # i stedet for at alle deler tunnelens IP. Porten er bare åpen på 127.0.0.1.
+      ForwardedHeaders__TrustAllProxies: "true"
       ConnectionStrings__DefaultConnection: "Server=db;Port=3306;Database=krisisdb;User=krisisapp;Password=${DB_APP_PASSWORD:?Set DB_APP_PASSWORD in your environment};"
     volumes:
       # Data Protection-nøklene som krypterer login-cookien. Uten dette volumet
