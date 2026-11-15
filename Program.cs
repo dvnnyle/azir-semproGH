@@ -25,6 +25,13 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 
         options.KnownProxies.Add(address);
     }
+
+    // Hosting bak en proxy med ukjent IP (f.eks. Render): stol på proxyen bare når dette er slått på.
+    if (builder.Configuration.GetValue<bool>("ForwardedHeaders:TrustAllProxies"))
+    {
+        options.KnownIPNetworks.Clear();
+        options.KnownProxies.Clear();
+    }
 });
 
 builder.Services.AddHsts(options =>

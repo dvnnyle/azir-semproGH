@@ -101,14 +101,14 @@
             @if (erPortal)
             {
                 <a asp-controller="Form" asp-action="Draw" class="nav-cta"><i class="fa-solid fa-plus" aria-hidden="true"></i> Ny</a>
-                <a asp-controller="Home" asp-action="Index" class="nav-portal"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Til nettstedet</a>
+                <a asp-controller="Home" asp-action="Index" class="nav-portal" aria-label="Til nettstedet" title="Til nettstedet"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i><span class="nav-portal__tekst">Til nettstedet</span></a>
             }
             else
             {
                 <a asp-controller="Form" asp-action="Draw" class="nav-cta"><i class="fa-solid fa-plus"></i> Ny</a>
                 @if (harPortalTilgang)
                 {
-                    <a asp-controller="Admin" asp-action="Index" class="nav-portal"><i class="fa-solid fa-briefcase" aria-hidden="true"></i> Portal</a>
+                    <a asp-controller="Admin" asp-action="Index" class="nav-portal" aria-label="Portal" title="Portal"><i class="fa-solid fa-briefcase" aria-hidden="true"></i><span class="nav-portal__tekst">Portal</span></a>
                 }
             }
             <button type="button" class="nav-avatar" id="navAccountToggle" aria-expanded="false">
@@ -155,8 +155,12 @@
                 }
             </div>
         </div>
-        <button type="button" class="nav-hamburger" id="navHamburgerToggle" aria-expanded="false" aria-controls="navMobilMeny">
-            <i class="fa-solid fa-bars"></i>
+        <button type="button" class="nav-hamburger" id="navHamburgerToggle" aria-expanded="false" aria-controls="navMobilMeny" aria-label="Meny">
+            @if (antallMineKoblinger > 0)
+            {
+                <span class="kobling-antall" aria-label="@antallMineKoblinger koblede meldinger">@antallMineKoblinger</span>
+            }
+            <i class="fa-solid fa-bars" aria-hidden="true"></i>
         </button>
     </nav>
 
