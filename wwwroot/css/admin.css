@@ -104,6 +104,7 @@
 }
 
 .admin-search input {
+    align-self: stretch;
     background: transparent;
     border: 0;
     color: #f8fafc;

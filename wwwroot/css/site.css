@@ -176,6 +176,34 @@ h1, h2, h3, h4, h5, h6 {
   top: -6px;
 }
 
+/* Nettbrett: portalknappen vises bare som ikon, ellers blir menyen bredere enn skjermen. */
+@media (max-width: 1100px) {
+  .nav-portal__tekst {
+    display: none;
+  }
+
+  .nav-account .nav-portal {
+    padding: 9px 11px;
+  }
+}
+
+/* Mobil: større trykkflate på små tekstlenker. Negativ margin holder oppsettet uendret. */
+@media (max-width: 767px) {
+  .site-footer__kolonne > a,
+  .glemt-passord-row a,
+  .bytte-row a,
+  .kort > a,
+  .profile-back,
+  .admin-back,
+  .admin-title a,
+  .admin-match-eier a,
+  .hjem-status__lenke,
+  .profile-tip a {
+    margin-block: -4px;
+    padding-block: 4px;
+  }
+}
+
 .nav-portal {
   align-items: center;
   background: rgba(0, 177, 226, 0.14);
@@ -596,7 +624,8 @@ html {
   background: #34d399;
 }
 
-@media (max-width: 767px) {
+/* Hamburgermeny også på nettbrett: menyen er for bred for 768-991px, særlig i portalen. */
+@media (max-width: 991px) {
   .nav-links,
   .nav-cta,
   .nav-portal,
@@ -606,6 +635,14 @@ html {
 
   .nav-hamburger {
     display: flex;
+    position: relative;
+  }
+
+  .nav-hamburger .kobling-antall {
+    margin: 0;
+    position: absolute;
+    right: -6px;
+    top: -6px;
   }
 }
 
