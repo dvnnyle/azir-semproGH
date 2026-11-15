@@ -633,9 +633,9 @@ html {
     display: none;
   }
 
+  /* Hamburgeren er allerede position: absolute til høyre; det holder som anker for merket. */
   .nav-hamburger {
     display: flex;
-    position: relative;
   }
 
   .nav-hamburger .kobling-antall {
