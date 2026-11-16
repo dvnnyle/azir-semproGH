@@ -123,9 +123,19 @@
         brann: { ikon: 'fa-fire-extinguisher', farge: '#dc2626' }
     };
 
+    // /Map?vis=<id> (fra «Åpne kart» i Delinger): zoom inn på den innsendingen og åpne popupen.
+    const fokusId = Number.parseInt(new URLSearchParams(location.search).get('vis'), 10);
+    const fokus = Number.isInteger(fokusId) ? document.querySelector(`.kart-listeelement[data-id="${fokusId}"]`) : null;
+
     const visVisning = () => {
         kart.invalidateSize();
-        if (alleBounds.length > 0) {
+        if (fokus?._kartLag) {
+            const lag = fokus._kartLag;
+            const zoom = lag.getBounds ? Math.min(kart.getBoundsZoom(lag.getBounds()), 16) : 16;
+            kart.setView(lag.getBounds ? lag.getBounds().getCenter() : lag.getLatLng(), zoom);
+            midtstillPopup(lag);
+            fokus.scrollIntoView({ block: 'nearest' });
+        } else if (alleBounds.length > 0) {
             kart.fitBounds(L.latLngBounds(alleBounds), { padding: [80, 80], maxZoom: 13.4 });
         }
     };

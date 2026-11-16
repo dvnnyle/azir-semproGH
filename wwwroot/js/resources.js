@@ -125,9 +125,10 @@
         detailMap = drawMap(detailMapElement, points, color);
 
         const mapLink = document.getElementById('detailMapLink');
-        if (points.length > 0) {
-            const [lat, lng] = points[0];
-            mapLink.href = `https://www.openstreetmap.org/?mlat=${encodeURIComponent(lat)}&mlon=${encodeURIComponent(lng)}#map=15/${encodeURIComponent(lat)}/${encodeURIComponent(lng)}`;
+        const id = card.closest('[data-id]')?.dataset.id;
+        if (points.length > 0 && id) {
+            // Vårt eget kart, zoomet inn på denne innsendingen.
+            mapLink.href = `/Map?vis=${encodeURIComponent(id)}`;
             mapLink.hidden = false;
         } else {
             mapLink.hidden = true;
