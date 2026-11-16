@@ -1,6 +1,7 @@
 @model azir_sempro.Models.ResourceListViewModel
 @{ ViewData["Title"] = "Kart"; }
 <link rel="stylesheet" href="~/lib/leaflet/dist/leaflet.min.css">
+<link rel="stylesheet" href="~/lib/leaflet-markercluster/dist/MarkerCluster.css">
 <link rel="stylesheet" href="~/css/form.css" asp-append-version="true">
 <link rel="stylesheet" href="~/css/map.css" asp-append-version="true">
 
@@ -111,5 +112,6 @@
 
 @section Scripts {
     <script src="~/lib/leaflet/dist/leaflet.min.js"></script>
+    <script src="~/lib/leaflet-markercluster/dist/leaflet.markercluster.js"></script>
     <script src="~/js/map.js" asp-append-version="true"></script>
 }

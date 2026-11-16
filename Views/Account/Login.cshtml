@@ -2,8 +2,21 @@
 @{
     var erAktor = Context.Request.Query.ContainsKey("aktor");
     ViewData["Title"] = erAktor ? "Logg inn som aktør" : "Logg inn";
+    // Feil uten felt (feil e-post/passord, låst konto) vises som toast i stedet for i skjemaet.
+    var innloggingsfeil = ViewData.ModelState[string.Empty]?.Errors.FirstOrDefault()?.ErrorMessage;
 }
 <link rel="stylesheet" href="~/css/account.css" asp-append-version="true">
+
+@if (innloggingsfeil is not null)
+{
+    <div class="konto-toast" id="kontoToast" role="alert">
+        <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+        <span class="konto-toast__tekst">@innloggingsfeil</span>
+        <button type="button" class="konto-toast__lukk" aria-label="Lukk" title="Lukk">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+    </div>
+}
 
 <div class="page-fill konto-wrap">
     <div class="kort @(erAktor ? "kort--aktor" : "")">
@@ -19,7 +32,6 @@
         </div>
 
         <form class="inputs-stack" method="post" asp-controller="Account" asp-action="Login" asp-route-aktor="@(erAktor ? "1" : null)">
-            <div asp-validation-summary="All"></div>
             <input type="hidden" asp-for="ReturnUrl">
             <div class="felt-gruppe">
                 <label class="konto-label" asp-for="Email">E-post</label>
@@ -76,6 +88,7 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/konto.js" asp-append-version="true"></script>
     <script nonce="@(Context.Items["CspNonce"])">
         const loginInfo = document.getElementById('loginInfo');
         document.getElementById('loginInfoKnapp').addEventListener('click', () => loginInfo.showModal());

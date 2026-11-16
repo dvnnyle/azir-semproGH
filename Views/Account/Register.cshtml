@@ -57,7 +57,12 @@
             <button type="submit" class="konto-knapp">Registrer deg</button>
         </form>
 
-    n konto? <a asp-controller="Account" asp-action="Login">Logg inn</a>
+        <div class="bytte-row">
+            Har du allerede en konto? <a asp-controller="Account" asp-action="Login">Logg inn</a>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/konto.js" asp-append-version="true"></script>
+}

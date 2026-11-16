@@ -153,6 +153,32 @@
     line-height: 1;
 }
 
+/* Klynge av nåler som ligger oppå hverandre (js/map.js). Fargen settes per klynge. */
+.kart-klynge {
+    align-items: center;
+    background: var(--klynge-farge, #10b981);
+    border: 3px solid #f1f5f9;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--klynge-farge, #10b981) 35%, transparent), 0 4px 10px rgba(0, 0, 0, 0.35);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    font-size: 15px;
+    font-weight: 700;
+    height: 38px;
+    justify-content: center;
+    width: 38px;
+}
+
+.kart-klynge-ikon:hover .kart-klynge {
+    transform: scale(1.08);
+}
+
+.leaflet-cluster-spider-leg {
+    stroke: #334155;
+    stroke-width: 2;
+}
+
 .kart-nal-puls {
     animation: kart-puls 2s ease-out infinite;
     border-radius: 50%;
@@ -178,22 +204,57 @@
     }
 }
 
-.kart-posisjon {
+/* Zoom- og posisjonsknappene i samme stil som tegneverktøyet (.bar-knapp i form.css). */
+#map .leaflet-bar {
+    background: none;
+    border: none;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#map .leaflet-bar a,
+#map .kart-posisjon {
     align-items: center;
-    background: #ffffff;
+    background: #0f1729;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
     box-sizing: border-box;
-    color: #b91c1c;
+    color: #a3a7af;
     cursor: pointer;
     display: flex;
     font-size: 15px;
-    height: 34px;
+    height: 40px;
     justify-content: center;
+    line-height: 1;
     padding: 0;
-    width: 34px;
+    width: 40px;
 }
 
-.kart-posisjon:hover {
-    background: #f4f4f4;
+#map .leaflet-bar a:hover,
+#map .kart-posisjon:hover {
+    background: #1a2438;
+    color: #f1f5f9;
+}
+
+#map .leaflet-bar a:focus-visible,
+#map .kart-posisjon:focus-visible {
+    outline: none;
+    border-color: #10b981;
+}
+
+#map .leaflet-bar a.leaflet-disabled {
+    background: #0f1729;
+    color: #a3a7af;
+    cursor: default;
+    opacity: 0.4;
+}
+
+#map .kart-posisjon,
+#map .kart-posisjon:hover {
+    color: #fca5a5;
 }
 
 .kart-posisjon:disabled {
@@ -201,7 +262,7 @@
     opacity: 0.6;
 }
 
-.portal .kart-posisjon {
+.portal #map .kart-posisjon {
     color: #006F91;
 }
 
