@@ -362,6 +362,100 @@
     color: #6ee7b7;
 }
 
+/* Øye-knapp i passordfeltet (lagt til av js/konto.js). */
+.passord-felt {
+    position: relative;
+}
+
+.passord-felt .konto-input {
+    padding-right: 48px;
+}
+
+.passord-vis {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    color: #94a3b8;
+    cursor: pointer;
+}
+
+.passord-vis:hover,
+.passord-vis[aria-pressed="true"] {
+    color: #34d399;
+}
+
+.passord-vis:focus-visible {
+    outline: 2px solid #10b981;
+}
+
+/* Toast for feil innlogging. */
+.konto-toast {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 84px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: min(420px, calc(100% - 32px));
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: #2a1215;
+    border: 1px solid #f87171;
+    border-radius: 12px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
+    color: #fecaca;
+    font-size: 14px;
+    line-height: 1.5;
+    animation: konto-toast-inn 0.25s ease-out;
+}
+
+.konto-toast > i {
+    margin-top: 3px;
+    color: #f87171;
+}
+
+.konto-toast__tekst {
+    flex: 1;
+}
+
+.konto-toast__lukk {
+    background: none;
+    border: none;
+    padding: 2px 4px;
+    color: #fecaca;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.konto-toast--skjul {
+    animation: konto-toast-ut 0.2s ease-in forwards;
+}
+
+@keyframes konto-toast-inn {
+    from { opacity: 0; transform: translate(-50%, -12px); }
+    to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@keyframes konto-toast-ut {
+    to { opacity: 0; transform: translate(-50%, -12px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .konto-toast,
+    .konto-toast--skjul {
+        animation-duration: 0.01ms;
+    }
+}
+
 /* Mobil: login, registrering, glemt passord og nytt passord.
    - Feltene må ha minst 16px tekst, ellers zoomer iPhone (Safari) inn når man trykker i dem.
    - Mindre luft rundt kortet, så feltene får plass på smale telefoner. */
