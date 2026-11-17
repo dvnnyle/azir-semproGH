@@ -3,7 +3,11 @@
     const fliser = 'https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png';
 
     const kart = L.map('map', { zoomControl: false }).setView([58.1467, 7.9956], 13.4);
-    L.control.zoom({ position: 'topright' }).addTo(kart);
+    L.control.zoom({
+        position: 'topright',
+        zoomInText: '<i class="fa-solid fa-plus" aria-hidden="true"></i>',
+        zoomOutText: '<i class="fa-solid fa-minus" aria-hidden="true"></i>'
+    }).addTo(kart);
     L.tileLayer(fliser, { maxZoom: 18 }).addTo(kart);
 
     const alleBounds = [];
@@ -34,10 +38,57 @@
         return kart.unproject(kart.project(punkt, zoom).subtract(forskyvning), zoom);
     };
 
-    const midtstillPopup = lag => {
+    // Nåler som ligger oppå hverandre samles i en klynge med antall. Klikk vifter dem ut
+    // rundt klyngen i stedet for å zoome inn. Områder (polygoner) legges rett på kartet.
+    const fargeRekkefolge = ['rod', 'gul', 'gronn'];
+    const klynge = L.markerClusterGroup({
+        // Avstanden (px) for å slå sammen nåler krymper når man zoomer inn, så klyngene
+        // sprekker opp og nålene glir ut til sin egen plass. Helt inne samles bare nåler
+        // som nesten ligger oppå hverandre; dem vifter man ut med klikk.
+        maxClusterRadius: zoom => (zoom <= 12 ? 50 : zoom <= 14 ? 40 : zoom <= 16 ? 25 : 12),
+        zoomToBoundsOnClick: false,
+        spiderfyOnMaxZoom: false,
+        showCoverageOnHover: false,
+        spiderfyDistanceMultiplier: 1.6,
+        // Klyngen får den mest alvorlige fargen blant nålene i den (rød før gul før grønn).
+        iconCreateFunction: gruppe => {
+            const fargeNokler = gruppe.getAllChildMarkers().map(m => m.options.fargeNokkel);
+            const verst = fargeRekkefolge.find(f => fargeNokler.includes(f)) || 'gronn';
+            const antall = gruppe.getChildCount();
+            return L.divIcon({
+                html: `<span class="kart-klynge" style="--klynge-farge:${farger[verst]}">${antall}</span>`,
+                className: 'kart-klynge-ikon',
+                iconSize: [38, 38],
+                iconAnchor: [19, 19]
+            });
+        }
+    });
+    klynge.on('clusterclick', e => e.layer.spiderfy());
+    kart.addLayer(klynge);
+
+    const lagForelder = lag => (lag instanceof L.Marker ? klynge : kart);
+
+    const apnePopup = lag => {
         lag.openPopup();
         const popup = lag.getPopup();
         kart.panTo(senterForSynlig(popup.getLatLng(), kart.getZoom(), popup.getElement().offsetHeight));
+    };
+
+    // Ligger nålen inne i en klynge, vifter vi ut klyngen først og åpner popupen etterpå.
+    const midtstillPopup = lag => {
+        if (lag instanceof L.Marker && klynge.hasLayer(lag)) {
+            let synlig = klynge.getVisibleParent(lag);
+            if (!synlig) {
+                kart.setView(lag.getLatLng(), kart.getZoom(), { animate: false });
+                synlig = klynge.getVisibleParent(lag);
+            }
+            if (synlig && synlig !== lag) {
+                klynge.once('spiderfied', () => apnePopup(lag));
+                synlig.spiderfy();
+                return;
+            }
+        }
+        apnePopup(lag);
     };
 
     const posisjonKnapp = L.DomUtil.create('button', 'kart-posisjon leaflet-bar');
@@ -106,10 +157,10 @@
                 iconSize: [30, 30],
                 iconAnchor: [15, 30]
             });
-            lag = L.marker(punkter[0], { icon: nal });
+            lag = L.marker(punkter[0], { icon: nal, fargeNokkel: el.dataset.color || 'gronn' });
         }
 
-        lag.bindPopup(popup, popupValg).addTo(kart);
+        lag.bindPopup(popup, popupValg).addTo(lagForelder(lag));
         el.addEventListener('click', () => midtstillPopup(lag));
         el._kartLag = lag;
 
@@ -195,9 +246,9 @@
             const skalVises = el.dataset.erbehov === '1' ? visBehov : visRessurs;
             if (!el._kartLag) return;
             if (skalVises) {
-                kart.addLayer(el._kartLag);
+                lagForelder(el._kartLag).addLayer(el._kartLag);
             } else {
-                kart.removeLayer(el._kartLag);
+                lagForelder(el._kartLag).removeLayer(el._kartLag);
             }
         });
 

@@ -72,7 +72,7 @@ public class AccountController : Controller
                 return RedirectToAction("Index", "Admin");
             }
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Map");
         }
 
         // Egen melding når kontoen er låst etter for mange feil forsøk (Lockout i Program.cs:
