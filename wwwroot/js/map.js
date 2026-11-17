@@ -183,7 +183,8 @@
         if (fokus?._kartLag) {
             const lag = fokus._kartLag;
             const zoom = lag.getBounds ? Math.min(kart.getBoundsZoom(lag.getBounds()), 16) : 16;
-            kart.setView(lag.getBounds ? lag.getBounds().getCenter() : lag.getLatLng(), zoom);
+            // Uten animasjon: klyngene regnes ut på nytt med en gang, før vi ser etter nålen.
+            kart.setView(lag.getBounds ? lag.getBounds().getCenter() : lag.getLatLng(), zoom, { animate: false });
             midtstillPopup(lag);
             fokus.scrollIntoView({ block: 'nearest' });
         } else if (alleBounds.length > 0) {
