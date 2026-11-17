@@ -1,4 +1,5 @@
 using System.Globalization;
+using azir_sempro.Services;
 
 namespace azir_sempro.Models;
 
@@ -22,6 +23,7 @@ public class AdminMatchBehovViewModel
     public MatchMeldingViewModel Behov { get; set; } = new();
     public string BehovPunkterJson { get; set; } = "[]";
     public List<MatchKandidatViewModel> Kandidater { get; set; } = [];
+    public bool FristUtlopt { get; set; }
 }
 
 public class MatchMeldingViewModel
@@ -39,13 +41,13 @@ public class MatchMeldingViewModel
     public string EierNavn { get; set; } = "";
     public string? EierEpost { get; set; }
     public string? EierTelefon { get; set; }
-    public double? Lat { get; set; }
-    public double? Lng { get; set; }
+    // Samme koordinat-type som matchingen bruker (Services/Matching.cs), ikke egne Lat/Lng-felt.
+    public Sted? Sted { get; set; }
 
-    public string? LatTekst => Lat?.ToString("0.000000", CultureInfo.InvariantCulture);
-    public string? LngTekst => Lng?.ToString("0.000000", CultureInfo.InvariantCulture);
-    public string? LatKort => Lat?.ToString("0.000", CultureInfo.InvariantCulture);
-    public string? LngKort => Lng?.ToString("0.000", CultureInfo.InvariantCulture);
+    public string? LatTekst => Sted?.Lat.ToString("0.000000", CultureInfo.InvariantCulture);
+    public string? LngTekst => Sted?.Lng.ToString("0.000000", CultureInfo.InvariantCulture);
+    public string? LatKort => Sted?.Lat.ToString("0.000", CultureInfo.InvariantCulture);
+    public string? LngKort => Sted?.Lng.ToString("0.000", CultureInfo.InvariantCulture);
 
     public string PrioritetTekst => Prioritet switch
     {

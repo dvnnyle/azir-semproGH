@@ -164,6 +164,11 @@ public class FormController : Controller
             Tidspunkt = DateTime.Now,
             Status = "ny"
         };
+
+        // Innsending, punkter og sletting av utkast lagres samlet: feiler ett steg,
+        // rulles alt tilbake, så vi aldri får en innsending uten punkter eller et
+        // utkast som både er sendt inn og fortsatt ligger som utkast.
+        await using var transaksjon = await database.Database.BeginTransactionAsync();
         database.Submissions.Add(innsending);
         await database.SaveChangesAsync();
 
@@ -189,6 +194,7 @@ public class FormController : Controller
             }
         }
 
+        await transaksjon.CommitAsync();
         return RedirectToAction(nameof(Kvittering), new { id = innsending.SubmissionId });
     }
 

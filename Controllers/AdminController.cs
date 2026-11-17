@@ -214,9 +214,13 @@ public class AdminController : Controller
         var tilMelding = await HentMeldingMapperAsync(steder);
         var koblinger = await HentKoblingerAsync(tilMelding);
         var kobledeBehov = koblinger.Select(kobling => kobling.Behov.SubmissionId).ToHashSet();
+        var idag = DateTime.Today;
         var aapneBehov = await database.Submissions
             .AsNoTracking()
-            .Where(submission => submission.Type == "behov" && submission.Status != "lost")
+            .Where(submission =>
+                submission.Type == "behov" &&
+                submission.Status != "lost" &&
+                (submission.Frist == null || submission.Frist >= idag))
             .ToListAsync();
 
         return View(new AdminMatchViewModel
@@ -265,12 +269,14 @@ public class AdminController : Controller
         var (ressurser, steder, forslag) = await HentMatchGrunnlagAsync();
         var tilMelding = await HentMeldingMapperAsync(steder);
         var beste = forslag.GetValueOrDefault(id)?.SubmissionId;
+        var fristUtlopt = behov.Frist < DateTime.Today;
 
         return View(new AdminMatchBehovViewModel
         {
             Behov = tilMelding(behov),
             BehovPunkterJson = await HentPunkterJsonAsync(id),
-            Kandidater = behov.Status == "lost"
+            FristUtlopt = fristUtlopt,
+            Kandidater = behov.Status == "lost" || fristUtlopt
                 ? []
                 : Matching.Ranger(behov, ressurser, steder)
                     .OrderByDescending(ressurs => ressurs.SubmissionId == beste)
@@ -291,7 +297,7 @@ public class AdminController : Controller
     {
         TempData["AdminMessage"] = await KobleAsync(id, ressursId)
             ? "Ressursen er koblet til behovet."
-            : "Kunne ikke koble. Ressursen er ikke lenger ledig.";
+            : "Kunne ikke koble. Ressursen er ikke lenger ledig, eller fristen er gått ut.";
         return RedirectToAction(nameof(Match));
     }
 
@@ -429,8 +435,7 @@ public class AdminController : Controller
             var sted = steder.GetValueOrDefault(submission.SubmissionId);
             return new MatchMeldingViewModel
             {
-                Lat = sted?.Lat,
-                Lng = sted?.Lng,
+                Sted = sted,
                 SubmissionId = submission.SubmissionId,
                 Tittel = submission.Tittel,
                 Type = submission.Type,
@@ -457,17 +462,21 @@ public class AdminController : Controller
         }
 
         // Betinget oppdatering: to samtidige koblinger kan ikke ta samme ressurs.
+        // Utløpt frist (før i dag) på behovet eller ressursen stopper koblingen.
+        var idag = DateTime.Today;
         var ressursTatt = await database.Submissions
             .Where(submission =>
                 submission.SubmissionId == ressursId &&
                 submission.Type == "ressurs" &&
-                (submission.Status == "ny" || submission.Status == "vurderes"))
+                (submission.Status == "ny" || submission.Status == "vurderes") &&
+                (submission.Frist == null || submission.Frist >= idag))
             .ExecuteUpdateAsync(set => set.SetProperty(submission => submission.Status, "tildelt"));
         var behovTildelt = await database.Submissions
             .Where(submission =>
                 submission.SubmissionId == behovId &&
                 submission.Type == "behov" &&
-                submission.Status != "lost")
+                submission.Status != "lost" &&
+                (submission.Frist == null || submission.Frist >= idag))
             .ExecuteUpdateAsync(set => set.SetProperty(submission => submission.Status, "tildelt"));
         if (ressursTatt == 0 || behovTildelt == 0)
         {
