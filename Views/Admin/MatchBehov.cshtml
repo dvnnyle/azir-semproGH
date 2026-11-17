@@ -34,7 +34,7 @@
                 </div>
             </div>
             <div class="admin-match-kart">
-                @if (Model.Behov.Lat is null)
+                @if (Model.Behov.Sted is null)
                 {
                     <p class="admin-match-meta">Behovet mangler kartposisjon.</p>
                 }
@@ -66,7 +66,15 @@
                 </div>
             </article>
         }
-        @if (Model.Kandidater.Count == 0)
+        @if (Model.FristUtlopt)
+        {
+            <div class="admin-tom">
+                <span class="admin-tom-ikon"><i class="fa-solid fa-calendar-xmark" aria-hidden="true"></i></span>
+                <h2>Fristen er gått ut</h2>
+                <p>Behovet kan ikke kobles fordi fristen har passert.</p>
+            </div>
+        }
+        else if (Model.Kandidater.Count == 0)
         {
             <div class="admin-tom">
                 <span class="admin-tom-ikon"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></span>
@@ -79,14 +87,14 @@
 
 @section Scripts {
     <script src="~/js/admin.js" asp-append-version="true"></script>
-    @if (Model.Behov.Lat is not null)
+    @if (Model.Behov.Sted is not null)
     {
         <script src="~/lib/leaflet/dist/leaflet.min.js"></script>
         <script src="~/js/ressurs-kart.js" asp-append-version="true"></script>
         <script nonce="@(Context.Items["CspNonce"])">
             const ressurser = @Html.Raw(JsonSerializer.Serialize(Model.Kandidater
-                .Where(kandidat => kandidat.Ressurs.Lat is not null)
-                .Select(kandidat => new { tittel = kandidat.Ressurs.Tittel, lat = kandidat.Ressurs.Lat, lng = kandidat.Ressurs.Lng })));
+                .Where(kandidat => kandidat.Ressurs.Sted is not null)
+                .Select(kandidat => new { tittel = kandidat.Ressurs.Tittel, lat = kandidat.Ressurs.Sted!.Lat, lng = kandidat.Ressurs.Sted!.Lng })));
 
             const { map } = tegnRessursOmradeKart('matchKart', @Html.Raw(JsonSerializer.Serialize(Model.BehovPunkterJson)), {
                 mapOptions: { dragging: !L.Browser.mobile },
