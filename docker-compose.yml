@@ -42,9 +42,7 @@ services:
       - mysql-data:/var/lib/mysql
       # Init scripts run in order; Identity precedes the submission owner foreign key.
       - ./Data/sql/identity.sql:/docker-entrypoint-initdb.d/00-identity.sql:ro
-      - ./Data/sql/roles.sql:/docker-entrypoint-initdb.d/01-roles.sql:ro
       - ./Data/sql/categories.sql:/docker-entrypoint-initdb.d/02-categories.sql:ro
-      - ./Data/sql/users.sql:/docker-entrypoint-initdb.d/03-users.sql:ro
       - ./Data/sql/submissions.sql:/docker-entrypoint-initdb.d/04-submissions.sql:ro
       - ./Data/sql/submission-identity-owner.sql:/docker-entrypoint-initdb.d/05-submission-identity-owner.sql:ro
       - ./Data/sql/resource-drafts.sql:/docker-entrypoint-initdb.d/06-resource-drafts.sql:ro

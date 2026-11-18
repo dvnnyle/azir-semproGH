@@ -503,16 +503,8 @@ public class AdminController : Controller
             .ToListAsync();
     }
 
-    private static string OwnerName(Submission submission, IReadOnlyDictionary<int, string> users)
-    {
-        if (submission.IdentityUserId.HasValue &&
-            users.TryGetValue(submission.IdentityUserId.Value, out var ownerName))
-        {
-            return ownerName;
-        }
-
-        return submission.UserId.HasValue
-            ? $"Eldre bruker #{submission.UserId.Value}"
+    private static string OwnerName(Submission submission, IReadOnlyDictionary<int, string> users) =>
+        submission.IdentityUserId is int eierId && users.TryGetValue(eierId, out var ownerName)
+            ? ownerName
             : "Ukjent bruker";
-    }
 }
